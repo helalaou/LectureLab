@@ -27,3 +27,32 @@ export function encode(v: unknown): FsValue {
   return { stringValue: String(v) }
 }
 
+function encodeFields(o: Record<string, unknown>): Record<string, FsValue> {
+  const out: Record<string, FsValue> = {}
+  for (const [k, val] of Object.entries(o)) if (val !== undefined) out[k] = encode(val)
+  return out
+}
+
+export function decode(v: FsValue): Json {
+  if ('stringValue' in v) return v.stringValue as string
+  if ('integerValue' in v) return Number(v.integerValue)
+  if ('doubleValue' in v) return Number(v.doubleValue)
+  if ('booleanValue' in v) return v.booleanValue as boolean
+  if ('nullValue' in v) return null
+  if ('timestampValue' in v) return v.timestampValue as string
+  if ('arrayValue' in v) return (((v.arrayValue as { values?: FsValue[] }).values) || []).map(decode)
+  if ('mapValue' in v) return decodeFields(((v.mapValue as { fields?: Record<string, FsValue> }).fields) || {})
+  return null
+}
+
+function decodeFields(f: Record<string, FsValue>): { [k: string]: Json } {
+  const out: { [k: string]: Json } = {}
+  for (const [k, val] of Object.entries(f)) out[k] = decode(val)
+  return out
+}
+
+interface RawDoc {
+  name: string
+  fields?: Record<string, FsValue>
+}
+
