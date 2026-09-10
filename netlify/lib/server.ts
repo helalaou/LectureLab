@@ -184,3 +184,18 @@ export function errorResponse(err: unknown): Response {
   return json({ error: message }, 500)
 }
 
+/** Turn an OpenAI error response into a friendly message. */
+export async function openAIError(res: Response): Promise<HttpError> {
+  let detail = ''
+  try {
+    const body = await res.json()
+    detail = body?.error?.message || ''
+  } catch {
+    /* ignore */
+  }
+  if (res.status === 401) return new HttpError(401, 'The OpenAI API key was rejected. Check the key in Settings.', 'bad_key')
+  if (res.status === 429)
+    return new HttpError(429, 'OpenAI rate limit or quota reached. Wait a minute, or check billing on the OpenAI account. ' + detail, 'rate_limited')
+  if (res.status === 404) return new HttpError(400, `The selected model is not available for this key. ${detail}`, 'bad_model')
+  return new HttpError(502, `OpenAI error (${res.status}): ${detail || res.statusText}`)
+}
