@@ -53,3 +53,28 @@ export async function requireUser(req: Request): Promise<User> {
   }
 }
 
+// ---------------------------------------------------------------- crypto
+
+function encryptionKey(): Buffer {
+  // Derive a fixed 32-byte key from whatever secret string the owner configured.
+  return createHash('sha256').update(env('KEY_ENCRYPTION_SECRET')).digest()
+}
+
+export function encryptSecret(plain: string): string {
+  const iv = randomBytes(12)
+  const cipher = createCipheriv('aes-256-gcm', encryptionKey(), iv)
+  const enc = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()])
+  const tag = cipher.getAuthTag()
+  return ['v1', iv.toString('base64'), tag.toString('base64'), enc.toString('base64')].join(':')
+}
+
+export function decryptSecret(blob: string): string {
+  const [v, iv, tag, data] = blob.split(':')
+  if (v !== 'v1') throw new Error('Unknown key format')
+  const decipher = createDecipheriv('aes-256-gcm', encryptionKey(), Buffer.from(iv, 'base64'))
+  decipher.setAuthTag(Buffer.from(tag, 'base64'))
+  return Buffer.concat([decipher.update(Buffer.from(data, 'base64')), decipher.final()]).toString('utf8')
+}
+
+// ---------------------------------------------------------------- key resolution
+
