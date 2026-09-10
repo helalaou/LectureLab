@@ -153,3 +153,34 @@ export const DEFAULT_SETTINGS: UserSettings = {
   output_language: 'English',
 }
 
+export async function getSettings(user: User): Promise<UserSettings> {
+  const doc = await user.db.get<{ settings?: Partial<UserSettings> }>(`users/${user.uid}`)
+  return { ...DEFAULT_SETTINGS, ...(doc?.settings || {}) }
+}
+
+// ---------------------------------------------------------------- usage
+
+export async function logUsage(user: User, kind: string, amount: number, shared: boolean, model?: string) {
+  try {
+    await user.db.add(`users/${user.uid}/usage`, { kind, amount, sharedKey: shared, model: model || null, email: user.email, created_at: new Date().toISOString() })
+  } catch {
+    /* never block the user on logging */
+  }
+}
+
+// ---------------------------------------------------------------- responses
+
+export function json(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+  })
+}
+
+export function errorResponse(err: unknown): Response {
+  if (err instanceof HttpError) return json({ error: err.message, code: err.code }, err.status)
+  console.error(err)
+  const message = err instanceof Error ? err.message : 'Unexpected server error'
+  return json({ error: message }, 500)
+}
+
