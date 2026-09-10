@@ -25,3 +25,31 @@ function env(name: string): string {
   return v
 }
 
+export interface User {
+  uid: string
+  email: string | null
+  emailVerified: boolean
+  /** Firestore client that acts as this user (security rules apply). */
+  db: Firestore
+}
+
+const JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'))
+
+export async function requireUser(req: Request): Promise<User> {
+  const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
+  if (!token) throw new HttpError(401, 'You need to sign in first.')
+  try {
+    const pid = projectId()
+    const { payload } = await jwtVerify(token, JWKS, { issuer: `https://securetoken.google.com/${pid}`, audience: pid })
+    return {
+      uid: String(payload.sub),
+      email: typeof payload.email === 'string' ? payload.email.toLowerCase() : null,
+      emailVerified: payload.email_verified === true,
+      db: new Firestore(token),
+    }
+  } catch (e) {
+    if (e instanceof HttpError) throw e
+    throw new HttpError(401, 'Your session expired. Please sign in again.')
+  }
+}
+
