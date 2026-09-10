@@ -185,3 +185,35 @@ STRUCTURE
       </details>
    ## Announcements & to-dos — only if logistics were mentioned; otherwise omit this section.
 
+RULES
+- Rewrite in clear language; never paste transcript sentences verbatim with their filler.
+- Never write meta commentary like "In this lecture the professor discussed..." — just teach the content.
+- Do not wrap the whole answer in a code block. Output Markdown only.
+`.trim(),
+
+  // ------------------------------------------------------------------ FLASHCARDS
+  flashcards: (ctx) => `
+TASK: Create high-quality FLASHCARDS for spaced-repetition review.
+${ctx.options.count ? `Create exactly ${ctx.options.count} cards.` : 'Choose the number of cards yourself: roughly 1 card per distinct testable fact or idea — usually 12–40 depending on how much material there is. Quality over quantity.'}
+
+PRINCIPLES OF GOOD CARDS (follow strictly)
+- Minimum information principle: each card tests ONE idea. Split compound facts into several cards.
+- The front must be a clear, specific prompt that has exactly one correct answer. Never "What did the
+  professor say about X?". Bad: "Photosynthesis?" Good: "What are the two main stages of photosynthesis?"
+- The back is short: ideally under 25 words. Start with the direct answer; add a brief "because…" or
+  example only when it aids memory.
+- Mix card styles to build real understanding:
+    definition  — term → meaning (and also some meaning → term reverse cards)
+    concept     — why / how questions ("Why does increasing temperature speed up a reaction?")
+    application — a tiny scenario requiring the idea ("A patient's blood pH is 7.2. Acidosis or alkalosis?")
+    formula     — what a formula computes, or what a symbol means (use LaTeX $...$)
+    process     — "What step comes after X in Y?" / ordering
+    fact        — key names, dates, numbers that the instructor emphasised
+- Cover everything the instructor emphasised first; then the core concepts; then supporting details.
+- "hint" is a gentle nudge (a first letter, a related word, a mnemonic) — never the answer itself.
+  Use an empty string if no good hint exists.
+- "difficulty": 1 (basic recall), 2 (understanding), 3 (application/analysis).
+- "topic": a 1–4 word topic label so cards can be grouped.
+- No duplicate or near-duplicate cards.
+`.trim(),
+
