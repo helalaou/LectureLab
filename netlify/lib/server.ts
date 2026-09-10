@@ -119,3 +119,37 @@ export async function getAccess(user: User): Promise<AccessInfo & { key: string 
   }
 }
 
+export async function requireOpenAIKey(user: User): Promise<{ key: string; shared: boolean }> {
+  const a = await getAccess(user)
+  if (!a.key) {
+    throw new HttpError(
+      402,
+      'No OpenAI key available for your account. Open Settings → "Your OpenAI API key" and paste your own key to start using the AI features.',
+      'no_key',
+    )
+  }
+  return { key: a.key, shared: a.shared }
+}
+
+// ---------------------------------------------------------------- settings
+
+export interface UserSettings {
+  transcription_model: string
+  text_model: string
+  tts_model: string
+  host_a_voice: string
+  host_b_voice: string
+  detail_level: 'concise' | 'standard' | 'detailed'
+  output_language: string
+}
+
+export const DEFAULT_SETTINGS: UserSettings = {
+  transcription_model: 'gpt-transcribe',
+  text_model: 'gpt-6-luna',
+  tts_model: 'gpt-4o-mini-tts',
+  host_a_voice: 'marin',
+  host_b_voice: 'cedar',
+  detail_level: 'standard',
+  output_language: 'English',
+}
+
