@@ -88,3 +88,34 @@ STYLE
 - Use the student's language and the course's own vocabulary.
 `.trim()
 
+function detailInstruction(level: PromptContext['detailLevel']): string {
+  switch (level) {
+    case 'concise':
+      return 'DETAIL LEVEL: concise. The student wants the essentials only — be brief and high-signal, cut anything secondary.'
+    case 'detailed':
+      return 'DETAIL LEVEL: detailed. The student wants depth — include secondary points, extra worked examples, nuances and edge cases.'
+    default:
+      return 'DETAIL LEVEL: standard. Balanced coverage — every important idea, with examples where they help, without exhaustive detail.'
+  }
+}
+
+function languageInstruction(language: string): string {
+  if (!language || /^english$/i.test(language)) {
+    return 'OUTPUT LANGUAGE: English (even if parts of the sources are in another language).'
+  }
+  return `OUTPUT LANGUAGE: ${language}. Write everything for the student in ${language}. Keep standard technical terms recognisable — when a term is usually taught in English, give the ${language} term followed by the English term in parentheses the first time.`
+}
+
+function header(ctx: PromptContext): string {
+  const lines = [
+    `LECTURE: ${ctx.lectureTitle || 'Untitled lecture'}`,
+    ctx.courseName ? `COURSE: ${ctx.courseName}` : null,
+    detailInstruction(ctx.detailLevel),
+    languageInstruction(ctx.language),
+    ctx.options.focus?.trim()
+      ? `STUDENT'S SPECIAL REQUEST (follow it as long as it stays grounded in the sources): ${ctx.options.focus.trim()}`
+      : null,
+  ]
+  return lines.filter(Boolean).join('\n')
+}
+
