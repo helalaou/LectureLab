@@ -74,3 +74,34 @@ export async function* streamChat(req: ChatRequest): AsyncGenerator<string, { us
   return { usage }
 }
 
+export async function transcribe(opts: {
+  key: string
+  model: string
+  audio: Blob
+  filename: string
+  prompt?: string
+  language?: string
+}): Promise<string> {
+  const form = new FormData()
+  form.append('file', opts.audio, opts.filename)
+  form.append('model', opts.model)
+  form.append('response_format', 'json')
+  if (opts.prompt) form.append('prompt', opts.prompt)
+  if (opts.language) form.append('language', opts.language)
+  const res = await fetch(`${BASE}/audio/transcriptions`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${opts.key}` },
+    body: form,
+  })
+  if (!res.ok) {
+    // Some transcription models don't accept a prompt; retry once without it.
+    if (res.status === 400 && opts.prompt) {
+      const body = await res.clone().text()
+      if (/prompt/i.test(body)) return transcribe({ ...opts, prompt: undefined })
+    }
+    throw await openAIError(res)
+  }
+  const data = (await res.json()) as { text?: string }
+  return (data.text || '').trim()
+}
+
