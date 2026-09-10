@@ -105,3 +105,31 @@ export async function transcribe(opts: {
   return (data.text || '').trim()
 }
 
+export async function speech(opts: {
+  key: string
+  model: string
+  voice: string
+  input: string
+  instructions?: string
+}): Promise<ArrayBuffer> {
+  const body: Record<string, unknown> = {
+    model: opts.model,
+    voice: opts.voice,
+    input: opts.input,
+    response_format: 'mp3',
+  }
+  // Only the gpt-4o-*-tts family understands voice "instructions".
+  if (opts.instructions && /gpt-(4o|realtime)/.test(opts.model)) body.instructions = opts.instructions
+  const res = await fetch(`${BASE}/audio/speech`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${opts.key}`, 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw await openAIError(res)
+  return res.arrayBuffer()
+}
+
+export async function validateKey(key: string): Promise<boolean> {
+  const res = await fetch(`${BASE}/models`, { headers: { authorization: `Bearer ${key}` } })
+  return res.ok
+}
