@@ -78,3 +78,44 @@ export function decryptSecret(blob: string): string {
 
 // ---------------------------------------------------------------- key resolution
 
+export interface AccessInfo {
+  hasOwnKey: boolean
+  ownKeyLast4: string | null
+  allowlisted: boolean
+  canUseAI: boolean
+}
+
+/** Emails allowed to use the owner's shared key: ALLOWED_EMAILS="a@x.com, b@y.com" */
+function allowlist(): string[] {
+  return (process.env.ALLOWED_EMAILS || '')
+    .split(/[\s,;]+/)
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export async function getAccess(user: User): Promise<AccessInfo & { key: string | null; shared: boolean }> {
+  const keyDoc = await user.db.get<{ encrypted: string; last4: string }>(`users/${user.uid}/private/openai`)
+  const allowlisted = !!user.email && user.emailVerified && allowlist().includes(user.email)
+  let key: string | null = null
+  let shared = false
+  if (keyDoc?.encrypted) {
+    try {
+      key = decryptSecret(keyDoc.encrypted)
+    } catch {
+      key = null
+    }
+  }
+  if (!key && allowlisted && process.env.OPENAI_API_KEY) {
+    key = process.env.OPENAI_API_KEY
+    shared = true
+  }
+  return {
+    hasOwnKey: !!keyDoc?.encrypted,
+    ownKeyLast4: keyDoc?.last4 ?? null,
+    allowlisted,
+    canUseAI: !!key,
+    key,
+    shared,
+  }
+}
+
