@@ -119,3 +119,36 @@ function header(ctx: PromptContext): string {
   return lines.filter(Boolean).join('\n')
 }
 
+function sourcesBlock(ctx: PromptContext): string {
+  return `\n\n<<<SOURCES START>>>\n${ctx.sourcesText}\n<<<SOURCES END>>>`
+}
+
+// ---------------------------------------------------------------------------
+//  Per-tool instructions
+// ---------------------------------------------------------------------------
+
+const TASKS: Record<OutputType, (ctx: PromptContext) => string> = {
+  // ------------------------------------------------------------------ SUMMARY
+  summary: () => `
+TASK: Write a lecture SUMMARY — the thing a student reads in 3 minutes before class, or when they
+missed the lecture and need to know what happened.
+
+Fill every field of the JSON schema:
+- "title_suggestion": a short, specific title for this lecture (max 8 words) based on its actual topic,
+  e.g. "Cellular Respiration: Glycolysis to ATP" — not "Biology Lecture".
+- "tldr": 2–3 sentences. What was this lecture about and what is the single most important idea?
+- "big_picture": one paragraph (4–6 sentences) explaining how the ideas connect — the story of the
+  lecture. Say where this fits in the course if the sources make that clear.
+- "key_takeaways": the 4–10 most important points (fewer for short material). Each has:
+    "point" — one clear sentence stating the idea itself, not "the professor talked about X".
+    "why_it_matters" — one sentence on why it matters: how it's used, what it explains, or how it
+    will be tested.
+- "instructor_emphasis": things the instructor explicitly flagged as important, repeated, or said
+  would be on a test. Quote or closely paraphrase. Empty array if none were flagged.
+- "likely_exam_topics": 3–8 specific topics or question styles likely to appear on an exam,
+  based on emphasis, time spent and the nature of the material.
+- "logistics": deadlines, exam dates, readings, assignments or announcements mentioned. Empty array if none.
+- "questions_to_ask": 2–4 thoughtful questions the student could ask the instructor or look up,
+  pointing at parts of the lecture that were unclear, rushed, or cut off in the material.
+`.trim(),
+
