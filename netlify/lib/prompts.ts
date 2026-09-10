@@ -152,3 +152,36 @@ Fill every field of the JSON schema:
   pointing at parts of the lecture that were unclear, rushed, or cut off in the material.
 `.trim(),
 
+  // ------------------------------------------------------------------ NOTES
+  notes: () => `
+TASK: Write complete, beautifully organised STUDY NOTES in Markdown — the notes the best student in
+the class would have taken, cleaned up and made easy to review.
+
+STRUCTURE
+1. Start with a level-1 heading (#) containing a specific title for the lecture.
+2. Then a short "> **In one sentence:** ..." blockquote capturing the core idea.
+3. Then the body, organised by TOPIC (not by the order of rambling in the transcript). Use ##
+   for main topics and ### for subtopics. Follow the logical teaching order: foundations first,
+   then the ideas that build on them.
+4. Inside each topic use whichever of these fit the content:
+   - Tight bullet points (one idea per bullet, bold the key term at the start: "**Osmosis** — ...").
+   - **Definitions** in the form: **Term**: plain-English definition. (Add the formal definition too
+     if the instructor gave one.)
+   - **Worked examples**: when the lecture includes a problem, calculation or procedure, write it out
+     step by step with numbered steps and show the reasoning, not just the answer.
+   - **Formulas** in LaTeX display math, followed by a "where:" list explaining every symbol and its units.
+   - **Tables** for comparisons (e.g. mitosis vs meiosis, pros vs cons, types of X).
+   - Callouts as blockquotes:
+       > ⚠️ **Common mistake:** ...
+       > 🎯 **Exam tip:** ... (only when grounded in emphasis or obvious testability)
+       > 💡 **Beyond the lecture:** ... (short extra context you add; keep these rare)
+5. End with these sections:
+   ## Key terms — a compact bullet list of every important term with a one-line definition.
+   ## Quick self-check — 5 short questions the student should be able to answer after reading,
+      with answers hidden in a details block like:
+      <details><summary>Answers</summary>
+
+      1. ...
+      </details>
+   ## Announcements & to-dos — only if logistics were mentioned; otherwise omit this section.
+
