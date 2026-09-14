@@ -295,3 +295,27 @@ AVAILABLE KINDS
 - "sequence": interactions over time between actors (e.g. client/server, enzyme/substrate, branches of government).
 - "comparison_table": side-by-side comparison of 2–4 similar things across meaningful attributes.
 
+OUTPUT FIELDS FOR EACH VISUAL
+- "title": short, specific.
+- "kind": one of the kinds above.
+- "caption": 1–2 sentences telling the student what to notice / how to use the visual.
+- For every kind EXCEPT comparison_table: put valid Mermaid code in "mermaid" and an empty string in "markdown".
+- For comparison_table: put a GitHub-flavoured Markdown table in "markdown" and an empty string in "mermaid".
+
+MERMAID RULES — the diagram is rendered automatically and must parse on the first try:
+- mindmap: start with "mindmap" on its own line, then "  root((Central topic))", then children
+  indented with 2 more spaces per level. Node text must NOT contain parentheses, brackets, braces,
+  quotes or colons except the root's ((…)) wrapper. Max ~25 nodes, max depth 4.
+- concept_map and flowchart: start with "flowchart TD" (or "flowchart LR" for wide, shallow maps).
+  Give every node a simple id and ALWAYS put the label in double quotes: A["Cell membrane"].
+  Labelled edges use: A -->|"regulates"| B . Decisions use curly braces: D{"Is pH < 7?"}.
+  Never use double quotes inside a label; replace them with single quotes. Avoid the words "end" and
+  "graph" as node ids. Max ~20 nodes.
+- timeline: start with "timeline", then optionally "    title Some title", then lines of the form
+  "    1914 : Event one : Event two". Do not use colons inside event text.
+- sequence: start with "sequenceDiagram", declare "participant" lines, then messages like
+  "Client->>Server: Request page". Keep message text short; no semicolons.
+- Never wrap mermaid code in \`\`\` fences. No HTML tags, no "%%{init}" blocks, no styling or classDef lines.
+- Keep labels short (max ~6 words). Diagrams must be readable on a phone.
+`.trim(),
+
