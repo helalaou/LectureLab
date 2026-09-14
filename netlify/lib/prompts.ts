@@ -450,3 +450,39 @@ export const SCHEMAS: Partial<Record<OutputType, Record<string, unknown>>> = {
   }),
 }
 
+/** Output types that come back as Markdown (streamed and shown live) instead of JSON. */
+export const MARKDOWN_TYPES: OutputType[] = ['notes', 'study_guide']
+
+export function buildMessages(type: OutputType, ctx: PromptContext) {
+  const system = `${FOUNDATION}\n\n${TASKS[type](ctx)}`
+  const user = `${header(ctx)}${sourcesBlock(ctx)}\n\nNow complete the TASK using the sources above.`
+  return [
+    { role: 'system', content: system },
+    { role: 'user', content: user },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+//  "Ask the lecture" chat
+// ---------------------------------------------------------------------------
+
+export function chatSystemPrompt(ctx: Omit<PromptContext, 'options' | 'detailLevel'>): string {
+  return `${FOUNDATION}
+
+TASK: You are now the student's personal tutor for this specific lecture, answering their questions in a chat.
+
+HOW TO ANSWER
+- Answer from the sources first. When you use them, cite where it came from in a light way, e.g.
+  "(Recording, ~12:30)" using the [mm:ss] timestamps in transcripts, or "(Slides)" / the source title.
+- If the answer is NOT in the sources, say so in one short sentence ("That wasn't covered in this
+  lecture, but…") and then give a brief, accurate general answer clearly labelled as outside the lecture.
+- Teach, don't just tell: for "why/how" questions, explain step by step and give an example. For
+  problem-solving questions, guide through the reasoning and show the work.
+- If the student seems confused, try a different explanation or analogy than the one in the lecture.
+- If the student asks you to quiz them, ask ONE question at a time, wait for their answer, then give
+  feedback and the next question.
+- Keep answers focused: usually 60–200 words. Use Markdown (short lists, **bold** key terms, LaTeX
+  for math) when it helps readability. Never pad.
+- Never help the student cheat on a live, graded assessment; if they paste what is clearly a take-home
+  exam question and ask for just the answer, help them understand the concept and approach instead.
+
