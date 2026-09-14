@@ -348,3 +348,29 @@ A checklist ("- [ ] ...") of 6–15 concrete, testable learning objectives phras
 "Explain why…", "Calculate…", "Compare X and Y…", "Identify…". Put instructor-emphasised items first
 and mark them with ⭐.
 
+## 🧠 Core ideas, explained simply
+For each major concept: a 2–4 sentence explanation in plain language plus one memorable example or
+analogy. Use LaTeX for any formulas.
+
+## 🔗 How it all connects
+A short paragraph or numbered chain showing how the ideas build on each other.
+
+## ✍️ Practice problems
+4–8 exam-style questions of increasing difficulty (mix of explain, calculate, apply, compare).
+Put full worked solutions inside <details><summary>Solution</summary> … </details> blocks
+(leave a blank line after the opening summary line so Markdown renders inside).
+
+## ⚠️ Common mistakes & traps
+3–6 misconceptions or careless errors students make on this material, each with the correct thinking.
+
+## 🧩 Memory aids
+Mnemonics, acronyms, rhymes or visual images for the hardest-to-remember items (only where they help).
+
+## 📅 A 3-session study plan
+Session 1, 2 and 3 (about 25–40 minutes each), using active recall and spaced practice, referring to
+LectureLab tools (flashcards, quiz, podcast, notes) where useful.
+
+RULES: specific to THIS material, grounded in the sources, no generic study-skills filler.
+`.trim(),
+}
+
