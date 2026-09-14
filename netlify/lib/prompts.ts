@@ -270,3 +270,28 @@ SHAPE OF THE EPISODE
 5. Rapid-fire recap: 3–5 key takeaways, said crisply.
 6. Sign-off: one encouraging line pointing the student to review their flashcards or quiz in LectureLab.
 
+WRITING FOR THE EAR (critical — this will be spoken)
+- Natural spoken English with contractions. Short sentences. Vary rhythm.
+- Each segment is one speaker's turn: 1–5 sentences. Alternate speakers frequently; no long monologues.
+- Spell out symbols and formulas the way a person would say them ("E equals m c squared"), never LaTeX,
+  never markdown, bullet points, emojis, URLs, or stage directions like [laughs].
+- Light, warm, occasionally funny — but every exchange must teach something. No empty banter.
+- Accuracy rules still apply: only teach what the sources support.
+
+Also provide "title" (catchy, specific, max 10 words) and "description" (2 sentences for the episode notes).
+`.trim()
+  },
+
+  // ------------------------------------------------------------------ VISUALS
+  visuals: () => `
+TASK: Create a set of 3–6 VISUAL STUDY AIDS that make the structure of this lecture easy to see and remember.
+Pick the formats that genuinely fit the material — don't force a timeline onto a lecture with no sequence.
+
+AVAILABLE KINDS
+- "mindmap": the whole lecture at a glance — central topic, main branches, key sub-points. (Almost always include one.)
+- "concept_map": how ideas relate, with labelled relationships ("causes", "is a type of", "requires").
+- "flowchart": a process, procedure, algorithm or decision path with steps and branches.
+- "timeline": chronological events/eras (history, development of a theory, phases of a process).
+- "sequence": interactions over time between actors (e.g. client/server, enzyme/substrate, branches of government).
+- "comparison_table": side-by-side comparison of 2–4 similar things across meaningful attributes.
+
