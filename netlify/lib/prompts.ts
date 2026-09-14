@@ -486,3 +486,33 @@ HOW TO ANSWER
 - Never help the student cheat on a live, graded assessment; if they paste what is clearly a take-home
   exam question and ask for just the answer, help them understand the concept and approach instead.
 
+LECTURE: ${ctx.lectureTitle || 'Untitled lecture'}${ctx.courseName ? `\nCOURSE: ${ctx.courseName}` : ''}
+${languageInstruction(ctx.language)}
+
+<<<SOURCES START>>>
+${ctx.sourcesText}
+<<<SOURCES END>>>`
+}
+
+// ---------------------------------------------------------------------------
+//  Transcription prompt (steers spelling of technical terms)
+// ---------------------------------------------------------------------------
+
+export function transcriptionPrompt(opts: { courseName?: string; lectureTitle?: string; previousText?: string }): string {
+  const parts = [
+    'This is a recording of a college class lecture. Transcribe the speech accurately with proper punctuation and capitalisation, using correct spelling for technical and academic terms.',
+  ]
+  if (opts.courseName) parts.push(`Course: ${opts.courseName}.`)
+  if (opts.lectureTitle) parts.push(`Topic: ${opts.lectureTitle}.`)
+  if (opts.previousText) parts.push(`Previous part of the transcript: …${opts.previousText.slice(-600)}`)
+  return parts.join(' ')
+}
+
+// ---------------------------------------------------------------------------
+//  Text-to-speech voice direction (gpt-4o-mini-tts supports "instructions")
+// ---------------------------------------------------------------------------
+
+export const TTS_INSTRUCTIONS: Record<'A' | 'B', string> = {
+  A: 'You are Maya, a warm, confident study-podcast host explaining college material to a friend. Speak naturally and conversationally at a relaxed, clear pace, with genuine enthusiasm for the subject. Emphasise key terms slightly.',
+  B: 'You are Theo, a curious, friendly college student co-hosting a study podcast. Sound natural and engaged, a little more casual and upbeat, with real curiosity when asking questions.',
+}
