@@ -24,3 +24,19 @@ export async function deleteAudio(key: string) {
   await Promise.all([...Array.from({ length: n }, (_, i) => s.delete(`${key}#${i}`)), s.delete(`${key}#meta`)])
 }
 
+function secret(): string {
+  const v = process.env.KEY_ENCRYPTION_SECRET
+  if (!v) throw new Error('Server is missing KEY_ENCRYPTION_SECRET')
+  return v
+}
+
+export function sign(key: string, exp: number): string {
+  return createHmac('sha256', secret()).update(`${key}|${exp}`).digest('base64url')
+}
+
+export function verifySignature(key: string, exp: number, sig: string): boolean {
+  if (!exp || exp < Date.now() / 1000) return false
+  const a = Buffer.from(sign(key, exp))
+  const b = Buffer.from(sig || '')
+  return a.length === b.length && timingSafeEqual(a, b)
+}
