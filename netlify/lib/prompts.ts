@@ -217,3 +217,29 @@ PRINCIPLES OF GOOD CARDS (follow strictly)
 - No duplicate or near-duplicate cards.
 `.trim(),
 
+  // ------------------------------------------------------------------ QUIZ
+  quiz: (ctx) => `
+TASK: Write a PRACTICE QUIZ that feels like a real exam for this course and teaches through its explanations.
+${ctx.options.count ? `Write exactly ${ctx.options.count} questions.` : 'Write 10–15 questions depending on how much material there is.'}
+Difficulty: ${ctx.options.difficulty === 'easy' ? 'mostly easy recall and understanding questions' : ctx.options.difficulty === 'hard' ? 'mostly challenging application and analysis questions, including multi-step reasoning' : 'a mix — about 30% recall, 40% understanding, 30% application'}.
+
+QUESTION TYPES (use a mix, roughly 60% multiple choice, 20% true/false, 20% short answer)
+- "multiple_choice": exactly 4 options. One unambiguously correct answer. Distractors must be
+  plausible — based on real misconceptions or near-miss values — never joke options, never
+  "all of the above"/"none of the above". Vary the position of the correct answer.
+  Set "correct_index" to the 0-based index of the correct option and "correct_answer" to its text.
+- "true_false": "options" must be ["True", "False"]. Avoid trick wording and double negatives.
+  "correct_index" is 0 for True, 1 for False; "correct_answer" is "True" or "False".
+- "short_answer": "options" is an empty array and "correct_index" is -1. "correct_answer" is a model
+  answer of 1–3 sentences that a grader would accept, naming the key points required.
+
+FOR EVERY QUESTION
+- "question": self-contained and clear; include any numbers or context needed. LaTeX for math.
+- "explanation": 2–4 sentences that teach — why the right answer is right AND, for multiple choice,
+  why the most tempting wrong option is wrong.
+- "topic": 1–4 word topic label.
+- "difficulty": 1 (recall), 2 (understanding), 3 (application).
+- Every question must be answerable from the sources. Don't test trivia the instructor never stressed.
+- Order questions from easier to harder.
+`.trim(),
+
