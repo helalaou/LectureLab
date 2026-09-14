@@ -374,3 +374,79 @@ RULES: specific to THIS material, grounded in the sources, no generic study-skil
 `.trim(),
 }
 
+// ---------------------------------------------------------------------------
+//  JSON schemas (OpenAI Structured Outputs, strict mode)
+// ---------------------------------------------------------------------------
+
+const str = { type: 'string' }
+const int = { type: 'integer' }
+const strArr = { type: 'array', items: str }
+
+function obj(properties: Record<string, unknown>) {
+  return { type: 'object', additionalProperties: false, properties, required: Object.keys(properties) }
+}
+
+export const SCHEMAS: Partial<Record<OutputType, Record<string, unknown>>> = {
+  summary: obj({
+    title_suggestion: str,
+    tldr: str,
+    big_picture: str,
+    key_takeaways: { type: 'array', items: obj({ point: str, why_it_matters: str }) },
+    instructor_emphasis: strArr,
+    likely_exam_topics: strArr,
+    logistics: strArr,
+    questions_to_ask: strArr,
+  }),
+  flashcards: obj({
+    cards: {
+      type: 'array',
+      items: obj({
+        front: str,
+        back: str,
+        hint: str,
+        kind: { type: 'string', enum: ['definition', 'concept', 'application', 'formula', 'process', 'fact'] },
+        topic: str,
+        difficulty: int,
+      }),
+    },
+  }),
+  quiz: obj({
+    questions: {
+      type: 'array',
+      items: obj({
+        type: { type: 'string', enum: ['multiple_choice', 'true_false', 'short_answer'] },
+        question: str,
+        options: strArr,
+        correct_index: int,
+        correct_answer: str,
+        explanation: str,
+        topic: str,
+        difficulty: int,
+      }),
+    },
+  }),
+  podcast: obj({
+    title: str,
+    description: str,
+    segments: { type: 'array', items: obj({ speaker: { type: 'string', enum: ['A', 'B'] }, text: str }) },
+  }),
+  visuals: obj({
+    visuals: {
+      type: 'array',
+      items: obj({
+        title: str,
+        kind: {
+          type: 'string',
+          enum: ['mindmap', 'concept_map', 'flowchart', 'timeline', 'sequence', 'comparison_table'],
+        },
+        caption: str,
+        mermaid: str,
+        markdown: str,
+      }),
+    },
+  }),
+  glossary: obj({
+    terms: { type: 'array', items: obj({ term: str, definition: str, example: str, related: strArr, category: str }) },
+  }),
+}
+
