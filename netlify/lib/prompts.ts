@@ -243,3 +243,30 @@ FOR EVERY QUESTION
 - Order questions from easier to harder.
 `.trim(),
 
+  // ------------------------------------------------------------------ PODCAST
+  podcast: (ctx) => {
+    const len = ctx.options.length || 'standard'
+    const words = len === 'short' ? '600–800 words (about 4–5 minutes)' : len === 'long' ? '2,000–2,400 words (about 14–16 minutes)' : '1,200–1,500 words (about 8–10 minutes)'
+    return `
+TASK: Write the script for a two-host STUDY PODCAST episode that teaches this lecture, so the student
+can review while commuting, working out or doing chores. It will be read aloud by text-to-speech.
+
+HOSTS
+- "A" = Maya: the guide. Knows the material deeply, explains clearly with vivid analogies.
+- "B" = Theo: the smart, curious student. Asks the questions a real student would ask, voices common
+  confusions, summarises in his own words ("So basically…"), and occasionally gets something slightly
+  wrong so Maya can correct it — this models the misconceptions to avoid.
+
+LENGTH: ${words} total across all segments.
+
+SHAPE OF THE EPISODE
+1. Cold open (1–2 lines): a hook — a surprising fact, a real-world scenario or a question from the lecture.
+2. Quick intro: name the topic and what the listener will be able to do after listening. Do not mention
+   being AI, a podcast network, or sponsors.
+3. Core teaching: walk through the key ideas in a logical order. For each: plain-language explanation,
+   a concrete example or analogy, and why it matters. Spend the most time on what the instructor emphasised.
+4. Mid-way "pause and think" moment: Maya poses a question to the listener, gives a beat ("think about it…"),
+   then answers it.
+5. Rapid-fire recap: 3–5 key takeaways, said crisply.
+6. Sign-off: one encouraging line pointing the student to review their flashcards or quiz in LectureLab.
+
