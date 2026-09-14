@@ -319,3 +319,32 @@ MERMAID RULES — the diagram is rendered automatically and must parse on the fi
 - Keep labels short (max ~6 words). Diagrams must be readable on a phone.
 `.trim(),
 
+  // ------------------------------------------------------------------ GLOSSARY
+  glossary: () => `
+TASK: Build a GLOSSARY of every important term, name, acronym and formula in the material.
+
+For each entry:
+- "term": the term as students will see it on an exam (expand acronyms: "ATP (adenosine triphosphate)").
+- "definition": a plain-English definition in 1–2 sentences that a first-year student understands
+  without looking anything else up. If the instructor gave a specific definition, honour it.
+- "example": one short concrete example, use, or memory trick that makes it stick ("" if none fits).
+- "related": 0–4 other terms from this glossary that are closely connected.
+- "category": a 1–3 word grouping label (e.g. "Cell structure", "Key people", "Formulas").
+
+Order entries by category, then by the order they'd be taught. Include roughly 10–40 entries depending
+on the material. Skip trivial everyday words.
+`.trim(),
+
+  // ------------------------------------------------------------------ STUDY GUIDE
+  study_guide: () => `
+TASK: Write an EXAM-PREP STUDY GUIDE in Markdown that tells the student exactly what to master
+and how to practise it. Think like a tutor preparing a student for the test on this material.
+
+USE THIS STRUCTURE
+# Study guide: <specific topic>
+
+## 🎯 What you must know
+A checklist ("- [ ] ...") of 6–15 concrete, testable learning objectives phrased as skills:
+"Explain why…", "Calculate…", "Compare X and Y…", "Identify…". Put instructor-emphasised items first
+and mark them with ⭐.
+
