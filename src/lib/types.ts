@@ -53,3 +53,38 @@ export interface Output<T = unknown> {
   created_at: string
 }
 
+export interface SummaryContent {
+  title_suggestion: string
+  tldr: string
+  big_picture: string
+  key_takeaways: { point: string; why_it_matters: string }[]
+  instructor_emphasis: string[]
+  likely_exam_topics: string[]
+  logistics: string[]
+  questions_to_ask: string[]
+}
+
+export interface MarkdownContent {
+  markdown: string
+}
+
+export interface Flashcard {
+  front: string
+  back: string
+  hint: string
+  kind: string
+  topic: string
+  difficulty: number
+}
+
+export interface QuizQuestion {
+  type: 'multiple_choice' | 'true_false' | 'short_answer'
+  question: string
+  options: string[]
+  correct_index: number
+  correct_answer: string
+  explanation: string
+  topic: string
+  difficulty: number
+}
+
