@@ -88,3 +88,32 @@ export interface QuizQuestion {
   difficulty: number
 }
 
+export interface PodcastContent {
+  title: string
+  description: string
+  segments: { speaker: 'A' | 'B'; text: string }[]
+}
+
+export interface Visual {
+  title: string
+  kind: 'mindmap' | 'concept_map' | 'flowchart' | 'timeline' | 'sequence' | 'comparison_table'
+  caption: string
+  mermaid: string
+  markdown: string
+}
+
+export interface GlossaryTerm {
+  term: string
+  definition: string
+  example: string
+  related: string[]
+  category: string
+}
+
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  created_at: string
+}
+
