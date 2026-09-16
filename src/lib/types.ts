@@ -26,3 +26,30 @@ export interface Segment {
   text: string
 }
 
+export type SourceKind = 'recording' | 'audio' | 'document' | 'text'
+
+export interface Source {
+  id: string
+  lecture_id: string
+  kind: SourceKind
+  title: string
+  storage_path: string | null
+  mime_type: string | null
+  duration_sec: number | null
+  content: string
+  segments: Segment[]
+  status: 'uploading' | 'transcribing' | 'ready' | 'error'
+  error: string | null
+  created_at: string
+}
+
+export interface Output<T = unknown> {
+  id: string
+  lecture_id: string
+  type: OutputType
+  content: T
+  audio_path: string | null
+  model: string | null
+  created_at: string
+}
+
