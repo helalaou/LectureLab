@@ -49,3 +49,36 @@ export default async (req: Request) => {
   }
 }
 
+async function serve(req: Request, key: string, url: URL): Promise<Response> {
+  const exp = Number(url.searchParams.get('exp'))
+  if (!verifySignature(key, exp, url.searchParams.get('sig') || '')) throw new HttpError(403, 'Link expired.')
+  const s = store()
+  const meta = (await s.get(`${key}#meta`, { type: 'json' })) as AudioMeta | null
+  if (!meta) throw new HttpError(404, 'Audio not found.')
+
+  // Parse "bytes=start-end"; serve at most one stored part per response.
+  const m = /bytes=(\d*)-(\d*)/.exec(req.headers.get('range') || '')
+  let start = m && m[1] ? Number(m[1]) : 0
+  let end = m && m[2] ? Number(m[2]) : meta.size - 1
+  if (m && !m[1] && m[2]) {
+    start = Math.max(0, meta.size - Number(m[2]))
+    end = meta.size - 1
+  }
+  if (start >= meta.size) return new Response(null, { status: 416, headers: { 'content-range': `bytes */${meta.size}` } })
+  const partIndex = Math.floor(start / meta.partSize)
+  const partStart = partIndex * meta.partSize
+  end = Math.min(end, partStart + meta.partSize - 1, meta.size - 1)
+  const buf = (await s.get(`${key}#${partIndex}`, { type: 'arrayBuffer' })) as ArrayBuffer | null
+  if (!buf) throw new HttpError(404, 'Audio part missing.')
+  const slice = buf.slice(start - partStart, end - partStart + 1)
+  const headers = {
+    'content-type': meta.type,
+    'accept-ranges': 'bytes',
+    'content-length': String(slice.byteLength),
+    'cache-control': 'private, max-age=3600',
+  }
+  if (!m && meta.parts === 1) return new Response(slice, { status: 200, headers })
+  return new Response(slice, { status: 206, headers: { ...headers, 'content-range': `bytes ${start}-${end}/${meta.size}` } })
+}
+
+export const config: Config = { path: '/api/audio', method: ['GET', 'PUT', 'POST', 'DELETE'] }
