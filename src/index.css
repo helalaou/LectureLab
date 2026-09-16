@@ -97,3 +97,29 @@
   transform: rotateY(180deg);
 }
 
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+}
+
+#print-root {
+  display: none;
+}
+@media print {
+  #root {
+    display: none !important;
+  }
+  #print-root {
+    display: block !important;
+  }
+  html.dark {
+    color-scheme: light;
+  }
+  #print-root .prose-study {
+    color: black;
+  }
+}
