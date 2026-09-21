@@ -92,3 +92,29 @@ export async function createLecture(input: { title: string; courseId: string | n
 }
 export const updateLecture = (id: string, patch: Partial<Lecture>) => updateDoc(userDoc('lectures', id), { ...patch, updated_at: now() })
 
+export async function deleteLecture(id: string) {
+  const [sources, outputs] = await Promise.all([getDocs(userCol('lectures', id, 'sources')), getDocs(userCol('lectures', id, 'outputs'))])
+  const audio = [
+    ...sources.docs.map((d) => d.data().storage_path as string | null),
+    ...outputs.docs.map((d) => d.data().audio_path as string | null),
+  ].filter((k): k is string => !!k)
+  await Promise.all(audio.map((k) => deleteAudio(k).catch(() => {})))
+  for (const sub of ['sources', 'outputs', 'chat', 'cards']) {
+    const snap = await getDocs(userCol('lectures', id, sub))
+    for (let i = 0; i < snap.docs.length; i += 400) {
+      const batch = writeBatch(db)
+      snap.docs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+      await batch.commit()
+    }
+  }
+  await deleteDoc(userDoc('lectures', id))
+}
+
+// ------------------------------------------------------------------ sources
+
+export function watchSources(lectureId: string, cb: (s: Source[]) => void) {
+  return onSnapshot(query(userCol('lectures', lectureId, 'sources'), orderBy('created_at')), (snap) =>
+    cb(rows<Source>(snap).map((s) => ({ ...s, lecture_id: lectureId }))),
+  )
+}
+
