@@ -27,3 +27,18 @@ export function review(state: CardState, grade: 0 | 1 | 2 | 3, now = new Date())
   return { ease, interval_days, reps, due_at: new Date(now.getTime() + interval_days * 86400_000).toISOString() }
 }
 
+export function intervalLabel(state: CardState, grade: 0 | 1 | 2 | 3): string {
+  const next = review(state, grade)
+  const d = next.interval_days
+  if (grade === 0) return '1m'
+  if (d < 1) return `${Math.round(d * 24)}h`
+  if (d < 30) return `${Math.round(d)}d`
+  return `${Math.round(d / 30)}mo`
+}
+
+/** Stable key for a card so progress survives regeneration when the card text stays the same. */
+export function cardKey(front: string): string {
+  let h = 5381
+  for (let i = 0; i < front.length; i++) h = ((h << 5) + h + front.charCodeAt(i)) | 0
+  return 'c' + (h >>> 0).toString(36)
+}
