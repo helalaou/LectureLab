@@ -63,3 +63,32 @@ export async function deleteCourse(id: string) {
   await batch.commit()
 }
 
+// ------------------------------------------------------------------ lectures
+
+export async function listLectures(): Promise<Lecture[]> {
+  return rows<Lecture>(await getDocs(query(userCol('lectures'), orderBy('updated_at', 'desc'))))
+}
+export async function getLecture(id: string): Promise<Lecture | null> {
+  const snap = await getDoc(userDoc('lectures', id))
+  return snap.exists() ? ({ ...(snap.data() as Lecture), id: snap.id }) : null
+}
+export function watchLecture(id: string, cb: (l: Lecture | null) => void) {
+  return onSnapshot(userDoc('lectures', id), (s) => cb(s.exists() ? ({ ...(s.data() as Lecture), id: s.id }) : null))
+}
+export async function createLecture(input: { title: string; courseId: string | null }): Promise<string> {
+  const t = now()
+  const ref = await addDoc(userCol('lectures'), {
+    title: input.title,
+    course_id: input.courseId,
+    lecture_date: t.slice(0, 10),
+    created_at: t,
+    updated_at: t,
+    output_types: [],
+    source_kinds: [],
+    source_count: 0,
+    processing: false,
+  })
+  return ref.id
+}
+export const updateLecture = (id: string, patch: Partial<Lecture>) => updateDoc(userDoc('lectures', id), { ...patch, updated_at: now() })
+
