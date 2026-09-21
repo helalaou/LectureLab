@@ -51,3 +51,29 @@ export function splitAll(samples: Float32Array): Float32Array[] {
   return out
 }
 
+/** Streaming linear-interpolation resampler (input rate → 16 kHz). */
+export class Resampler {
+  private ratio: number
+  private pos = 0
+  private last = 0
+  constructor(inputRate: number) {
+    this.ratio = inputRate / TARGET_RATE
+  }
+  process(input: Float32Array): Float32Array {
+    if (this.ratio === 1) return input.slice()
+    const out: number[] = []
+    // pos is the fractional read position relative to the start of `input`,
+    // where index -1 refers to the last sample of the previous block.
+    while (this.pos < input.length - 1) {
+      const i = Math.floor(this.pos)
+      const frac = this.pos - i
+      const a = i < 0 ? this.last : input[i]
+      const b = input[i + 1]
+      out.push(a + (b - a) * frac)
+      this.pos += this.ratio
+    }
+    this.pos -= input.length
+    this.last = input[input.length - 1] ?? this.last
+    return Float32Array.from(out)
+  }
+}
