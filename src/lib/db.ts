@@ -180,3 +180,32 @@ export async function updateOutput(lectureId: string, type: OutputType, patch: P
   return { ...(snap.data() as Output), id: snap.id }
 }
 
+// ------------------------------------------------------------------ chat
+
+export async function listChat(lectureId: string): Promise<ChatMessage[]> {
+  return rows<ChatMessage>(await getDocs(query(userCol('lectures', lectureId, 'chat'), orderBy('created_at'))))
+}
+export async function clearChat(lectureId: string) {
+  const snap = await getDocs(userCol('lectures', lectureId, 'chat'))
+  const batch = writeBatch(db)
+  snap.docs.forEach((d) => batch.delete(d.ref))
+  await batch.commit()
+}
+
+// ------------------------------------------------------------------ flashcard progress
+
+export async function listCardProgress(lectureId: string): Promise<Record<string, CardState>> {
+  const map: Record<string, CardState> = {}
+  for (const d of (await getDocs(userCol('lectures', lectureId, 'cards'))).docs) map[d.id] = d.data() as CardState
+  return map
+}
+export const saveCardProgress = (lectureId: string, key: string, state: CardState) =>
+  setDoc(userDoc('lectures', lectureId, 'cards', key), { ...state, updated_at: now() })
+
+// ------------------------------------------------------------------ account
+
+export async function deleteAllData() {
+  for (const l of await listLectures()) await deleteLecture(l.id)
+  for (const c of await listCourses()) await deleteDoc(userDoc('courses', c.id))
+  await deleteDoc(doc(db, 'users', uid()))
+}
