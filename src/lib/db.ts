@@ -152,3 +152,31 @@ export async function addSource(lectureId: string, kind: SourceKind, title: stri
   return { ...data, id: ref.id, lecture_id: lectureId } as Source
 }
 
+export async function updateSource(lectureId: string, id: string, patch: Partial<Source>) {
+  const p = { ...patch }
+  if (p.content && p.content.length > MAX_CONTENT) p.content = p.content.slice(0, MAX_CONTENT)
+  delete (p as Partial<Source>).id
+  delete (p as Partial<Source>).lecture_id
+  await updateDoc(userDoc('lectures', lectureId, 'sources', id), p)
+  if ('status' in patch) await refreshLectureSummary(lectureId)
+}
+
+export async function removeSource(src: Source) {
+  if (src.storage_path) await deleteAudio(src.storage_path).catch(() => {})
+  await deleteDoc(userDoc('lectures', src.lecture_id, 'sources', src.id))
+  await refreshLectureSummary(src.lecture_id)
+}
+
+// ------------------------------------------------------------------ outputs
+
+export async function listOutputs(lectureId: string): Promise<Partial<Record<OutputType, Output>>> {
+  const map: Partial<Record<OutputType, Output>> = {}
+  for (const o of rows<Output>(await getDocs(userCol('lectures', lectureId, 'outputs')))) map[o.type] = o
+  return map
+}
+export async function updateOutput(lectureId: string, type: OutputType, patch: Partial<Output>): Promise<Output> {
+  await updateDoc(userDoc('lectures', lectureId, 'outputs', type), patch)
+  const snap = await getDoc(userDoc('lectures', lectureId, 'outputs', type))
+  return { ...(snap.data() as Output), id: snap.id }
+}
+
