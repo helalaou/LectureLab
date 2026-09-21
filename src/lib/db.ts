@@ -118,3 +118,37 @@ export function watchSources(lectureId: string, cb: (s: Source[]) => void) {
   )
 }
 
+/** Keep the small summary on the lecture doc (used by the home list) in sync. */
+async function refreshLectureSummary(lectureId: string) {
+  const all = rows<Source>(await getDocs(userCol('lectures', lectureId, 'sources')))
+  await updateDoc(userDoc('lectures', lectureId), {
+    source_kinds: Array.from(new Set(all.map((s) => s.kind))),
+    source_count: all.length,
+    processing: all.some((s) => s.status === 'uploading' || s.status === 'transcribing'),
+    updated_at: now(),
+  }).catch(() => {})
+}
+
+// Firestore documents max out at 1 MB, so very long texts are trimmed.
+const MAX_CONTENT = 700_000
+
+export async function addSource(lectureId: string, kind: SourceKind, title: string, extra: Partial<Source> = {}): Promise<Source> {
+  const data = {
+    kind,
+    title,
+    storage_path: null,
+    mime_type: null,
+    duration_sec: null,
+    content: '',
+    segments: [],
+    status: 'uploading' as Source['status'],
+    error: null,
+    created_at: now(),
+    ...extra,
+  }
+  if (data.content.length > MAX_CONTENT) data.content = data.content.slice(0, MAX_CONTENT)
+  const ref = await addDoc(userCol('lectures', lectureId, 'sources'), data)
+  await refreshLectureSummary(lectureId)
+  return { ...data, id: ref.id, lecture_id: lectureId } as Source
+}
+
