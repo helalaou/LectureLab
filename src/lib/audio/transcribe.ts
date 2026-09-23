@@ -64,3 +64,39 @@ function toSegments(text: string, start: number, duration: number): Segment[] {
   })
 }
 
+/**
+ * Transcribe chunks with limited parallelism and retries.
+ * Returns the full text plus approximate timestamped segments.
+ */
+export async function transcribeChunks(chunks: StoredChunk[], ctx: Ctx): Promise<{ text: string; segments: Segment[] }> {
+  const results: string[] = new Array(chunks.length).fill('')
+  let done = 0
+  let next = 0
+  ctx.onProgress?.(0, chunks.length)
+
+  const worker = async () => {
+    while (next < chunks.length) {
+      const i = next++
+      let attempt = 0
+      while (true) {
+        try {
+          results[i] = await transcribeOne(chunks[i], i, ctx, i > 0 ? results[i - 1] : '')
+          break
+        } catch (e) {
+          attempt++
+          const err = e as ApiError
+          const fatal = err.status === 401 || err.status === 402 || err.status === 400 || err.name === 'AbortError'
+          if (fatal || attempt >= 4) throw e
+          await new Promise((r) => setTimeout(r, 1500 * attempt * attempt))
+        }
+      }
+      done++
+      ctx.onProgress?.(done, chunks.length)
+    }
+  }
+  await Promise.all([worker(), worker(), worker()])
+
+  const segments = chunks.flatMap((c, i) => toSegments(results[i], c.start, c.duration))
+  const text = results.filter(Boolean).join('\n\n')
+  return { text, segments }
+}
