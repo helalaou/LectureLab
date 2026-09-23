@@ -125,3 +125,34 @@ export async function processRecording(recordingId: string): Promise<{ lectureId
   return { lectureId, sourceId }
 }
 
+async function runRecordingJob(
+  recordingId: string,
+  lectureId: string,
+  sourceId: string,
+  chunks: Awaited<ReturnType<typeof loadStoredRecording>>['chunks'],
+  audio: Blob,
+  meta: RecordingMeta,
+) {
+  try {
+    setJob({ sourceId, lectureId, stage: 'Uploading audio…' })
+    await updateSource(sourceId, lectureId, { status: 'uploading', error: null })
+    const path = await uploadSourceAudio(lectureId, sourceId, audio, meta.mimeType, (p) => setJob({ sourceId, lectureId, stage: `Uploading audio… ${Math.round(p * 100)}%`, progress: p }))
+    await updateSource(sourceId, lectureId, { status: 'transcribing', storage_path: path })
+    const ctx = await lectureContext(lectureId)
+    const { text, segments } = await transcribeChunks(chunks, {
+      ...ctx,
+      onProgress: (d, t) => setJob({ sourceId, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
+    })
+    if (!text.trim()) throw new Error('No speech was detected in this recording. Check your microphone in Settings.')
+    await updateSource(sourceId, lectureId, { status: 'ready', content: text, segments, duration_sec: meta.durationSec })
+    await deleteStoredRecording(recordingId)
+  } catch (e) {
+    await updateSource(sourceId, lectureId, {
+      status: 'error',
+      error: `${(e as Error).message} — the recording is still saved on this device; tap Retry.`,
+    }).catch(() => {})
+  } finally {
+    endJob(sourceId)
+  }
+}
+
