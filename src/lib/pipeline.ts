@@ -52,3 +52,30 @@ function changed(lectureId: string) {
   sourceEvents.dispatchEvent(new CustomEvent('change', { detail: lectureId }))
 }
 
+// ------------------------------------------------------------------ helpers
+
+export async function createLecture(input: { title?: string; courseId?: string | null }): Promise<string> {
+  return db.createLecture({ title: input.title?.trim() || defaultLectureTitle(), courseId: input.courseId || null })
+}
+
+async function insertSource(lectureId: string, kind: SourceKind, title: string, extra: Partial<Source> = {}): Promise<Source> {
+  const src = await db.addSource(lectureId, kind, title, extra)
+  changed(lectureId)
+  return src
+}
+
+async function updateSource(id: string, lectureId: string, patch: Partial<Source>) {
+  await db.updateSource(lectureId, id, patch)
+  changed(lectureId)
+}
+
+async function lectureContext(lectureId: string) {
+  const lec = await db.getLecture(lectureId)
+  let courseName: string | undefined
+  if (lec?.course_id) courseName = (await db.listCourses()).find((c) => c.id === lec.course_id)?.name
+  return {
+    lectureTitle: /^lecture ·/i.test(lec?.title || '') ? undefined : lec?.title,
+    courseName,
+  }
+}
+
