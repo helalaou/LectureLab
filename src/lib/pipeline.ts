@@ -26,3 +26,29 @@ let jobs: Record<string, Job> = {}
 const listeners = new Set<() => void>()
 const emit = () => listeners.forEach((l) => l())
 
+function setJob(job: Job) {
+  jobs = { ...jobs, [job.sourceId]: job }
+  emit()
+}
+function endJob(sourceId: string) {
+  const { [sourceId]: _, ...rest } = jobs
+  jobs = rest
+  emit()
+}
+
+export function useJobs(): Record<string, Job> {
+  return useSyncExternalStore(
+    (l) => {
+      listeners.add(l)
+      return () => listeners.delete(l)
+    },
+    () => jobs,
+  )
+}
+
+/** Notifies pages that a source row changed so they can refetch. */
+export const sourceEvents = new EventTarget()
+function changed(lectureId: string) {
+  sourceEvents.dispatchEvent(new CustomEvent('change', { detail: lectureId }))
+}
+
