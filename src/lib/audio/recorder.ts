@@ -283,3 +283,24 @@ export async function loadStoredRecording(id: string): Promise<{ meta: Recording
   return { meta: { ...meta, durationSec }, chunks, audio: new Blob(parts, { type: meta.mimeType.split(';')[0] }) }
 }
 
+export async function deleteStoredRecording(id: string) {
+  await idb.delPrefix(`rec:${id}:`)
+}
+
+// ------------------------------------------------------------------ devices
+
+export async function listMicrophones(): Promise<MediaDeviceInfo[]> {
+  if (!navigator.mediaDevices?.enumerateDevices) return []
+  let devices = await navigator.mediaDevices.enumerateDevices()
+  // Labels are empty until the user has granted mic permission once.
+  if (devices.some((d) => d.kind === 'audioinput' && !d.label)) {
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ audio: true })
+      s.getTracks().forEach((t) => t.stop())
+      devices = await navigator.mediaDevices.enumerateDevices()
+    } catch {
+      /* permission denied — return unlabeled list */
+    }
+  }
+  return devices.filter((d) => d.kind === 'audioinput')
+}
