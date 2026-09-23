@@ -79,3 +79,49 @@ async function lectureContext(lectureId: string) {
   }
 }
 
+function extFor(mime: string): string {
+  if (mime.includes('webm')) return 'webm'
+  if (mime.includes('mp4') || mime.includes('m4a') || mime.includes('aac')) return 'm4a'
+  if (mime.includes('ogg')) return 'ogg'
+  if (mime.includes('mpeg') || mime.includes('mp3')) return 'mp3'
+  if (mime.includes('wav')) return 'wav'
+  return 'audio'
+}
+
+async function uploadSourceAudio(lectureId: string, sourceId: string, blob: Blob, mime: string, onProgress?: (p: number) => void): Promise<string | null> {
+  if (blob.size > MAX_STORED_AUDIO || blob.size === 0) return null
+  const key = `${auth.currentUser!.uid}/${lectureId}/${sourceId}.${extFor(mime)}`
+  try {
+    await uploadAudio(key, blob.type ? blob : new Blob([blob], { type: mime }), onProgress)
+    return key
+  } catch (e) {
+    console.warn('Audio upload failed (transcript will still be saved):', (e as Error).message)
+    return null
+  }
+}
+
+// ------------------------------------------------------------------ recordings
+
+/**
+ * Turn a finished recording (saved in IndexedDB) into a transcribed source.
+ * Safe to call again for a recording that failed earlier.
+ */
+export async function processRecording(recordingId: string): Promise<{ lectureId: string; sourceId: string }> {
+  const { meta, chunks, audio } = await loadStoredRecording(recordingId)
+  const lectureId = meta.lectureId || (await createLecture({ title: meta.title, courseId: meta.courseId }))
+  const startedAt = new Date(meta.startedAt)
+  const title = `Class recording · ${startedAt.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`
+
+  // remember which lecture/source this recording belongs to, for retries
+  let sourceId = (meta as RecordingMeta & { sourceId?: string }).sourceId
+  if (!sourceId) {
+    const src = await insertSource(lectureId, 'recording', title, { duration_sec: meta.durationSec, mime_type: meta.mimeType })
+    sourceId = src.id
+    const { idb } = await import('./audio/idb')
+    await idb.set(`rec:${recordingId}:meta`, { ...meta, lectureId, sourceId })
+  }
+
+  void runRecordingJob(recordingId, lectureId, sourceId, chunks, audio, meta)
+  return { lectureId, sourceId }
+}
+
