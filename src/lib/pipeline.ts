@@ -181,3 +181,42 @@ export async function addMediaFile(lectureId: string, file: File): Promise<void>
   }
 }
 
+export async function addDocument(lectureId: string, file: File): Promise<void> {
+  const src = await insertSource(lectureId, 'document', file.name, { mime_type: file.type || null })
+  setJob({ sourceId: src.id, lectureId, stage: 'Reading document…' })
+  try {
+    const text = await extractText(file, (s) => setJob({ sourceId: src.id, lectureId, stage: s }))
+    if (!text.trim()) throw new Error('No readable text found in this document.')
+    await updateSource(src.id, lectureId, { status: 'ready', content: text })
+  } catch (e) {
+    await updateSource(src.id, lectureId, { status: 'error', error: (e as Error).message }).catch(() => {})
+  } finally {
+    endJob(src.id)
+  }
+}
+
+export async function addText(lectureId: string, title: string, text: string): Promise<void> {
+  await insertSource(lectureId, 'text', title.trim() || 'My notes', { status: 'ready', content: text.trim() } as Partial<Source>)
+}
+
+export async function deleteSource(src: Source) {
+  await db.removeSource(src)
+  changed(src.lecture_id)
+}
+
+/** Find the on-device recording that belongs to a failed source, if any. */
+export async function findRecordingForSource(sourceId: string): Promise<string | null> {
+  const { listStoredRecordings } = await import('./audio/recorder')
+  const recs = (await listStoredRecordings()) as (RecordingMeta & { sourceId?: string })[]
+  return recs.find((r) => r.sourceId === sourceId)?.id ?? null
+}
+
+export async function retryRecordingSource(sourceId: string) {
+  const recId = await findRecordingForSource(sourceId)
+  if (!recId) throw new Error('The original recording is not on this device anymore.')
+  await processRecording(recId)
+}
+
+export async function deleteLecture(lectureId: string) {
+  await db.deleteLecture(lectureId)
+}
