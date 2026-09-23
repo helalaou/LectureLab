@@ -256,3 +256,30 @@ export class LectureRecorder {
   }
 }
 
+// ------------------------------------------------------------------ stored recordings
+
+export async function listStoredRecordings(): Promise<RecordingMeta[]> {
+  const keys = (await idb.keys()).map(String).filter((k) => k.startsWith('rec:') && k.endsWith(':meta'))
+  const metas = await Promise.all(keys.map((k) => idb.get<RecordingMeta>(k)))
+  return metas.filter((m): m is RecordingMeta => !!m).sort((a, b) => b.startedAt - a.startedAt)
+}
+
+export async function loadStoredRecording(id: string): Promise<{ meta: RecordingMeta; chunks: StoredChunk[]; audio: Blob }> {
+  const meta = await idb.get<RecordingMeta>(`rec:${id}:meta`)
+  if (!meta) throw new Error('Recording not found on this device.')
+  const keys = (await idb.keys()).map(String).sort()
+  const chunks: StoredChunk[] = []
+  const parts: Blob[] = []
+  for (const k of keys) {
+    if (k.startsWith(`rec:${id}:chunk:`)) {
+      const c = await idb.get<StoredChunk>(k)
+      if (c) chunks.push(c)
+    } else if (k.startsWith(`rec:${id}:part:`)) {
+      const p = await idb.get<Blob>(k)
+      if (p) parts.push(p)
+    }
+  }
+  const durationSec = chunks.reduce((s, c) => Math.max(s, c.start + c.duration), 0) || meta.durationSec
+  return { meta: { ...meta, durationSec }, chunks, audio: new Blob(parts, { type: meta.mimeType.split(';')[0] }) }
+}
+
