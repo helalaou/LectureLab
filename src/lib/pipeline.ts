@@ -156,3 +156,28 @@ async function runRecordingJob(
   }
 }
 
+// ------------------------------------------------------------------ uploads
+
+export async function addMediaFile(lectureId: string, file: File): Promise<void> {
+  const title = file.name.replace(/\.[^.]+$/, '')
+  const src = await insertSource(lectureId, 'audio', title, { mime_type: file.type || null })
+  setJob({ sourceId: src.id, lectureId, stage: 'Reading file…' })
+  try {
+    const { chunks, durationSec } = await fileToChunks(file, (s) => setJob({ sourceId: src.id, lectureId, stage: s }))
+    setJob({ sourceId: src.id, lectureId, stage: 'Uploading audio…' })
+    const path = await uploadSourceAudio(lectureId, src.id, file, file.type || 'audio/mpeg')
+    await updateSource(src.id, lectureId, { status: 'transcribing', storage_path: path, duration_sec: durationSec })
+    const ctx = await lectureContext(lectureId)
+    const { text, segments } = await transcribeChunks(chunks, {
+      ...ctx,
+      onProgress: (d, t) => setJob({ sourceId: src.id, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
+    })
+    if (!text.trim()) throw new Error('No speech was detected in this file.')
+    await updateSource(src.id, lectureId, { status: 'ready', content: text, segments })
+  } catch (e) {
+    await updateSource(src.id, lectureId, { status: 'error', error: (e as Error).message }).catch(() => {})
+  } finally {
+    endJob(src.id)
+  }
+}
+
