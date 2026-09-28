@@ -51,3 +51,33 @@ export function Button({
   )
 }
 
+export function IconButton({ label, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string }) {
+  return (
+    <button
+      aria-label={label}
+      title={label}
+      {...rest}
+      className={clsx(
+        'inline-flex size-10 items-center justify-center rounded-xl text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:opacity-40 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+        className,
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+// ------------------------------------------------------------------ Misc
+
+export function Spinner({ className }: { className?: string }) {
+  return <Loader2 className={clsx('size-5 animate-spin text-accent-600', className)} />
+}
+
+export function PageSpinner() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center">
+      <Spinner className="size-7" />
+    </div>
+  )
+}
+
