@@ -111,3 +111,43 @@ export function Empty({ icon, title, children, action }: { icon?: ReactNode; tit
   )
 }
 
+export function Toggle({ checked, onChange, label, description }: { checked: boolean; onChange: (v: boolean) => void; label: string; description?: string }) {
+  return (
+    <label className="flex cursor-pointer items-start justify-between gap-4 py-2">
+      <span>
+        <span className="block text-[15px] font-medium">{label}</span>
+        {description && <span className="muted block text-sm">{description}</span>}
+      </span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={clsx('relative mt-0.5 inline-flex h-6 w-11 shrink-0 rounded-full transition-colors', checked ? 'bg-accent-600' : 'bg-zinc-300 dark:bg-zinc-700')}
+      >
+        <span className={clsx('absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-[22px]' : 'translate-x-0.5')} />
+      </button>
+    </label>
+  )
+}
+
+export function Segmented<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: ReactNode }[] }) {
+  return (
+    <div className="inline-flex w-full rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onChange(o.value)}
+          className={clsx(
+            'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition',
+            value === o.value ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-950 dark:text-white' : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
+          )}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
