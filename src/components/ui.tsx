@@ -151,3 +151,43 @@ export function Segmented<T extends string>({ value, onChange, options }: { valu
   )
 }
 
+// ------------------------------------------------------------------ Modal / bottom sheet
+
+export function Modal({ open, onClose, title, children, wide }: { open: boolean; onClose: () => void; title?: ReactNode; children: ReactNode; wide?: boolean }) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [open, onClose])
+  if (!open) return null
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6">
+      <div className="absolute inset-0 bg-zinc-950/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={clsx(
+          'relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-2xl dark:bg-zinc-900 sm:rounded-3xl',
+          wide ? 'sm:max-w-2xl' : 'sm:max-w-lg',
+        )}
+      >
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-white/90 px-5 pt-4 pb-2 backdrop-blur dark:bg-zinc-900/90">
+          <div className="mx-auto h-1 w-10 rounded-full bg-zinc-300 sm:hidden dark:bg-zinc-700" style={{ position: 'absolute', top: 8, left: 0, right: 0 }} />
+          <h2 className="pt-2 text-lg font-semibold">{title}</h2>
+          <IconButton label="Close" onClick={onClose} className="-mr-2">
+            <X className="size-5" />
+          </IconButton>
+        </div>
+        <div className="px-5 pt-2 pb-6 pb-safe">{children}</div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
