@@ -24,3 +24,30 @@ const SIZES: Record<Size, string> = {
   lg: 'h-14 px-6 text-base gap-2.5 rounded-2xl',
 }
 
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  icon,
+  className,
+  children,
+  disabled,
+  ...rest
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size; loading?: boolean; icon?: ReactNode }) {
+  return (
+    <button
+      {...rest}
+      disabled={disabled || loading}
+      className={clsx(
+        'inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap transition-colors select-none disabled:cursor-not-allowed disabled:opacity-50',
+        VARIANTS[variant],
+        SIZES[size],
+        className,
+      )}
+    >
+      {loading ? <Loader2 className="size-4 animate-spin" /> : icon}
+      {children}
+    </button>
+  )
+}
+
