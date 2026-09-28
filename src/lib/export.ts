@@ -67,3 +67,19 @@ export function toMarkdown(type: OutputType, content: unknown, title: string): s
   }
 }
 
+export function exportMarkdown(type: OutputType, content: unknown, title: string) {
+  download(`${slug(title)}-${type.replace('_', '-')}.md`, toMarkdown(type, content, title), 'text/markdown;charset=utf-8')
+}
+
+/** Anki: File → Import → choose this .txt; fields are separated by tabs. */
+export function exportAnki(cards: Flashcard[], title: string) {
+  const esc = (s: string) => s.replace(/\t/g, ' ').replace(/\r?\n/g, '<br>')
+  const tag = slug(title).replace(/-/g, '_')
+  const rows = ['#separator:tab', '#html:true', '#tags column:3', ...cards.map((c) => `${esc(c.front)}\t${esc(c.back)}\t${tag} ${slug(c.topic).replace(/-/g, '_')}`)]
+  download(`${slug(title)}-anki.txt`, rows.join('\n'))
+}
+
+export function exportCsv(rows: string[][], filename: string) {
+  const esc = (s: string) => `"${String(s ?? '').replace(/"/g, '""')}"`
+  download(filename, '﻿' + rows.map((r) => r.map(esc).join(',')).join('\n'), 'text/csv;charset=utf-8')
+}
