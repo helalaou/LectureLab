@@ -81,3 +81,33 @@ export function PageSpinner() {
   )
 }
 
+export function Badge({ children, tone = 'zinc', className }: { children: ReactNode; tone?: 'zinc' | 'accent' | 'green' | 'amber' | 'red'; className?: string }) {
+  const tones = {
+    zinc: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+    accent: 'bg-accent-50 text-accent-700 dark:bg-accent-950/60 dark:text-accent-300',
+    green: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
+    amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
+    red: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300',
+  }
+  return <span className={clsx('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', tones[tone], className)}>{children}</span>
+}
+
+export function Progress({ value, className }: { value: number; className?: string }) {
+  return (
+    <div className={clsx('h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800', className)}>
+      <div className="h-full rounded-full bg-accent-600 transition-[width] duration-500" style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%` }} />
+    </div>
+  )
+}
+
+export function Empty({ icon, title, children, action }: { icon?: ReactNode; title: string; children?: ReactNode; action?: ReactNode }) {
+  return (
+    <div className="flex flex-col items-center px-6 py-14 text-center">
+      {icon && <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">{icon}</div>}
+      <h3 className="text-lg font-semibold">{title}</h3>
+      {children && <div className="muted mt-1.5 max-w-sm text-[15px]">{children}</div>}
+      {action && <div className="mt-6">{action}</div>}
+    </div>
+  )
+}
+
