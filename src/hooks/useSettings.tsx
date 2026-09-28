@@ -29,3 +29,37 @@ function localTheme(): UserSettings['theme'] {
   }
 }
 
+export function SettingsProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
+  const [settings, setSettings] = useState<UserSettings>({ ...DEFAULT_SETTINGS, theme: localTheme() })
+
+  useEffect(() => {
+    if (!user) return
+    getSettings()
+      .then((data) => setSettings((s) => ({ ...s, ...data })))
+      .catch(() => {})
+  }, [user])
+
+  // keep following the OS theme while on "system"
+  useEffect(() => {
+    applyTheme(settings.theme)
+    if (settings.theme !== 'system') return
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const on = () => applyTheme('system')
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [settings.theme])
+
+  const update = useCallback(
+    async (patch: Partial<UserSettings>) => {
+      setSettings((s) => ({ ...s, ...patch }))
+      if (!user) return
+      await saveSettings(patch)
+    },
+    [user],
+  )
+
+  return <Ctx.Provider value={{ settings, update }}>{children}</Ctx.Provider>
+}
+
+export const useSettings = () => useContext(Ctx)
