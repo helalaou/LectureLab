@@ -230,3 +230,30 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   )
 }
 
+export const useToast = () => useContext(ToastCtx)
+
+// ------------------------------------------------------------------ Menu
+
+export function Menu({ trigger, children }: { trigger: (open: () => void) => ReactNode; children: (close: () => void) => ReactNode }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const onDoc = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [open])
+  return (
+    <div className="relative" ref={ref}>
+      {trigger(() => setOpen((o) => !o))}
+      {open && (
+        <div className="absolute right-0 z-40 mt-1 min-w-52 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+          {children(() => setOpen(false))}
+        </div>
+      )}
+    </div>
+  )
+}
+
