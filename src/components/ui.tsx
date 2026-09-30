@@ -257,3 +257,17 @@ export function Menu({ trigger, children }: { trigger: (open: () => void) => Rea
   )
 }
 
+export function MenuItem({ icon, children, onClick, danger }: { icon?: ReactNode; children: ReactNode; onClick: () => void; danger?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      className={clsx(
+        'flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800',
+        danger ? 'text-red-600 dark:text-red-400' : 'text-zinc-700 dark:text-zinc-200',
+      )}
+    >
+      {icon}
+      {children}
+    </button>
+  )
+}
