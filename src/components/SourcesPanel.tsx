@@ -257,3 +257,63 @@ function SourceItem({ source }: { source: Source }) {
   )
 }
 
+export default function SourcesPanel({
+  sources,
+  onAdd,
+  onMakeAll,
+  makingAll,
+}: {
+  sources: Source[]
+  onAdd: () => void
+  onMakeAll: () => void
+  makingAll: boolean
+}) {
+  const ready = sources.filter((s) => s.status === 'ready')
+  const totalWords = ready.reduce((n, s) => n + wordCount(s.content), 0)
+  return (
+    <div className="space-y-4">
+      {sources.length === 0 ? (
+        <div className="card px-6 py-12 text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">
+            <Plus className="size-7" />
+          </div>
+          <h3 className="mt-4 text-lg font-semibold">Add your first source</h3>
+          <p className="muted mx-auto mt-1 max-w-sm">Record the class, or upload old recordings, slides, readings or your own notes. Mix and match as many as you want.</p>
+          <Button className="mt-6" size="lg" icon={<Plus className="size-5" />} onClick={onAdd}>
+            Add source
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="muted text-sm">
+              {sources.length} source{sources.length === 1 ? '' : 's'} · {totalWords.toLocaleString()} words ready
+            </p>
+            <Button variant="secondary" icon={<Plus className="size-4" />} onClick={onAdd}>
+              Add source
+            </Button>
+          </div>
+          <ul className="space-y-2.5">
+            {sources.map((s) => (
+              <SourceItem key={s.id} source={s} />
+            ))}
+          </ul>
+          {ready.length > 0 && (
+            <div className="rounded-2xl border border-dashed border-accent-300 bg-accent-50/50 p-5 text-center dark:border-accent-800 dark:bg-accent-950/20">
+              <Sparkles className="mx-auto size-6 text-accent-600" />
+              <h3 className="mt-2 font-semibold">Ready to study?</h3>
+              <p className="muted mx-auto mt-1 max-w-md text-sm">Create everything at once: summary, notes, flashcards, quiz, glossary, visuals, study guide and the podcast script. Takes about a minute.</p>
+              <Button className="mt-4" loading={makingAll} icon={<Sparkles className="size-4" />} onClick={onMakeAll}>
+                {makingAll ? 'Making your study kit…' : 'Make my study kit'}
+              </Button>
+              <div className="mt-2">
+                <Badge tone="accent">Tip: add all your sources first</Badge>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
