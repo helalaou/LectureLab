@@ -227,3 +227,49 @@ function StudySession({
   )
 }
 
+function Browse({ cards }: { cards: Flashcard[] }) {
+  const [i, setI] = useState<number | null>(null)
+  if (i !== null) {
+    const c = cards[i]
+    return (
+      <div className="mx-auto max-w-xl">
+        <div className="card p-6">
+          <Badge>{c.topic}</Badge>
+          <div className="mt-4 text-lg font-medium">
+            <InlineMd>{c.front}</InlineMd>
+          </div>
+          <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+            <InlineMd>{c.back}</InlineMd>
+          </div>
+        </div>
+        <div className="mt-3 flex justify-between">
+          <Button variant="ghost" icon={<ChevronLeft className="size-4" />} disabled={i === 0} onClick={() => setI(i - 1)}>
+            Prev
+          </Button>
+          <Button variant="ghost" onClick={() => setI(null)}>
+            Back to list
+          </Button>
+          <Button variant="ghost" disabled={i === cards.length - 1} onClick={() => setI(i + 1)}>
+            Next <ChevronRight className="size-4" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <ul className="grid gap-3 sm:grid-cols-2">
+      {cards.map((c, idx) => (
+        <li key={idx}>
+          <button onClick={() => setI(idx)} className="card block h-full w-full p-4 text-left transition hover:border-accent-300 dark:hover:border-accent-700">
+            <div className="font-medium">
+              <InlineMd>{c.front}</InlineMd>
+            </div>
+            <div className="muted mt-2 text-sm">
+              <InlineMd>{c.back}</InlineMd>
+            </div>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
