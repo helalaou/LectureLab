@@ -24,3 +24,83 @@ function GoogleIcon() {
   )
 }
 
+export default function Login() {
+  const { signInWithGoogle, signInWithEmail } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [emailState, setEmailState] = useState<'idle' | 'sending' | 'sent'>('idle')
+
+  return (
+    <div className="min-h-dvh bg-gradient-to-b from-accent-50 via-zinc-50 to-zinc-50 dark:from-accent-950/40 dark:via-zinc-950 dark:to-zinc-950">
+      <div className="mx-auto flex max-w-5xl flex-col px-5 py-6 sm:px-8">
+        <Logo />
+        <div className="mt-12 grid items-center gap-12 sm:mt-20 lg:grid-cols-[1.1fr_1fr]">
+          <div>
+            <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+              Turn every class into <span className="text-accent-600 dark:text-accent-400">study material</span> that works.
+            </h1>
+            <p className="muted mt-5 max-w-lg text-lg">
+              Record your lectures or upload old ones. LectureLab writes your notes, builds flashcards and practice quizzes, draws the
+              big picture, and even makes a podcast so you can review anywhere.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button
+                size="lg"
+                variant="secondary"
+                loading={loading}
+                icon={<GoogleIcon />}
+                className="shadow-sm"
+                onClick={async () => {
+                  setLoading(true)
+                  setError(null)
+                  try {
+                    await signInWithGoogle()
+                  } catch (e) {
+                    setError((e as Error).message)
+                    setLoading(false)
+                  }
+                }}
+              >
+                Continue with Google
+              </Button>
+              <span className="muted text-sm">Free and open source. Your lectures stay private.</span>
+            </div>
+            <form
+              className="mt-5 flex max-w-md flex-col gap-2 sm:flex-row"
+              onSubmit={async (e) => {
+                e.preventDefault()
+                if (!email.trim()) return
+                setEmailState('sending')
+                setError(null)
+                try {
+                  await signInWithEmail(email)
+                  setEmailState('sent')
+                } catch (err) {
+                  setError((err as Error).message)
+                  setEmailState('idle')
+                }
+              }}
+            >
+              <input className="input" type="email" placeholder="or sign in with your email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Button type="submit" variant="soft" loading={emailState === 'sending'}>
+                Email me a link
+              </Button>
+            </form>
+            {emailState === 'sent' && <p className="mt-2 text-sm text-emerald-700 dark:text-emerald-400">Check your inbox for a sign-in link.</p>}
+            {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {FEATURES.map(({ icon: Icon, title, text }) => (
+              <div key={title} className="card p-4">
+                <Icon className="size-5 text-accent-600 dark:text-accent-400" />
+                <div className="mt-2.5 font-medium">{title}</div>
+                <div className="muted mt-0.5 text-sm">{text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
