@@ -122,3 +122,138 @@ export function AddSourceModal({ open, onClose, lectureId }: { open: boolean; on
   )
 }
 
+function SourceItem({ source }: { source: Source }) {
+  const job = useJobs()[source.id]
+  const [open, setOpen] = useState(false)
+  const [audioUrl, setAudioUrl] = useState<string | null>(null)
+  const [time, setTime] = useState(0)
+  const [retrying, setRetrying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const toast = useToast()
+  const meta = KIND[source.kind]
+  const Icon = meta.icon
+  const processing = !!job || source.status === 'uploading' || source.status === 'transcribing'
+
+  useEffect(() => {
+    if (!open || !source.storage_path || audioUrl) return
+    getAudioUrl(source.storage_path)
+      .then(setAudioUrl)
+      .catch(() => setAudioUrl(null))
+  }, [open, source.storage_path, audioUrl])
+
+  const words = wordCount(source.content)
+
+  return (
+    <li className="card overflow-hidden">
+      <div className="flex items-center gap-3 p-3.5 sm:p-4">
+        <div className={cx('flex size-10 shrink-0 items-center justify-center rounded-xl', source.status === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-950/50' : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300')}>
+          {processing ? <Loader2 className="size-5 animate-spin text-accent-600" /> : source.status === 'error' ? <AlertCircle className="size-5" /> : <Icon className="size-5" />}
+        </div>
+        <button className="min-w-0 flex-1 text-left" onClick={() => source.status === 'ready' && setOpen((o) => !o)}>
+          <div className="truncate font-medium">{source.title}</div>
+          <div className="muted mt-0.5 truncate text-xs">
+            {processing
+              ? job?.stage || (source.status === 'transcribing' ? 'Transcribing…' : 'Uploading…')
+              : source.status === 'error'
+                ? 'Failed'
+                : [meta.label, source.duration_sec ? fmtDuration(source.duration_sec) : null, `${words.toLocaleString()} words`].filter(Boolean).join(' · ')}
+          </div>
+        </button>
+        {source.status === 'ready' && (
+          <IconButton label={open ? 'Hide' : 'Show content'} onClick={() => setOpen((o) => !o)}>
+            <ChevronDown className={cx('size-5 transition-transform', open && 'rotate-180')} />
+          </IconButton>
+        )}
+        {!processing && (
+          <IconButton
+            label="Delete source"
+            onClick={async () => {
+              if (!confirm(`Delete "${source.title}"?`)) return
+              await deleteSource(source)
+            }}
+          >
+            <Trash2 className="size-4" />
+          </IconButton>
+        )}
+      </div>
+      {processing && job?.progress !== undefined && <Progress className="rounded-none" value={job.progress} />}
+      {processing && !job && <p className="muted px-4 pb-3 text-xs">Processing on another device or tab. Refresh in a bit.</p>}
+
+      {source.status === 'error' && (
+        <div className="border-t border-red-100 bg-red-50/60 px-4 py-3 text-sm text-red-700 dark:border-red-950 dark:bg-red-950/20 dark:text-red-300">
+          {source.error}
+          {source.kind === 'recording' && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="mt-2"
+              loading={retrying}
+              icon={<RotateCcw className="size-4" />}
+              onClick={async () => {
+                setRetrying(true)
+                try {
+                  await retryRecordingSource(source.id)
+                } catch (e) {
+                  toast((e as Error).message, 'error')
+                } finally {
+                  setRetrying(false)
+                }
+              }}
+            >
+              Retry
+            </Button>
+          )}
+        </div>
+      )}
+
+      {open && (
+        <div className="border-t border-zinc-200 dark:border-zinc-800">
+          {audioUrl && (
+            <div className="sticky top-14 z-10 bg-white/95 px-4 pt-3 pb-2 backdrop-blur dark:bg-zinc-900/95 sm:top-16">
+              <audio ref={audioRef} src={audioUrl} controls preload="metadata" className="w-full" onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} />
+            </div>
+          )}
+          <div className="flex justify-end px-4 pt-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={<Copy className="size-4" />}
+              onClick={() => {
+                navigator.clipboard.writeText(source.content)
+                toast('Copied', 'success')
+              }}
+            >
+              Copy text
+            </Button>
+          </div>
+          <div className="max-h-[55vh] overflow-y-auto px-4 pb-4">
+            {source.segments?.length ? (
+              <div className="space-y-1">
+                {source.segments.map((s, i) => {
+                  const active = time >= s.start && time < s.end
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        if (!audioRef.current) return
+                        audioRef.current.currentTime = s.start
+                        audioRef.current.play()
+                      }}
+                      className={cx('flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-[15px] leading-relaxed transition', active ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50')}
+                    >
+                      <span className="muted w-12 shrink-0 pt-0.5 font-mono text-xs tabular-nums">{fmtDuration(s.start)}</span>
+                      <span>{s.text}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : (
+              <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{source.content}</p>
+            )}
+          </div>
+        </div>
+      )}
+    </li>
+  )
+}
+
