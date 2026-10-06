@@ -29,3 +29,36 @@ const TTS_MODELS = [
 const VOICES = ['marin', 'cedar', 'alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
 const LANGUAGES = ['English', 'Spanish', 'French', 'Arabic', 'Portuguese', 'Chinese (Simplified)', 'Vietnamese', 'Korean', 'Haitian Creole', 'Russian', 'Hindi', 'Tagalog', 'German', 'Italian', 'Japanese']
 
+function Section({ id, icon, title, description, children }: { id?: string; icon: ReactNode; title: string; description?: string; children: ReactNode }) {
+  return (
+    <section id={id} className="card scroll-mt-24 p-5 sm:p-6">
+      <div className="flex items-start gap-3">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">{icon}</div>
+        <div>
+          <h2 className="font-semibold">{title}</h2>
+          {description && <p className="muted mt-0.5 text-sm">{description}</p>}
+        </div>
+      </div>
+      <div className="mt-5">{children}</div>
+    </section>
+  )
+}
+
+function Select({ label, value, onChange, options, hint }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; hint?: string }) {
+  const known = options.some((o) => o.value === value)
+  return (
+    <div>
+      <label className="label">{label}</label>
+      <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
+        {!known && <option value={value}>{value}</option>}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {hint && <p className="muted mt-1 text-xs">{hint}</p>}
+    </div>
+  )
+}
+
