@@ -8,7 +8,7 @@ import { Button } from '@/components/ui'
 const FEATURES = [
   {
     icon: Mic,
-    title: 'Record class live',
+    title: 'Record lectures live',
     text: 'Plug in a mic and hit record. It saves as you go, even if Wi-Fi drops.',
   },
   {
@@ -23,7 +23,7 @@ const FEATURES = [
   },
   { icon: Headphones, title: 'Study podcast', text: 'A two-host audio recap you can listen to on the bus.' },
   { icon: Brain, title: 'Notes & visuals', text: 'Clean study notes, mind maps, timelines and a study guide.' },
-  { icon: Sparkles, title: 'Ask the lecture', text: 'Chat with a tutor that only answers from your class material.' },
+  { icon: Sparkles, title: 'Ask the lecture', text: 'Chat with a tutor that only answers from your course material.' },
 ]
 
 function GoogleIcon() {
@@ -63,7 +63,7 @@ export default function Login() {
         <div className="mt-12 grid items-center gap-12 sm:mt-20 lg:grid-cols-[1.1fr_1fr]">
           <div>
             <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-              Turn every class into <span className="text-accent-600 dark:text-accent-400">study material</span> that
+              Turn every lecture into <span className="text-accent-600 dark:text-accent-400">study material</span> that
               works.
             </h1>
             <p className="muted mt-5 max-w-lg text-lg">
