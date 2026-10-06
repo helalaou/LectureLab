@@ -4,6 +4,7 @@ import { useAccess } from '@/hooks/useAccess'
 import { apiJson } from '@/lib/api'
 import { Button, Badge } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { useDialog } from '@/hooks/useDialog'
 import { SettingsSection } from '@/components/settings/SettingsSection'
 
 export function ApiKeySection() {
@@ -12,6 +13,7 @@ export function ApiKeySection() {
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const toast = useToast()
+  const dialog = useDialog()
 
   return (
     <SettingsSection
@@ -32,9 +34,15 @@ export function ApiKeySection() {
               <CheckCircle2 className="size-3.5" /> Using your key ····{access.ownKeyLast4}
             </Badge>
           ) : access.allowlisted ? (
-            <Badge tone="green">
-              <CheckCircle2 className="size-3.5" /> Free access enabled for your account
-            </Badge>
+            <>
+              <Badge tone="green">
+                <CheckCircle2 className="size-3.5" /> Using the shared key
+              </Badge>
+              <p className="muted w-full text-sm">
+                Your email is on this site's allowlist, so AI features run on the owner's OpenAI key. Add your own key
+                below to use it instead.
+              </p>
+            </>
           ) : (
             <Badge tone="amber">
               <AlertTriangle className="size-3.5" /> Add a key to use AI features
@@ -87,7 +95,13 @@ export function ApiKeySection() {
               type="button"
               variant="ghost"
               onClick={async () => {
-                if (!confirm('Remove your key?')) return
+                const ok = await dialog.confirm({
+                  title: 'Remove your API key?',
+                  message: 'You can add it again any time.',
+                  confirmLabel: 'Remove',
+                  danger: true,
+                })
+                if (!ok) return
                 await apiJson('/api/key', { method: 'DELETE' })
                 toast('Key removed.')
                 refresh()
