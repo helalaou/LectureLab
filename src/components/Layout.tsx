@@ -6,19 +6,7 @@ import { cn } from '@/lib/cn'
 export function Logo({ className }: { className?: string }) {
   return (
     <Link to="/" className={cn('flex items-center gap-2 font-semibold tracking-tight', className)}>
-      <span className="bg-accent-600 shadow-accent-600/30 flex size-8 items-center justify-center rounded-xl text-white shadow-sm">
-        <svg viewBox="0 0 64 64" className="size-5" aria-hidden>
-          <path
-            d="M20 16v30h24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle cx="41" cy="23" r="6.5" fill="#c7d2fe" />
-        </svg>
-      </span>
+      <img src="/favicon.svg" alt="" className="size-8 rounded-[9px] shadow-sm" />
       <span className="text-[17px]">{APP_NAME}</span>
     </Link>
   )

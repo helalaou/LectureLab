@@ -1,1 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4f46e5"/><path d="M20 18v28h24" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="24" r="6" fill="#a5b4fc"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e0e7ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="232" fill="url(#bg)"/>
+  <!-- open book -->
+  <path d="M512 330 C 440 280, 330 262, 222 276 L 222 742 C 330 728, 440 746, 512 796 Z" fill="url(#page)"/>
+  <path d="M512 330 C 584 280, 694 262, 802 276 L 802 742 C 694 728, 584 746, 512 796 Z" fill="url(#page)" opacity="0.92"/>
+  <!-- sound wave on the left page -->
+  <g fill="#4f46e5">
+    <rect x="290" y="482" width="30" height="96" rx="15"/>
+    <rect x="346" y="430" width="30" height="200" rx="15"/>
+    <rect x="402" y="470" width="30" height="120" rx="15"/>
+    <rect x="458" y="446" width="30" height="168" rx="15"/>
+  </g>
+  <!-- note lines turning into a check on the right page -->
+  <g stroke="#a5b4fc" stroke-width="26" stroke-linecap="round">
+    <line x1="568" y1="440" x2="736" y2="440"/>
+    <line x1="568" y1="510" x2="700" y2="510"/>
+  </g>
+  <path d="M580 600 L 630 650 L 736 560" fill="none" stroke="#4f46e5" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
