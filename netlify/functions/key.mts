@@ -22,9 +22,16 @@ export default async (req: Request) => {
       throw new HttpError(400, 'That does not look like an OpenAI API key. It should start with "sk-".')
     }
     if (!(await validateKey(clean))) {
-      throw new HttpError(400, 'OpenAI rejected this key. Double-check it, and make sure the account has billing set up.')
+      throw new HttpError(
+        400,
+        'OpenAI rejected this key. Double-check it, and make sure the account has billing set up.',
+      )
     }
-    await user.db.set(path, { encrypted: encryptSecret(clean), last4: clean.slice(-4), updated_at: new Date().toISOString() })
+    await user.db.set(path, {
+      encrypted: encryptSecret(clean),
+      last4: clean.slice(-4),
+      updated_at: new Date().toISOString(),
+    })
     return json({ ok: true, last4: clean.slice(-4) })
   } catch (e) {
     return errorResponse(e)

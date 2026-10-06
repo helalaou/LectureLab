@@ -50,7 +50,8 @@ export async function generate(lectureId: string, type: OutputType, options: Gen
   set(k, { text: '', status: 'Reading your sources…', startedAt: Date.now() })
   try {
     await apiStream('/api/generate', { lectureId, type, options }, (e) => {
-      if (e.t === 'status') set(k, { ...state[k], status: e.status === 'writing' ? 'Writing…' : 'Reading your sources…' })
+      if (e.t === 'status')
+        set(k, { ...state[k], status: e.status === 'writing' ? 'Writing…' : 'Reading your sources…' })
       if (e.t === 'delta') {
         text += e.d
         set(k, { ...state[k], text, status: 'Writing…' })

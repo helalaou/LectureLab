@@ -1,5 +1,14 @@
 import type { Config } from '@netlify/functions'
-import { errorResponse, getSettings, HttpError, logUsage, requireOpenAIKey, requireUser, type User, type UserSettings } from '../lib/server.ts'
+import {
+  errorResponse,
+  getSettings,
+  HttpError,
+  logUsage,
+  requireOpenAIKey,
+  requireUser,
+  type User,
+  type UserSettings,
+} from '../lib/server.ts'
 import { loadLecture } from '../lib/lecture.ts'
 import { buildMessages, MARKDOWN_TYPES, SCHEMAS, type GenerateOptions, type OutputType } from '../lib/prompts.ts'
 import { streamChat } from '../lib/openai.ts'
@@ -20,7 +29,8 @@ export default async (req: Request) => {
     keyInfo = await requireOpenAIKey(user)
     settings = await getSettings(user)
     body = await req.json()
-    if (!body.lectureId || !/^[\w-]+$/.test(body.lectureId) || !body.type || !TYPES.includes(body.type)) throw new HttpError(400, 'Bad request.')
+    if (!body.lectureId || !/^[\w-]+$/.test(body.lectureId) || !body.type || !TYPES.includes(body.type))
+      throw new HttpError(400, 'Bad request.')
   } catch (e) {
     return errorResponse(e)
   }
@@ -80,7 +90,14 @@ export default async (req: Request) => {
     }
 
     const now = new Date().toISOString()
-    const output = { type, lecture_id: lectureId, content, audio_path: null, model: settings.text_model, created_at: now }
+    const output = {
+      type,
+      lecture_id: lectureId,
+      content,
+      audio_path: null,
+      model: settings.text_model,
+      created_at: now,
+    }
     await user.db.set(outPath, output)
 
     const patch: Record<string, unknown> = {
@@ -90,7 +107,8 @@ export default async (req: Request) => {
     // The summary suggests a better title — apply it if the lecture still has a default name.
     if (type === 'summary') {
       const suggestion = (content as { title_suggestion?: string }).title_suggestion
-      if (suggestion && /^(untitled|new lecture|recording|lecture)\b/i.test(lec.lecture.title || 'untitled')) patch.title = suggestion
+      if (suggestion && /^(untitled|new lecture|recording|lecture)\b/i.test(lec.lecture.title || 'untitled'))
+        patch.title = suggestion
     }
     await user.db.update(lec.path, patch)
 

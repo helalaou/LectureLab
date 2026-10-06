@@ -21,6 +21,10 @@ export function ndjson(run: (send: Send) => Promise<void>): Response {
     },
   })
   return new Response(stream, {
-    headers: { 'content-type': 'application/x-ndjson; charset=utf-8', 'cache-control': 'no-store', 'x-accel-buffering': 'no' },
+    headers: {
+      'content-type': 'application/x-ndjson; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-accel-buffering': 'no',
+    },
   })
 }

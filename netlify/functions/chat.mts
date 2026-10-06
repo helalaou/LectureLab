@@ -1,5 +1,14 @@
 import type { Config } from '@netlify/functions'
-import { errorResponse, getSettings, HttpError, logUsage, requireOpenAIKey, requireUser, type User, type UserSettings } from '../lib/server.ts'
+import {
+  errorResponse,
+  getSettings,
+  HttpError,
+  logUsage,
+  requireOpenAIKey,
+  requireUser,
+  type User,
+  type UserSettings,
+} from '../lib/server.ts'
 import { loadLecture } from '../lib/lecture.ts'
 import { chatSystemPrompt } from '../lib/prompts.ts'
 import { streamChat } from '../lib/openai.ts'
@@ -17,7 +26,8 @@ export default async (req: Request) => {
     keyInfo = await requireOpenAIKey(user)
     settings = await getSettings(user)
     body = await req.json()
-    if (!body.lectureId || !/^[\w-]+$/.test(body.lectureId) || !body.message?.trim()) throw new HttpError(400, 'Empty message.')
+    if (!body.lectureId || !/^[\w-]+$/.test(body.lectureId) || !body.message?.trim())
+      throw new HttpError(400, 'Empty message.')
   } catch (e) {
     return errorResponse(e)
   }
@@ -27,11 +37,23 @@ export default async (req: Request) => {
   return ndjson(async (send) => {
     const lec = await loadLecture(user, lectureId, { timestamps: true })
     const chatPath = `${lec.path}/chat`
-    const history = await user.db.list<{ role: string; content: string }>(chatPath, { orderBy: 'created_at', desc: true, limit: 16 })
+    const history = await user.db.list<{ role: string; content: string }>(chatPath, {
+      orderBy: 'created_at',
+      desc: true,
+      limit: 16,
+    })
     await user.db.add(chatPath, { role: 'user', content: message, created_at: new Date().toISOString() })
 
     const messages = [
-      { role: 'system', content: chatSystemPrompt({ lectureTitle: lec.lecture.title, courseName: lec.courseName, sourcesText: lec.sourcesText, language: settings.output_language }) },
+      {
+        role: 'system',
+        content: chatSystemPrompt({
+          lectureTitle: lec.lecture.title,
+          courseName: lec.courseName,
+          sourcesText: lec.sourcesText,
+          language: settings.output_language,
+        }),
+      },
       ...history.reverse().map((m) => ({ role: m.role, content: m.content })),
       { role: 'user', content: message },
     ]

@@ -34,7 +34,8 @@ export default async (req: Request) => {
     const parts = Number(url.searchParams.get('parts'))
     const size = Number(url.searchParams.get('size'))
     const type = (url.searchParams.get('type') || 'audio/webm').split(';')[0]
-    if (!Number.isInteger(part) || !Number.isInteger(parts) || part < 0 || part >= parts || parts > 40) throw new HttpError(400, 'Bad part.')
+    if (!Number.isInteger(part) || !Number.isInteger(parts) || part < 0 || part >= parts || parts > 40)
+      throw new HttpError(400, 'Bad part.')
     const body = await req.arrayBuffer()
     if (body.byteLength > PART_SIZE) throw new HttpError(413, 'Part too large.')
     const s = store()
@@ -64,7 +65,8 @@ async function serve(req: Request, key: string, url: URL): Promise<Response> {
     start = Math.max(0, meta.size - Number(m[2]))
     end = meta.size - 1
   }
-  if (start >= meta.size) return new Response(null, { status: 416, headers: { 'content-range': `bytes */${meta.size}` } })
+  if (start >= meta.size)
+    return new Response(null, { status: 416, headers: { 'content-range': `bytes */${meta.size}` } })
   const partIndex = Math.floor(start / meta.partSize)
   const partStart = partIndex * meta.partSize
   end = Math.min(end, partStart + meta.partSize - 1, meta.size - 1)
@@ -78,7 +80,10 @@ async function serve(req: Request, key: string, url: URL): Promise<Response> {
     'cache-control': 'private, max-age=3600',
   }
   if (!m && meta.parts === 1) return new Response(slice, { status: 200, headers })
-  return new Response(slice, { status: 206, headers: { ...headers, 'content-range': `bytes ${start}-${end}/${meta.size}` } })
+  return new Response(slice, {
+    status: 206,
+    headers: { ...headers, 'content-range': `bytes ${start}-${end}/${meta.size}` },
+  })
 }
 
 export const config: Config = { path: '/api/audio', method: ['GET', 'PUT', 'POST', 'DELETE'] }

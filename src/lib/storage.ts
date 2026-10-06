@@ -14,7 +14,11 @@ export async function uploadAudio(key: string, blob: Blob, onProgress?: (p: numb
     const body = blob.slice(i * PART_SIZE, (i + 1) * PART_SIZE)
     const qs = new URLSearchParams({ key, part: String(i), parts: String(parts), size: String(blob.size), type })
     for (let attempt = 1; ; attempt++) {
-      const res = await fetch(`/api/audio?${qs}`, { method: 'PUT', headers: { ...(await authHeader()), 'content-type': 'application/octet-stream' }, body })
+      const res = await fetch(`/api/audio?${qs}`, {
+        method: 'PUT',
+        headers: { ...(await authHeader()), 'content-type': 'application/octet-stream' },
+        body,
+      })
       if (res.ok) break
       if (attempt >= 3) throw new Error(`Audio upload failed (${res.status})`)
       await new Promise((r) => setTimeout(r, 1000 * attempt))

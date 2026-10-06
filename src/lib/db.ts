@@ -58,7 +58,8 @@ export const renameCourse = (id: string, name: string) => updateDoc(userDoc('cou
 export async function deleteCourse(id: string) {
   const lectures = await listLectures()
   const batch = writeBatch(db)
-  for (const l of lectures.filter((l) => l.course_id === id)) batch.update(userDoc('lectures', l.id), { course_id: null })
+  for (const l of lectures.filter((l) => l.course_id === id))
+    batch.update(userDoc('lectures', l.id), { course_id: null })
   batch.delete(userDoc('courses', id))
   await batch.commit()
 }
@@ -70,10 +71,10 @@ export async function listLectures(): Promise<Lecture[]> {
 }
 export async function getLecture(id: string): Promise<Lecture | null> {
   const snap = await getDoc(userDoc('lectures', id))
-  return snap.exists() ? ({ ...(snap.data() as Lecture), id: snap.id }) : null
+  return snap.exists() ? { ...(snap.data() as Lecture), id: snap.id } : null
 }
 export function watchLecture(id: string, cb: (l: Lecture | null) => void) {
-  return onSnapshot(userDoc('lectures', id), (s) => cb(s.exists() ? ({ ...(s.data() as Lecture), id: s.id }) : null))
+  return onSnapshot(userDoc('lectures', id), (s) => cb(s.exists() ? { ...(s.data() as Lecture), id: s.id } : null))
 }
 export async function createLecture(input: { title: string; courseId: string | null }): Promise<string> {
   const t = now()
@@ -90,10 +91,14 @@ export async function createLecture(input: { title: string; courseId: string | n
   })
   return ref.id
 }
-export const updateLecture = (id: string, patch: Partial<Lecture>) => updateDoc(userDoc('lectures', id), { ...patch, updated_at: now() })
+export const updateLecture = (id: string, patch: Partial<Lecture>) =>
+  updateDoc(userDoc('lectures', id), { ...patch, updated_at: now() })
 
 export async function deleteLecture(id: string) {
-  const [sources, outputs] = await Promise.all([getDocs(userCol('lectures', id, 'sources')), getDocs(userCol('lectures', id, 'outputs'))])
+  const [sources, outputs] = await Promise.all([
+    getDocs(userCol('lectures', id, 'sources')),
+    getDocs(userCol('lectures', id, 'outputs')),
+  ])
   const audio = [
     ...sources.docs.map((d) => d.data().storage_path as string | null),
     ...outputs.docs.map((d) => d.data().audio_path as string | null),
@@ -132,7 +137,12 @@ async function refreshLectureSummary(lectureId: string) {
 // Firestore documents max out at 1 MB, so very long texts are trimmed.
 const MAX_CONTENT = 700_000
 
-export async function addSource(lectureId: string, kind: SourceKind, title: string, extra: Partial<Source> = {}): Promise<Source> {
+export async function addSource(
+  lectureId: string,
+  kind: SourceKind,
+  title: string,
+  extra: Partial<Source> = {},
+): Promise<Source> {
   const data = {
     kind,
     title,

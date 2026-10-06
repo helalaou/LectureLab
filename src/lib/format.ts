@@ -26,7 +26,13 @@ export function defaultLectureTitle(date = new Date()): string {
 }
 
 export function slug(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'lecture'
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 60) || 'lecture'
+  )
 }
 
 export function wordCount(s: string): number {

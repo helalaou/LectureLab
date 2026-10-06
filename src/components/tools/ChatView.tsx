@@ -40,7 +40,12 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
     const msg = text.trim()
     if (!msg || streaming !== null) return
     setInput('')
-    const temp: ChatMessage = { id: 'tmp-' + Date.now(), role: 'user', content: msg, created_at: new Date().toISOString() }
+    const temp: ChatMessage = {
+      id: 'tmp-' + Date.now(),
+      role: 'user',
+      content: msg,
+      created_at: new Date().toISOString(),
+    }
     setMessages((m) => [...m, temp])
     setStreaming('')
     const ctrl = new AbortController()
@@ -61,7 +66,11 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
       )
     } catch (e) {
       if ((e as Error).name === 'AbortError') {
-        if (acc) setMessages((m) => [...m, { id: 'stop-' + Date.now(), role: 'assistant', content: acc + ' …', created_at: new Date().toISOString() }])
+        if (acc)
+          setMessages((m) => [
+            ...m,
+            { id: 'stop-' + Date.now(), role: 'assistant', content: acc + ' …', created_at: new Date().toISOString() },
+          ])
       } else {
         toast((e as Error).message, 'error')
         if ((e as ApiError).code === 'no_key') navigate('/settings#api-key')
@@ -96,7 +105,7 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {messages.length === 0 && streaming === null && (
           <div className="py-6 text-center">
-            <Sparkles className="mx-auto size-8 text-accent-500" />
+            <Sparkles className="text-accent-500 mx-auto size-8" />
             <p className="mt-2 font-medium">Ask anything about this lecture</p>
             <div className="mx-auto mt-5 flex max-w-xl flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((s) => (
@@ -104,7 +113,7 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
                   key={s}
                   disabled={!canChat}
                   onClick={() => send(s)}
-                  className="rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition hover:border-accent-400 hover:bg-accent-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-accent-950/40"
+                  className="hover:border-accent-400 hover:bg-accent-50 dark:hover:bg-accent-950/40 rounded-full border border-zinc-300 px-3.5 py-1.5 text-sm text-zinc-700 transition disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300"
                 >
                   {s}
                 </button>
@@ -121,7 +130,7 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
       </div>
 
       <form
-        className="sticky bottom-[5.75rem] border-t border-zinc-200 bg-white p-3 sm:bottom-0 dark:border-zinc-800 dark:bg-zinc-900 rounded-b-2xl"
+        className="sticky bottom-[5.75rem] rounded-b-2xl border-t border-zinc-200 bg-white p-3 sm:bottom-0 dark:border-zinc-800 dark:bg-zinc-900"
         onSubmit={(e) => {
           e.preventDefault()
           send(input)
@@ -148,11 +157,21 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
             }}
           />
           {streaming !== null ? (
-            <button type="button" onClick={() => abortRef.current?.abort()} className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900" aria-label="Stop">
+            <button
+              type="button"
+              onClick={() => abortRef.current?.abort()}
+              className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900"
+              aria-label="Stop"
+            >
               <Square className="size-4 fill-current" />
             </button>
           ) : (
-            <button type="submit" disabled={!input.trim() || !canChat} className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-600 text-white transition hover:bg-accent-700 disabled:opacity-40" aria-label="Send">
+            <button
+              type="submit"
+              disabled={!input.trim() || !canChat}
+              className="bg-accent-600 hover:bg-accent-700 flex size-11 shrink-0 items-center justify-center rounded-xl text-white transition disabled:opacity-40"
+              aria-label="Send"
+            >
               <ArrowUp className="size-5" />
             </button>
           )}
@@ -165,8 +184,17 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
 function Bubble({ role, content }: { role: 'user' | 'assistant'; content: string }) {
   return (
     <div className={cx('flex', role === 'user' ? 'justify-end' : 'justify-start')}>
-      <div className={cx('max-w-[88%] rounded-2xl px-4 py-2.5', role === 'user' ? 'bg-accent-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800')}>
-        {role === 'user' ? <p className="text-[15px] whitespace-pre-wrap">{content}</p> : <Markdown className="prose-sm [&_p]:my-1.5">{content}</Markdown>}
+      <div
+        className={cx(
+          'max-w-[88%] rounded-2xl px-4 py-2.5',
+          role === 'user' ? 'bg-accent-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800',
+        )}
+      >
+        {role === 'user' ? (
+          <p className="text-[15px] whitespace-pre-wrap">{content}</p>
+        ) : (
+          <Markdown className="prose-sm [&_p]:my-1.5">{content}</Markdown>
+        )}
       </div>
     </div>
   )

@@ -6,7 +6,19 @@ import { deleteLecture } from '../lib/pipeline'
 import { generate, runKey, useRunning } from '../lib/genStore'
 import { exportAnki, exportCsv } from '../lib/export'
 import { slug } from '../lib/format'
-import type { Flashcard, GlossaryTerm, Lecture, MarkdownContent, Output, OutputType, PodcastContent, QuizQuestion, Source, SummaryContent, Visual } from '../lib/types'
+import type {
+  Flashcard,
+  GlossaryTerm,
+  Lecture,
+  MarkdownContent,
+  Output,
+  OutputType,
+  PodcastContent,
+  QuizQuestion,
+  Source,
+  SummaryContent,
+  Visual,
+} from '../lib/types'
 import { useCourses, COURSE_COLORS } from '../hooks/useCourses'
 import SourcesPanel, { AddSourceModal } from '../components/SourcesPanel'
 import ToolPanel from '../components/tools/ToolPanel'
@@ -26,7 +38,16 @@ import { ApiError } from '../lib/api'
 
 type Tab = OutputType | 'sources' | 'chat'
 
-const KIT_ORDER: OutputType[] = ['summary', 'notes', 'flashcards', 'quiz', 'glossary', 'visuals', 'study_guide', 'podcast']
+const KIT_ORDER: OutputType[] = [
+  'summary',
+  'notes',
+  'flashcards',
+  'quiz',
+  'glossary',
+  'visuals',
+  'study_guide',
+  'podcast',
+]
 
 export default function LecturePage() {
   const { id = '' } = useParams()
@@ -57,7 +78,9 @@ export default function LecturePage() {
   useEffect(() => {
     const offLecture = watchLecture(id, (l) => (l ? setLecture(l) : setNotFound(true)))
     const offSources = watchSources(id, setSources)
-    listOutputs(id).then(setOutputs).catch(() => {})
+    listOutputs(id)
+      .then(setOutputs)
+      .catch(() => {})
     return () => {
       offLecture()
       offSources()
@@ -111,13 +134,19 @@ export default function LecturePage() {
     }
     await Promise.all([worker(), worker()])
     setMakingAll(false)
-    toast(failed ? `Done, but ${failed} tool${failed > 1 ? 's' : ''} failed. Open them to retry.` : 'Your study kit is ready! 🎉', failed ? 'error' : 'success')
+    toast(
+      failed
+        ? `Done, but ${failed} tool${failed > 1 ? 's' : ''} failed. Open them to retry.`
+        : 'Your study kit is ready! 🎉',
+      failed ? 'error' : 'success',
+    )
   }
 
   const tabs = useMemo(
     () =>
       TAB_ORDER.map((t) => {
-        if (t === 'sources') return { id: t, label: `Sources${sources.length ? ` (${sources.length})` : ''}`, icon: Library }
+        if (t === 'sources')
+          return { id: t, label: `Sources${sources.length ? ` (${sources.length})` : ''}`, icon: Library }
         if (t === 'chat') return { id: t, label: CHAT_META.label, icon: CHAT_META.icon }
         return { id: t, label: OUTPUT_META[t].short, icon: OUTPUT_META[t].icon }
       }),
@@ -128,7 +157,7 @@ export default function LecturePage() {
     return (
       <div className="py-20 text-center">
         <p className="font-medium">Lecture not found.</p>
-        <Link to="/" className="mt-3 inline-block text-accent-600">
+        <Link to="/" className="text-accent-600 mt-3 inline-block">
           Back to lectures
         </Link>
       </div>
@@ -136,8 +165,20 @@ export default function LecturePage() {
   if (!lecture) return <PageSpinner />
 
   const title = lecture.title
-  const tool = (type: OutputType, render: (o: Output) => React.ReactNode, extra?: Parameters<typeof ToolPanel>[0]['extraExports']) => (
-    <ToolPanel type={type} lectureId={id} lectureTitle={title} output={outputs[type]} canGenerate={canGenerate} onChange={setOutput} extraExports={extra}>
+  const tool = (
+    type: OutputType,
+    render: (o: Output) => React.ReactNode,
+    extra?: Parameters<typeof ToolPanel>[0]['extraExports'],
+  ) => (
+    <ToolPanel
+      type={type}
+      lectureId={id}
+      lectureTitle={title}
+      output={outputs[type]}
+      canGenerate={canGenerate}
+      onChange={setOutput}
+      extraExports={extra}
+    >
       {render}
     </ToolPanel>
   )
@@ -160,10 +201,16 @@ export default function LecturePage() {
               )}
               <span className="flex items-center gap-1">
                 <CalendarDays className="size-3.5" />
-                {new Date(lecture.lecture_date + 'T12:00:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                {new Date(lecture.lecture_date + 'T12:00:00').toLocaleDateString(undefined, {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                })}
               </span>
             </div>
-            <h1 className="mt-1 text-2xl leading-tight font-semibold tracking-tight text-balance sm:text-3xl">{title}</h1>
+            <h1 className="mt-1 text-2xl leading-tight font-semibold tracking-tight text-balance sm:text-3xl">
+              {title}
+            </h1>
           </div>
           <Menu
             trigger={(toggle) => (
@@ -223,12 +270,16 @@ export default function LecturePage() {
                   onClick={() => setTab(t)}
                   className={cx(
                     'relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
-                    active ? 'bg-accent-600 text-white shadow-sm' : 'text-zinc-600 hover:bg-zinc-200/60 dark:text-zinc-400 dark:hover:bg-zinc-800',
+                    active
+                      ? 'bg-accent-600 text-white shadow-sm'
+                      : 'text-zinc-600 hover:bg-zinc-200/60 dark:text-zinc-400 dark:hover:bg-zinc-800',
                   )}
                 >
                   {busy ? <Loader2 className="size-4 animate-spin" /> : <Icon className="size-4" />}
                   {label}
-                  {has && !active && <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-emerald-500" />}
+                  {has && !active && (
+                    <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-emerald-500" />
+                  )}
                 </button>
               )
             })}
@@ -237,10 +288,22 @@ export default function LecturePage() {
       </div>
 
       <div className="mt-5">
-        {tab === 'sources' && <SourcesPanel sources={sources} onAdd={() => setAddOpen(true)} onMakeAll={makeAll} makingAll={makingAll} />}
+        {tab === 'sources' && (
+          <SourcesPanel sources={sources} onAdd={() => setAddOpen(true)} onMakeAll={makeAll} makingAll={makingAll} />
+        )}
         {tab === 'summary' && tool('summary', (o) => <SummaryView c={o.content as SummaryContent} />)}
-        {tab === 'notes' && tool('notes', (o) => <div className="card p-5 sm:p-8"><Markdown>{(o.content as MarkdownContent).markdown}</Markdown></div>)}
-        {tab === 'study_guide' && tool('study_guide', (o) => <div className="card p-5 sm:p-8"><Markdown>{(o.content as MarkdownContent).markdown}</Markdown></div>)}
+        {tab === 'notes' &&
+          tool('notes', (o) => (
+            <div className="card p-5 sm:p-8">
+              <Markdown>{(o.content as MarkdownContent).markdown}</Markdown>
+            </div>
+          ))}
+        {tab === 'study_guide' &&
+          tool('study_guide', (o) => (
+            <div className="card p-5 sm:p-8">
+              <Markdown>{(o.content as MarkdownContent).markdown}</Markdown>
+            </div>
+          ))}
         {tab === 'flashcards' &&
           tool(
             'flashcards',
@@ -261,7 +324,10 @@ export default function LecturePage() {
                   onClick={() => {
                     close()
                     const cards = (o.content as { cards: Flashcard[] }).cards
-                    exportCsv([['Front', 'Back', 'Topic'], ...cards.map((c) => [c.front, c.back, c.topic])], `${slug(title)}-flashcards.csv`)
+                    exportCsv(
+                      [['Front', 'Back', 'Topic'], ...cards.map((c) => [c.front, c.back, c.topic])],
+                      `${slug(title)}-flashcards.csv`,
+                    )
                   }}
                 >
                   CSV (Quizlet, Excel)
@@ -269,9 +335,14 @@ export default function LecturePage() {
               </>
             ),
           )}
-        {tab === 'quiz' && tool('quiz', (o) => <QuizView key={o.id + o.created_at} questions={(o.content as { questions: QuizQuestion[] }).questions} />)}
-        {tab === 'podcast' && tool('podcast', (o) => <PodcastView output={o as Output<PodcastContent>} onChange={setOutput} />)}
-        {tab === 'visuals' && tool('visuals', (o) => <VisualsView visuals={(o.content as { visuals: Visual[] }).visuals} />)}
+        {tab === 'quiz' &&
+          tool('quiz', (o) => (
+            <QuizView key={o.id + o.created_at} questions={(o.content as { questions: QuizQuestion[] }).questions} />
+          ))}
+        {tab === 'podcast' &&
+          tool('podcast', (o) => <PodcastView output={o as Output<PodcastContent>} onChange={setOutput} />)}
+        {tab === 'visuals' &&
+          tool('visuals', (o) => <VisualsView visuals={(o.content as { visuals: Visual[] }).visuals} />)}
         {tab === 'glossary' &&
           tool(
             'glossary',
@@ -282,7 +353,13 @@ export default function LecturePage() {
                 onClick={() => {
                   close()
                   const terms = (o.content as { terms: GlossaryTerm[] }).terms
-                  exportCsv([['Term', 'Definition', 'Example', 'Category'], ...terms.map((t) => [t.term, t.definition, t.example, t.category])], `${slug(title)}-glossary.csv`)
+                  exportCsv(
+                    [
+                      ['Term', 'Definition', 'Example', 'Category'],
+                      ...terms.map((t) => [t.term, t.definition, t.example, t.category]),
+                    ],
+                    `${slug(title)}-glossary.csv`,
+                  )
                 }}
               >
                 CSV

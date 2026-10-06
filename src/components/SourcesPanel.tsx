@@ -1,6 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mic, AudioLines, FileText, Type, Plus, Trash2, RotateCcw, ChevronDown, Loader2, AlertCircle, Sparkles, Copy } from 'lucide-react'
+import {
+  Mic,
+  AudioLines,
+  FileText,
+  Type,
+  Plus,
+  Trash2,
+  RotateCcw,
+  ChevronDown,
+  Loader2,
+  AlertCircle,
+  Sparkles,
+  Copy,
+} from 'lucide-react'
 import type { Source } from '../lib/types'
 import { addDocument, addMediaFile, addText, deleteSource, retryRecordingSource, useJobs } from '../lib/pipeline'
 import { DOC_ACCEPT } from '../lib/docs'
@@ -15,7 +28,15 @@ const KIND = {
   text: { icon: Type, label: 'Notes' },
 }
 
-export function AddSourceModal({ open, onClose, lectureId }: { open: boolean; onClose: () => void; lectureId: string }) {
+export function AddSourceModal({
+  open,
+  onClose,
+  lectureId,
+}: {
+  open: boolean
+  onClose: () => void
+  lectureId: string
+}) {
   const navigate = useNavigate()
   const toast = useToast()
   const mediaRef = useRef<HTMLInputElement>(null)
@@ -33,21 +54,47 @@ export function AddSourceModal({ open, onClose, lectureId }: { open: boolean; on
   }, [open])
 
   const options = [
-    { icon: Mic, title: 'Record now', text: 'Use your microphone during class', onClick: () => navigate(`/record?lecture=${lectureId}`) },
-    { icon: AudioLines, title: 'Upload recordings', text: 'MP3, M4A, WAV, WEBM, or video files (MP4, MOV)', onClick: () => mediaRef.current?.click() },
-    { icon: FileText, title: 'Upload documents', text: 'Slides or readings as PDF, Word (.docx), or TXT', onClick: () => docRef.current?.click() },
-    { icon: Type, title: 'Paste text', text: 'Your own notes, a syllabus, or a textbook passage', onClick: () => setPasting(true) },
+    {
+      icon: Mic,
+      title: 'Record now',
+      text: 'Use your microphone during class',
+      onClick: () => navigate(`/record?lecture=${lectureId}`),
+    },
+    {
+      icon: AudioLines,
+      title: 'Upload recordings',
+      text: 'MP3, M4A, WAV, WEBM, or video files (MP4, MOV)',
+      onClick: () => mediaRef.current?.click(),
+    },
+    {
+      icon: FileText,
+      title: 'Upload documents',
+      text: 'Slides or readings as PDF, Word (.docx), or TXT',
+      onClick: () => docRef.current?.click(),
+    },
+    {
+      icon: Type,
+      title: 'Paste text',
+      text: 'Your own notes, a syllabus, or a textbook passage',
+      onClick: () => setPasting(true),
+    },
   ]
 
   return (
     <Modal open={open} onClose={onClose} title={pasting ? 'Paste text' : 'Add a source'}>
       {!pasting ? (
         <>
-          <p className="muted mb-4 text-sm">Add as many sources as you like. Every study tool uses all of them together.</p>
+          <p className="muted mb-4 text-sm">
+            Add as many sources as you like. Every study tool uses all of them together.
+          </p>
           <div className="grid gap-2.5">
             {options.map(({ icon: Icon, title, text, onClick }) => (
-              <button key={title} onClick={onClick} className="flex items-center gap-4 rounded-2xl border border-zinc-200 p-4 text-left transition hover:border-accent-400 hover:bg-accent-50/50 dark:border-zinc-800 dark:hover:border-accent-700 dark:hover:bg-accent-950/30">
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">
+              <button
+                key={title}
+                onClick={onClick}
+                className="hover:border-accent-400 hover:bg-accent-50/50 dark:hover:border-accent-700 dark:hover:bg-accent-950/30 flex items-center gap-4 rounded-2xl border border-zinc-200 p-4 text-left transition dark:border-zinc-800"
+              >
+                <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 flex size-11 shrink-0 items-center justify-center rounded-xl">
                   <Icon className="size-5" />
                 </div>
                 <div>
@@ -101,11 +148,22 @@ export function AddSourceModal({ open, onClose, lectureId }: { open: boolean; on
         >
           <div>
             <label className="label">Title</label>
-            <input className="input" placeholder="e.g. My notes, Chapter 3 reading" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input
+              className="input"
+              placeholder="e.g. My notes, Chapter 3 reading"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
           <div>
             <label className="label">Text</label>
-            <textarea className="input min-h-56" placeholder="Paste or type here…" value={text} onChange={(e) => setText(e.target.value)} autoFocus />
+            <textarea
+              className="input min-h-56"
+              placeholder="Paste or type here…"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              autoFocus
+            />
             <p className="muted mt-1 text-xs">{wordCount(text).toLocaleString()} words</p>
           </div>
           <div className="flex gap-2">
@@ -146,8 +204,21 @@ function SourceItem({ source }: { source: Source }) {
   return (
     <li className="card overflow-hidden">
       <div className="flex items-center gap-3 p-3.5 sm:p-4">
-        <div className={cx('flex size-10 shrink-0 items-center justify-center rounded-xl', source.status === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-950/50' : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300')}>
-          {processing ? <Loader2 className="size-5 animate-spin text-accent-600" /> : source.status === 'error' ? <AlertCircle className="size-5" /> : <Icon className="size-5" />}
+        <div
+          className={cx(
+            'flex size-10 shrink-0 items-center justify-center rounded-xl',
+            source.status === 'error'
+              ? 'bg-red-50 text-red-600 dark:bg-red-950/50'
+              : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300',
+          )}
+        >
+          {processing ? (
+            <Loader2 className="text-accent-600 size-5 animate-spin" />
+          ) : source.status === 'error' ? (
+            <AlertCircle className="size-5" />
+          ) : (
+            <Icon className="size-5" />
+          )}
         </div>
         <button className="min-w-0 flex-1 text-left" onClick={() => source.status === 'ready' && setOpen((o) => !o)}>
           <div className="truncate font-medium">{source.title}</div>
@@ -156,7 +227,13 @@ function SourceItem({ source }: { source: Source }) {
               ? job?.stage || (source.status === 'transcribing' ? 'Transcribing…' : 'Uploading…')
               : source.status === 'error'
                 ? 'Failed'
-                : [meta.label, source.duration_sec ? fmtDuration(source.duration_sec) : null, `${words.toLocaleString()} words`].filter(Boolean).join(' · ')}
+                : [
+                    meta.label,
+                    source.duration_sec ? fmtDuration(source.duration_sec) : null,
+                    `${words.toLocaleString()} words`,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
           </div>
         </button>
         {source.status === 'ready' && (
@@ -177,7 +254,9 @@ function SourceItem({ source }: { source: Source }) {
         )}
       </div>
       {processing && job?.progress !== undefined && <Progress className="rounded-none" value={job.progress} />}
-      {processing && !job && <p className="muted px-4 pb-3 text-xs">Processing on another device or tab. Refresh in a bit.</p>}
+      {processing && !job && (
+        <p className="muted px-4 pb-3 text-xs">Processing on another device or tab. Refresh in a bit.</p>
+      )}
 
       {source.status === 'error' && (
         <div className="border-t border-red-100 bg-red-50/60 px-4 py-3 text-sm text-red-700 dark:border-red-950 dark:bg-red-950/20 dark:text-red-300">
@@ -209,8 +288,15 @@ function SourceItem({ source }: { source: Source }) {
       {open && (
         <div className="border-t border-zinc-200 dark:border-zinc-800">
           {audioUrl && (
-            <div className="sticky top-14 z-10 bg-white/95 px-4 pt-3 pb-2 backdrop-blur dark:bg-zinc-900/95 sm:top-16">
-              <audio ref={audioRef} src={audioUrl} controls preload="metadata" className="w-full" onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)} />
+            <div className="sticky top-14 z-10 bg-white/95 px-4 pt-3 pb-2 backdrop-blur sm:top-16 dark:bg-zinc-900/95">
+              <audio
+                ref={audioRef}
+                src={audioUrl}
+                controls
+                preload="metadata"
+                className="w-full"
+                onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+              />
             </div>
           )}
           <div className="flex justify-end px-4 pt-2">
@@ -239,9 +325,14 @@ function SourceItem({ source }: { source: Source }) {
                         audioRef.current.currentTime = s.start
                         audioRef.current.play()
                       }}
-                      className={cx('flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-[15px] leading-relaxed transition', active ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50')}
+                      className={cx(
+                        'flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-[15px] leading-relaxed transition',
+                        active ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50',
+                      )}
                     >
-                      <span className="muted w-12 shrink-0 pt-0.5 font-mono text-xs tabular-nums">{fmtDuration(s.start)}</span>
+                      <span className="muted w-12 shrink-0 pt-0.5 font-mono text-xs tabular-nums">
+                        {fmtDuration(s.start)}
+                      </span>
                       <span>{s.text}</span>
                     </button>
                   )
@@ -274,11 +365,14 @@ export default function SourcesPanel({
     <div className="space-y-4">
       {sources.length === 0 ? (
         <div className="card px-6 py-12 text-center">
-          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">
+          <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 mx-auto flex size-14 items-center justify-center rounded-2xl">
             <Plus className="size-7" />
           </div>
           <h3 className="mt-4 text-lg font-semibold">Add your first source</h3>
-          <p className="muted mx-auto mt-1 max-w-sm">Record the class, or upload old recordings, slides, readings or your own notes. Mix and match as many as you want.</p>
+          <p className="muted mx-auto mt-1 max-w-sm">
+            Record the class, or upload old recordings, slides, readings or your own notes. Mix and match as many as you
+            want.
+          </p>
           <Button className="mt-6" size="lg" icon={<Plus className="size-5" />} onClick={onAdd}>
             Add source
           </Button>
@@ -299,10 +393,13 @@ export default function SourcesPanel({
             ))}
           </ul>
           {ready.length > 0 && (
-            <div className="rounded-2xl border border-dashed border-accent-300 bg-accent-50/50 p-5 text-center dark:border-accent-800 dark:bg-accent-950/20">
-              <Sparkles className="mx-auto size-6 text-accent-600" />
+            <div className="border-accent-300 bg-accent-50/50 dark:border-accent-800 dark:bg-accent-950/20 rounded-2xl border border-dashed p-5 text-center">
+              <Sparkles className="text-accent-600 mx-auto size-6" />
               <h3 className="mt-2 font-semibold">Ready to study?</h3>
-              <p className="muted mx-auto mt-1 max-w-md text-sm">Create everything at once: summary, notes, flashcards, quiz, glossary, visuals, study guide and the podcast script. Takes about a minute.</p>
+              <p className="muted mx-auto mt-1 max-w-md text-sm">
+                Create everything at once: summary, notes, flashcards, quiz, glossary, visuals, study guide and the
+                podcast script. Takes about a minute.
+              </p>
               <Button className="mt-4" loading={makingAll} icon={<Sparkles className="size-4" />} onClick={onMakeAll}>
                 {makingAll ? 'Making your study kit…' : 'Make my study kit'}
               </Button>
@@ -316,4 +413,3 @@ export default function SourcesPanel({
     </div>
   )
 }
-

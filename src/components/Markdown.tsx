@@ -37,8 +37,12 @@ export default function Markdown({ children, className }: { children: string; cl
 /** Inline markdown for short strings (cards, quiz options) — no block wrappers. */
 export function InlineMd({ children, className }: { children: string; className?: string }) {
   return (
-    <span className={cx('[&_p]:inline [&_.katex]:text-[1.02em]', className)}>
-      <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: 'ignore' }]]} components={{ p: ({ children }) => <>{children} </> }}>
+    <span className={cx('[&_.katex]:text-[1.02em] [&_p]:inline', className)}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: 'ignore' }]]}
+        components={{ p: ({ children }) => <>{children} </> }}
+      >
         {children}
       </ReactMarkdown>
     </span>

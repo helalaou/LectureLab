@@ -5,9 +5,16 @@ import { cx } from './ui'
 export function Logo({ className }: { className?: string }) {
   return (
     <Link to="/" className={cx('flex items-center gap-2 font-semibold tracking-tight', className)}>
-      <span className="flex size-8 items-center justify-center rounded-xl bg-accent-600 text-white shadow-sm shadow-accent-600/30">
+      <span className="bg-accent-600 shadow-accent-600/30 flex size-8 items-center justify-center rounded-xl text-white shadow-sm">
         <svg viewBox="0 0 64 64" className="size-5" aria-hidden>
-          <path d="M20 16v30h24" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M20 16v30h24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
           <circle cx="41" cy="23" r="6.5" fill="#c7d2fe" />
         </svg>
       </span>
@@ -39,7 +46,7 @@ export default function Layout() {
                   cx(
                     'flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors',
                     to === '/record'
-                      ? 'ml-1 bg-accent-600 text-white hover:bg-accent-700'
+                      ? 'bg-accent-600 hover:bg-accent-700 ml-1 text-white'
                       : isActive
                         ? 'bg-zinc-200/70 text-zinc-900 dark:bg-zinc-800 dark:text-white'
                         : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white',
@@ -59,7 +66,7 @@ export default function Layout() {
       </main>
 
       {/* Bottom bar (mobile) */}
-      <nav className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white/95 backdrop-blur-md pb-safe sm:hidden dark:border-zinc-800 dark:bg-zinc-950/95">
+      <nav className="no-print pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white/95 backdrop-blur-md sm:hidden dark:border-zinc-800 dark:bg-zinc-950/95">
         <div className="mx-auto grid h-16 max-w-md grid-cols-3">
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink
@@ -67,11 +74,14 @@ export default function Layout() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                cx('flex flex-col items-center justify-center gap-1 text-[11px] font-medium', isActive ? 'text-accent-600 dark:text-accent-400' : 'text-zinc-500 dark:text-zinc-400')
+                cx(
+                  'flex flex-col items-center justify-center gap-1 text-[11px] font-medium',
+                  isActive ? 'text-accent-600 dark:text-accent-400' : 'text-zinc-500 dark:text-zinc-400',
+                )
               }
             >
               {to === '/record' ? (
-                <span className="-mt-7 flex size-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-lg shadow-accent-600/40 ring-4 ring-zinc-50 dark:ring-zinc-950">
+                <span className="bg-accent-600 shadow-accent-600/40 -mt-7 flex size-14 items-center justify-center rounded-full text-white shadow-lg ring-4 ring-zinc-50 dark:ring-zinc-950">
                   <Icon className="size-6" />
                 </span>
               ) : (

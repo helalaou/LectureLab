@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from 'react'
 import { createPortal } from 'react-dom'
 import { X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import clsx from 'clsx'
@@ -15,7 +24,8 @@ const VARIANTS: Record<Variant, string> = {
   secondary:
     'bg-white text-zinc-800 border border-zinc-300 hover:bg-zinc-50 active:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800',
   soft: 'bg-accent-50 text-accent-700 hover:bg-accent-100 dark:bg-accent-950/50 dark:text-accent-300 dark:hover:bg-accent-900/50',
-  ghost: 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
+  ghost:
+    'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100',
   danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
 }
 const SIZES: Record<Size, string> = {
@@ -51,7 +61,12 @@ export function Button({
   )
 }
 
-export function IconButton({ label, className, children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string }) {
+export function IconButton({
+  label,
+  className,
+  children,
+  ...rest
+}: ButtonHTMLAttributes<HTMLButtonElement> & { label: string }) {
   return (
     <button
       aria-label={label}
@@ -70,7 +85,7 @@ export function IconButton({ label, className, children, ...rest }: ButtonHTMLAt
 // ------------------------------------------------------------------ Misc
 
 export function Spinner({ className }: { className?: string }) {
-  return <Loader2 className={clsx('size-5 animate-spin text-accent-600', className)} />
+  return <Loader2 className={clsx('text-accent-600 size-5 animate-spin', className)} />
 }
 
 export function PageSpinner() {
@@ -81,7 +96,15 @@ export function PageSpinner() {
   )
 }
 
-export function Badge({ children, tone = 'zinc', className }: { children: ReactNode; tone?: 'zinc' | 'accent' | 'green' | 'amber' | 'red'; className?: string }) {
+export function Badge({
+  children,
+  tone = 'zinc',
+  className,
+}: {
+  children: ReactNode
+  tone?: 'zinc' | 'accent' | 'green' | 'amber' | 'red'
+  className?: string
+}) {
   const tones = {
     zinc: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
     accent: 'bg-accent-50 text-accent-700 dark:bg-accent-950/60 dark:text-accent-300',
@@ -89,21 +112,48 @@ export function Badge({ children, tone = 'zinc', className }: { children: ReactN
     amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
     red: 'bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-300',
   }
-  return <span className={clsx('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium', tones[tone], className)}>{children}</span>
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
+        tones[tone],
+        className,
+      )}
+    >
+      {children}
+    </span>
+  )
 }
 
 export function Progress({ value, className }: { value: number; className?: string }) {
   return (
     <div className={clsx('h-1.5 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800', className)}>
-      <div className="h-full rounded-full bg-accent-600 transition-[width] duration-500" style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%` }} />
+      <div
+        className="bg-accent-600 h-full rounded-full transition-[width] duration-500"
+        style={{ width: `${Math.round(Math.max(0, Math.min(1, value)) * 100)}%` }}
+      />
     </div>
   )
 }
 
-export function Empty({ icon, title, children, action }: { icon?: ReactNode; title: string; children?: ReactNode; action?: ReactNode }) {
+export function Empty({
+  icon,
+  title,
+  children,
+  action,
+}: {
+  icon?: ReactNode
+  title: string
+  children?: ReactNode
+  action?: ReactNode
+}) {
   return (
     <div className="flex flex-col items-center px-6 py-14 text-center">
-      {icon && <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">{icon}</div>}
+      {icon && (
+        <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 mb-4 flex size-14 items-center justify-center rounded-2xl">
+          {icon}
+        </div>
+      )}
       <h3 className="text-lg font-semibold">{title}</h3>
       {children && <div className="muted mt-1.5 max-w-sm text-[15px]">{children}</div>}
       {action && <div className="mt-6">{action}</div>}
@@ -111,7 +161,17 @@ export function Empty({ icon, title, children, action }: { icon?: ReactNode; tit
   )
 }
 
-export function Toggle({ checked, onChange, label, description }: { checked: boolean; onChange: (v: boolean) => void; label: string; description?: string }) {
+export function Toggle({
+  checked,
+  onChange,
+  label,
+  description,
+}: {
+  checked: boolean
+  onChange: (v: boolean) => void
+  label: string
+  description?: string
+}) {
   return (
     <label className="flex cursor-pointer items-start justify-between gap-4 py-2">
       <span>
@@ -123,15 +183,31 @@ export function Toggle({ checked, onChange, label, description }: { checked: boo
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={clsx('relative mt-0.5 inline-flex h-6 w-11 shrink-0 rounded-full transition-colors', checked ? 'bg-accent-600' : 'bg-zinc-300 dark:bg-zinc-700')}
+        className={clsx(
+          'relative mt-0.5 inline-flex h-6 w-11 shrink-0 rounded-full transition-colors',
+          checked ? 'bg-accent-600' : 'bg-zinc-300 dark:bg-zinc-700',
+        )}
       >
-        <span className={clsx('absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-[22px]' : 'translate-x-0.5')} />
+        <span
+          className={clsx(
+            'absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform',
+            checked ? 'translate-x-[22px]' : 'translate-x-0.5',
+          )}
+        />
       </button>
     </label>
   )
 }
 
-export function Segmented<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { value: T; label: ReactNode }[] }) {
+export function Segmented<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T
+  onChange: (v: T) => void
+  options: { value: T; label: ReactNode }[]
+}) {
   return (
     <div className="inline-flex w-full rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
       {options.map((o) => (
@@ -141,7 +217,9 @@ export function Segmented<T extends string>({ value, onChange, options }: { valu
           onClick={() => onChange(o.value)}
           className={clsx(
             'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition',
-            value === o.value ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-950 dark:text-white' : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
+            value === o.value
+              ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-950 dark:text-white'
+              : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
           )}
         >
           {o.label}
@@ -153,7 +231,19 @@ export function Segmented<T extends string>({ value, onChange, options }: { valu
 
 // ------------------------------------------------------------------ Modal / bottom sheet
 
-export function Modal({ open, onClose, title, children, wide }: { open: boolean; onClose: () => void; title?: ReactNode; children: ReactNode; wide?: boolean }) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  wide,
+}: {
+  open: boolean
+  onClose: () => void
+  title?: ReactNode
+  children: ReactNode
+  wide?: boolean
+}) {
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -173,18 +263,21 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
         role="dialog"
         aria-modal="true"
         className={clsx(
-          'relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-2xl dark:bg-zinc-900 sm:rounded-3xl',
+          'relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl dark:bg-zinc-900',
           wide ? 'sm:max-w-2xl' : 'sm:max-w-lg',
         )}
       >
         <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-white/90 px-5 pt-4 pb-2 backdrop-blur dark:bg-zinc-900/90">
-          <div className="mx-auto h-1 w-10 rounded-full bg-zinc-300 sm:hidden dark:bg-zinc-700" style={{ position: 'absolute', top: 8, left: 0, right: 0 }} />
+          <div
+            className="mx-auto h-1 w-10 rounded-full bg-zinc-300 sm:hidden dark:bg-zinc-700"
+            style={{ position: 'absolute', top: 8, left: 0, right: 0 }}
+          />
           <h2 className="pt-2 text-lg font-semibold">{title}</h2>
           <IconButton label="Close" onClick={onClose} className="-mr-2">
             <X className="size-5" />
           </IconButton>
         </div>
-        <div className="px-5 pt-2 pb-6 pb-safe">{children}</div>
+        <div className="pb-safe px-5 pt-2 pb-6">{children}</div>
       </div>
     </div>,
     document.body,
@@ -218,7 +311,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               key={t.id}
               className="pointer-events-auto flex max-w-md items-start gap-2.5 rounded-2xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-xl dark:bg-zinc-100 dark:text-zinc-900"
             >
-              {t.kind === 'success' && <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400 dark:text-emerald-600" />}
+              {t.kind === 'success' && (
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400 dark:text-emerald-600" />
+              )}
               {t.kind === 'error' && <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400 dark:text-red-600" />}
               <span>{t.message}</span>
             </div>
@@ -234,7 +329,13 @@ export const useToast = () => useContext(ToastCtx)
 
 // ------------------------------------------------------------------ Menu
 
-export function Menu({ trigger, children }: { trigger: (open: () => void) => ReactNode; children: (close: () => void) => ReactNode }) {
+export function Menu({
+  trigger,
+  children,
+}: {
+  trigger: (open: () => void) => ReactNode
+  children: (close: () => void) => ReactNode
+}) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
@@ -257,7 +358,17 @@ export function Menu({ trigger, children }: { trigger: (open: () => void) => Rea
   )
 }
 
-export function MenuItem({ icon, children, onClick, danger }: { icon?: ReactNode; children: ReactNode; onClick: () => void; danger?: boolean }) {
+export function MenuItem({
+  icon,
+  children,
+  onClick,
+  danger,
+}: {
+  icon?: ReactNode
+  children: ReactNode
+  onClick: () => void
+  danger?: boolean
+}) {
   return (
     <button
       onClick={onClick}

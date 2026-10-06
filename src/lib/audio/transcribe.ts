@@ -41,7 +41,11 @@ async function transcribeOne(chunk: StoredChunk, index: number, ctx: Ctx, previo
 
 /** Split a chunk's text into sentences and spread its time span across them. */
 function toSegments(text: string, start: number, duration: number): Segment[] {
-  const sentences = text.match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g)?.map((s) => s.trim()).filter(Boolean) || []
+  const sentences =
+    text
+      .match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g)
+      ?.map((s) => s.trim())
+      .filter(Boolean) || []
   if (!sentences.length) return []
   // group short sentences so segments are ~1-3 sentences
   const groups: string[] = []
@@ -68,7 +72,10 @@ function toSegments(text: string, start: number, duration: number): Segment[] {
  * Transcribe chunks with limited parallelism and retries.
  * Returns the full text plus approximate timestamped segments.
  */
-export async function transcribeChunks(chunks: StoredChunk[], ctx: Ctx): Promise<{ text: string; segments: Segment[] }> {
+export async function transcribeChunks(
+  chunks: StoredChunk[],
+  ctx: Ctx,
+): Promise<{ text: string; segments: Segment[] }> {
   const results: string[] = new Array(chunks.length).fill('')
   let done = 0
   let next = 0

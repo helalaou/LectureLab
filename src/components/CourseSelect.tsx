@@ -37,7 +37,13 @@ export default function CourseSelect({
           }
         }}
       >
-        <input autoFocus className="input" placeholder="e.g. BIO 101 – Intro to Biology" value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          autoFocus
+          className="input"
+          placeholder="e.g. BIO 101 – Intro to Biology"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <Button type="submit" loading={busy}>
           Add
         </Button>

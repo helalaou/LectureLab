@@ -40,8 +40,8 @@ export function decode(v: FsValue): Json {
   if ('booleanValue' in v) return v.booleanValue as boolean
   if ('nullValue' in v) return null
   if ('timestampValue' in v) return v.timestampValue as string
-  if ('arrayValue' in v) return (((v.arrayValue as { values?: FsValue[] }).values) || []).map(decode)
-  if ('mapValue' in v) return decodeFields(((v.mapValue as { fields?: Record<string, FsValue> }).fields) || {})
+  if ('arrayValue' in v) return ((v.arrayValue as { values?: FsValue[] }).values || []).map(decode)
+  if ('mapValue' in v) return decodeFields((v.mapValue as { fields?: Record<string, FsValue> }).fields || {})
   return null
 }
 
@@ -80,7 +80,10 @@ export class Firestore {
     return toObj<T>(await res.json())
   }
 
-  async list<T = Record<string, Json>>(collectionPath: string, opts: { orderBy?: string; desc?: boolean; limit?: number } = {}): Promise<(T & { id: string })[]> {
+  async list<T = Record<string, Json>>(
+    collectionPath: string,
+    opts: { orderBy?: string; desc?: boolean; limit?: number } = {},
+  ): Promise<(T & { id: string })[]> {
     const out: (T & { id: string })[] = []
     let pageToken = ''
     do {
@@ -99,7 +102,10 @@ export class Firestore {
 
   /** Create or fully replace a document. */
   async set(path: string, data: Record<string, unknown>) {
-    const res = await this.req(`${base()}/${path}`, { method: 'PATCH', body: JSON.stringify({ fields: encodeFields(data) }) })
+    const res = await this.req(`${base()}/${path}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ fields: encodeFields(data) }),
+    })
     if (!res.ok) throw new Error(`Firestore write failed (${res.status}): ${await res.text()}`)
   }
 
@@ -108,13 +114,19 @@ export class Firestore {
     const qs = Object.keys(data)
       .map((k) => `updateMask.fieldPaths=${encodeURIComponent(k)}`)
       .join('&')
-    const res = await this.req(`${base()}/${path}?${qs}&currentDocument.exists=true`, { method: 'PATCH', body: JSON.stringify({ fields: encodeFields(data) }) })
+    const res = await this.req(`${base()}/${path}?${qs}&currentDocument.exists=true`, {
+      method: 'PATCH',
+      body: JSON.stringify({ fields: encodeFields(data) }),
+    })
     if (!res.ok) throw new Error(`Firestore update failed (${res.status}): ${await res.text()}`)
   }
 
   /** Add a document with an auto-generated id. Returns the id. */
   async add(collectionPath: string, data: Record<string, unknown>): Promise<string> {
-    const res = await this.req(`${base()}/${collectionPath}`, { method: 'POST', body: JSON.stringify({ fields: encodeFields(data) }) })
+    const res = await this.req(`${base()}/${collectionPath}`, {
+      method: 'POST',
+      body: JSON.stringify({ fields: encodeFields(data) }),
+    })
     if (!res.ok) throw new Error(`Firestore create failed (${res.status}): ${await res.text()}`)
     return ((await res.json()) as RawDoc).name.split('/').pop()!
   }

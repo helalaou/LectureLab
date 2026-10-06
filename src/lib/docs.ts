@@ -33,7 +33,10 @@ async function extractPdf(file: File, onStage?: (s: string) => void): Promise<st
       }
     }
     if (line) lines.push(line)
-    const text = lines.join('\n').replace(/[ \t]+/g, ' ').trim()
+    const text = lines
+      .join('\n')
+      .replace(/[ \t]+/g, ' ')
+      .trim()
     if (text) pages.push(`[Page ${p}]\n${text}`)
   }
   const out = pages.join('\n\n')

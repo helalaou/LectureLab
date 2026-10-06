@@ -49,7 +49,13 @@ registerProcessor('lecturelab-tap', Tap);
 `
 
 function pickMime(): string {
-  const options = ['audio/webm;codecs=opus', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm', 'audio/ogg;codecs=opus']
+  const options = [
+    'audio/webm;codecs=opus',
+    'audio/mp4;codecs=mp4a.40.2',
+    'audio/mp4',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+  ]
   for (const m of options) if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(m)) return m
   return ''
 }
@@ -141,7 +147,9 @@ export class LectureRecorder {
 
   private async requestWakeLock() {
     try {
-      const nav = navigator as Navigator & { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } }
+      const nav = navigator as Navigator & {
+        wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> }
+      }
       this.wakeLock = (await nav.wakeLock?.request('screen')) ?? null
     } catch {
       /* not supported — fine */
@@ -264,7 +272,9 @@ export async function listStoredRecordings(): Promise<RecordingMeta[]> {
   return metas.filter((m): m is RecordingMeta => !!m).sort((a, b) => b.startedAt - a.startedAt)
 }
 
-export async function loadStoredRecording(id: string): Promise<{ meta: RecordingMeta; chunks: StoredChunk[]; audio: Blob }> {
+export async function loadStoredRecording(
+  id: string,
+): Promise<{ meta: RecordingMeta; chunks: StoredChunk[]; audio: Blob }> {
   const meta = await idb.get<RecordingMeta>(`rec:${id}:meta`)
   if (!meta) throw new Error('Recording not found on this device.')
   const keys = (await idb.keys()).map(String).sort()
