@@ -89,12 +89,19 @@ export default function LecturePage() {
     }
   }, [id])
 
-  // keep the active tab chip visible
+  // Keep the active tab chip centred in the scrollable tab bar (jump on first paint, animate afterwards).
+  const tabsScrolled = useRef(false)
+  const lectureLoaded = lecture !== null
   useEffect(() => {
     const box = tabsRef.current
     const el = box?.querySelector<HTMLElement>('[data-active="true"]')
-    if (box && el) box.scrollTo({ left: el.offsetLeft - box.clientWidth / 2 + el.clientWidth / 2, behavior: 'smooth' })
-  }, [tab])
+    if (!box || !el) return
+    box.scrollTo({
+      left: el.offsetLeft - box.clientWidth / 2 + el.clientWidth / 2,
+      behavior: tabsScrolled.current ? 'smooth' : 'auto',
+    })
+    tabsScrolled.current = true
+  }, [tab, lectureLoaded])
 
   const canGenerate = sources.some((s) => s.status === 'ready' && s.content.trim())
   const course = courses.find((c) => c.id === lecture?.course_id)
