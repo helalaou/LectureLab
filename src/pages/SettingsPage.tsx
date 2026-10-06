@@ -62,3 +62,96 @@ function Select({ label, value, onChange, options, hint }: { label: string; valu
   )
 }
 
+export default function SettingsPage() {
+  const { settings, update } = useSettings()
+  const { user, signOut } = useAuth()
+  const toast = useToast()
+
+  useEffect(() => {
+    if (location.hash) document.querySelector(location.hash)?.scrollIntoView()
+  }, [])
+
+  const set = (patch: Partial<UserSettings>) => update(patch).catch((e) => toast(e.message, 'error'))
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-5">
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Settings</h1>
+
+      <Section icon={<Sun className="size-5" />} title="Appearance">
+        <Segmented
+          value={settings.theme}
+          onChange={(theme) => set({ theme })}
+          options={[
+            { value: 'light', label: <><Sun className="size-4" /> Light</> },
+            { value: 'dark', label: <><Moon className="size-4" /> Dark</> },
+            { value: 'system', label: <><Monitor className="size-4" /> Auto</> },
+          ]}
+        />
+      </Section>
+
+      <MicrophoneSection />
+
+      <ApiKeySection />
+
+      <Section icon={<Sparkles className="size-5" />} title="Study material" description="How the AI writes your notes, cards and quizzes.">
+        <div className="space-y-5">
+          <div>
+            <label className="label">Detail level</label>
+            <Segmented
+              value={settings.detail_level}
+              onChange={(detail_level) => set({ detail_level })}
+              options={[
+                { value: 'concise', label: 'Concise' },
+                { value: 'standard', label: 'Standard' },
+                { value: 'detailed', label: 'Detailed' },
+              ]}
+            />
+          </div>
+          <Select
+            label="Write study material in"
+            value={settings.output_language}
+            onChange={(output_language) => set({ output_language })}
+            options={LANGUAGES.map((l) => ({ value: l, label: l }))}
+            hint="Lectures can be in any language. This only changes the language of notes, cards and answers."
+          />
+          <details className="group rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+            <summary className="cursor-pointer text-sm font-medium">Advanced: AI models and podcast voices</summary>
+            <div className="mt-4 space-y-4">
+              <Select label="Writing model" value={settings.text_model} onChange={(text_model) => set({ text_model })} options={TEXT_MODELS} />
+              <Select label="Transcription model" value={settings.transcription_model} onChange={(transcription_model) => set({ transcription_model })} options={TRANSCRIBE_MODELS} />
+              <Select label="Voice model" value={settings.tts_model} onChange={(tts_model) => set({ tts_model })} options={TTS_MODELS} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <VoicePicker label="Host 1 · Maya" speaker="A" value={settings.host_a_voice} onChange={(host_a_voice) => set({ host_a_voice })} />
+                <VoicePicker label="Host 2 · Theo" speaker="B" value={settings.host_b_voice} onChange={(host_b_voice) => set({ host_b_voice })} />
+              </div>
+            </div>
+          </details>
+        </div>
+      </Section>
+
+      <Section icon={<User className="size-5" />} title="Account">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            {user?.photoURL && <img src={user.photoURL} alt="" className="size-10 rounded-full" referrerPolicy="no-referrer" />}
+            <div>
+              <div className="font-medium">{user?.displayName || 'Signed in'}</div>
+              <div className="muted text-sm">{user?.email}</div>
+            </div>
+          </div>
+          <Button variant="secondary" onClick={signOut}>
+            Sign out
+          </Button>
+        </div>
+        <DeleteData />
+      </Section>
+
+      <p className="muted pb-4 text-center text-xs">
+        LectureLab is open source ·{' '}
+        <a className="underline" href="https://github.com/helalaou/lecturelab" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
+      </p>
+    </div>
+  )
+}
+
