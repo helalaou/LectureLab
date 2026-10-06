@@ -1,3 +1,4 @@
+import { APP_NAME } from '@shared/app'
 import { createRoot } from 'react-dom/client'
 import type { ReactNode } from 'react'
 
@@ -16,7 +17,7 @@ export function printNode(node: ReactNode, title: string, waitMs = 400) {
   root.render(
     <div className="mx-auto max-w-3xl p-2 text-black">
       {node}
-      <p className="mt-10 border-t pt-3 text-xs text-zinc-500">Made with LectureLab</p>
+      <p className="mt-10 border-t pt-3 text-xs text-zinc-500">Made with {APP_NAME}</p>
     </div>,
   )
   const prevTitle = document.title

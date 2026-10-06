@@ -4,16 +4,12 @@
  * rules apply exactly as they do in the browser. No service account needed.
  */
 
+import { env } from './env.ts'
+
 type Json = null | boolean | number | string | Json[] | { [k: string]: Json }
 type FsValue = Record<string, unknown>
 
-export function projectId(): string {
-  const id = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID
-  if (!id) throw new Error('Server is missing the VITE_FIREBASE_PROJECT_ID environment variable. See README.')
-  return id
-}
-
-const base = () => `https://firestore.googleapis.com/v1/projects/${projectId()}/databases/(default)/documents`
+const base = () => `https://firestore.googleapis.com/v1/projects/${env.firebaseProjectId}/databases/(default)/documents`
 
 // ------------------------------------------------------------------ value encoding
 

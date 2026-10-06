@@ -1,3 +1,4 @@
+import { APP_NAME } from '@shared/app'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -167,7 +168,7 @@ export default function Home() {
               </div>
             }
           >
-            Record your next class, or upload an old recording, slides or notes. LectureLab turns them into notes,
+            Record your next class, or upload an old recording, slides or notes. {APP_NAME} turns them into notes,
             flashcards, quizzes and more.
           </Empty>
         </div>

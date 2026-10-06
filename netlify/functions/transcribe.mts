@@ -1,4 +1,5 @@
 import type { Config } from '@netlify/functions'
+import { MAX_TRANSCRIBE_CHUNK_BYTES } from '../../shared/limits.ts'
 import { errorResponse, getSettings, HttpError, json, logUsage, requireOpenAIKey, requireUser } from '../lib/server.ts'
 import { transcribe } from '../lib/openai.ts'
 import { transcriptionPrompt } from '../lib/prompts.ts'
@@ -21,7 +22,7 @@ export default async (req: Request) => {
     const form = await req.formData()
     const file = form.get('file')
     if (!(file instanceof Blob)) throw new HttpError(400, 'No audio received.')
-    if (file.size > 5_500_000) throw new HttpError(413, 'Audio chunk too large.')
+    if (file.size > MAX_TRANSCRIBE_CHUNK_BYTES) throw new HttpError(413, 'Audio chunk too large.')
 
     const text = await transcribe({
       key,

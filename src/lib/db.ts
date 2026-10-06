@@ -18,6 +18,7 @@ import {
   type DocumentData,
   type QuerySnapshot,
 } from 'firebase/firestore'
+import { MAX_SOURCE_CHARS } from '@shared/limits'
 import { auth, db } from '@/lib/firebase'
 import type { ChatMessage, Course, Lecture, Output, OutputType, Source, SourceKind, UserSettings } from '@/lib/types'
 import type { CardState } from '@/lib/srs'
@@ -134,9 +135,6 @@ async function refreshLectureSummary(lectureId: string) {
   }).catch(() => {})
 }
 
-// Firestore documents max out at 1 MB, so very long texts are trimmed.
-const MAX_CONTENT = 700_000
-
 export async function addSource(
   lectureId: string,
   kind: SourceKind,
@@ -156,7 +154,7 @@ export async function addSource(
     created_at: now(),
     ...extra,
   }
-  if (data.content.length > MAX_CONTENT) data.content = data.content.slice(0, MAX_CONTENT)
+  if (data.content.length > MAX_SOURCE_CHARS) data.content = data.content.slice(0, MAX_SOURCE_CHARS)
   const ref = await addDoc(userCol('lectures', lectureId, 'sources'), data)
   await refreshLectureSummary(lectureId)
   return { ...data, id: ref.id, lecture_id: lectureId } as Source
@@ -164,7 +162,7 @@ export async function addSource(
 
 export async function updateSource(lectureId: string, id: string, patch: Partial<Source>) {
   const p = { ...patch }
-  if (p.content && p.content.length > MAX_CONTENT) p.content = p.content.slice(0, MAX_CONTENT)
+  if (p.content && p.content.length > MAX_SOURCE_CHARS) p.content = p.content.slice(0, MAX_SOURCE_CHARS)
   delete (p as Partial<Source>).id
   delete (p as Partial<Source>).lecture_id
   await updateDoc(userDoc('lectures', lectureId, 'sources', id), p)

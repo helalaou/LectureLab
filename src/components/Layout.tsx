@@ -1,3 +1,4 @@
+import { APP_NAME } from '@shared/app'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { BookOpen, Mic, Settings as SettingsIcon } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -18,7 +19,7 @@ export function Logo({ className }: { className?: string }) {
           <circle cx="41" cy="23" r="6.5" fill="#c7d2fe" />
         </svg>
       </span>
-      <span className="text-[17px]">LectureLab</span>
+      <span className="text-[17px]">{APP_NAME}</span>
     </Link>
   )
 }

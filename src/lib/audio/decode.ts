@@ -1,8 +1,7 @@
+import { MAX_MEDIA_UPLOAD_BYTES } from '@shared/limits'
 import { splitAll, TARGET_RATE } from '@/lib/audio/chunker'
 import { encodeWav } from '@/lib/audio/wav'
 import type { StoredChunk } from '@/lib/audio/recorder'
-
-export const MAX_MEDIA_BYTES = 500 * 1024 * 1024
 
 /**
  * Decode an uploaded audio/video file in the browser, convert it to 16 kHz mono
@@ -12,7 +11,7 @@ export async function fileToChunks(
   file: File,
   onStage?: (s: string) => void,
 ): Promise<{ chunks: StoredChunk[]; durationSec: number }> {
-  if (file.size > MAX_MEDIA_BYTES)
+  if (file.size > MAX_MEDIA_UPLOAD_BYTES)
     throw new Error('This file is over 500 MB. Please trim it or export just the audio first.')
   onStage?.('Reading file…')
   const data = await file.arrayBuffer()

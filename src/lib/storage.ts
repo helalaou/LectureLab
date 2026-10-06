@@ -2,16 +2,14 @@
  * Audio files live in Netlify Blobs, behind the /api/audio function.
  * Uploads are split into 3 MB parts; playback uses short-lived signed URLs.
  */
+import { AUDIO_PART_BYTES, AUDIO_URL_TTL_SECONDS } from '@shared/limits'
 import { authHeader } from '@/lib/api'
 
-const PART_SIZE = 3 * 1024 * 1024
-export const MAX_STORED_AUDIO = 100 * 1024 * 1024
-
 export async function uploadAudio(key: string, blob: Blob, onProgress?: (p: number) => void): Promise<void> {
-  const parts = Math.max(1, Math.ceil(blob.size / PART_SIZE))
+  const parts = Math.max(1, Math.ceil(blob.size / AUDIO_PART_BYTES))
   const type = (blob.type || 'audio/webm').split(';')[0]
   for (let i = 0; i < parts; i++) {
-    const body = blob.slice(i * PART_SIZE, (i + 1) * PART_SIZE)
+    const body = blob.slice(i * AUDIO_PART_BYTES, (i + 1) * AUDIO_PART_BYTES)
     const qs = new URLSearchParams({ key, part: String(i), parts: String(parts), size: String(blob.size), type })
     for (let attempt = 1; ; attempt++) {
       const res = await fetch(`/api/audio?${qs}`, {
@@ -32,7 +30,7 @@ const urlCache = new Map<string, { url: string; at: number }>()
 /** A signed URL an <audio> element can play (valid ~6 hours). */
 export async function audioUrl(key: string): Promise<string> {
   const hit = urlCache.get(key)
-  if (hit && Date.now() - hit.at < 5 * 3600_000) return hit.url
+  if (hit && Date.now() - hit.at < (AUDIO_URL_TTL_SECONDS - 3600) * 1000) return hit.url
   const res = await fetch(`/api/audio?key=${encodeURIComponent(key)}`, { method: 'POST', headers: await authHeader() })
   if (!res.ok) throw new Error('Could not load audio')
   const { url } = (await res.json()) as { url: string }

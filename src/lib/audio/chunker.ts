@@ -1,10 +1,12 @@
+import { TRANSCRIBE_CHUNK_SECONDS } from '@shared/limits'
+
 /**
  * Splits long audio into ~1 minute pieces for transcription.
  * Cuts are placed at the quietest moment near the target length so we
  * don't chop words in half.
  */
 export const TARGET_RATE = 16000
-export const CHUNK_SECONDS = 60
+export const CHUNK_SECONDS = TRANSCRIBE_CHUNK_SECONDS
 const SEARCH_SECONDS = 6
 const WINDOW = Math.round(TARGET_RATE * 0.05) // 50 ms RMS windows
 

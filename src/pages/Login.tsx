@@ -1,3 +1,4 @@
+import { APP_NAME } from '@shared/app'
 import { useState } from 'react'
 import { Mic, Upload, Layers, Headphones, Sparkles, Brain } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
@@ -66,7 +67,7 @@ export default function Login() {
               works.
             </h1>
             <p className="muted mt-5 max-w-lg text-lg">
-              Record your lectures or upload old ones. LectureLab writes your notes, builds flashcards and practice
+              Record your lectures or upload old ones. {APP_NAME} writes your notes, builds flashcards and practice
               quizzes, draws the big picture, and even makes a podcast so you can review anywhere.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
