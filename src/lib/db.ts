@@ -18,10 +18,10 @@ import {
   type DocumentData,
   type QuerySnapshot,
 } from 'firebase/firestore'
-import { auth, db } from './firebase'
-import type { ChatMessage, Course, Lecture, Output, OutputType, Source, SourceKind, UserSettings } from './types'
-import type { CardState } from './srs'
-import { deleteAudio } from './storage'
+import { auth, db } from '@/lib/firebase'
+import type { ChatMessage, Course, Lecture, Output, OutputType, Source, SourceKind, UserSettings } from '@/lib/types'
+import type { CardState } from '@/lib/srs'
+import { deleteAudio } from '@/lib/storage'
 
 function uid(): string {
   const u = auth.currentUser

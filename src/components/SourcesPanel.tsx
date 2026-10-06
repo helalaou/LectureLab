@@ -14,12 +14,12 @@ import {
   Sparkles,
   Copy,
 } from 'lucide-react'
-import type { Source } from '../lib/types'
-import { addDocument, addMediaFile, addText, deleteSource, retryRecordingSource, useJobs } from '../lib/pipeline'
-import { DOC_ACCEPT } from '../lib/docs'
-import { audioUrl as getAudioUrl } from '../lib/storage'
-import { fmtDuration, wordCount } from '../lib/format'
-import { Button, Modal, Progress, useToast, cx, IconButton, Badge } from './ui'
+import type { Source } from '@/lib/types'
+import { addDocument, addMediaFile, addText, deleteSource, retryRecordingSource, useJobs } from '@/lib/pipeline'
+import { DOC_ACCEPT } from '@/lib/docs'
+import { audioUrl as getAudioUrl } from '@/lib/storage'
+import { fmtDuration, wordCount } from '@/lib/format'
+import { Button, Modal, Progress, useToast, cx, IconButton, Badge } from '@/components/ui'
 
 const KIND = {
   recording: { icon: Mic, label: 'Class recording' },

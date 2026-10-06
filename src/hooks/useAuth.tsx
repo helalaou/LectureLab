@@ -9,7 +9,7 @@ import {
   signOut as fbSignOut,
   type User,
 } from 'firebase/auth'
-import { auth } from '../lib/firebase'
+import { auth } from '@/lib/firebase'
 
 interface AuthState {
   user: User | null

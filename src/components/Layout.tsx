@@ -1,6 +1,6 @@
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { BookOpen, Mic, Settings as SettingsIcon } from 'lucide-react'
-import { cx } from './ui'
+import { cx } from '@/components/ui'
 
 export function Logo({ className }: { className?: string }) {
   return (

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { getSettings, saveSettings } from '../lib/db'
-import { DEFAULT_SETTINGS, type UserSettings } from '../lib/types'
-import { useAuth } from './useAuth'
+import { getSettings, saveSettings } from '@/lib/db'
+import { DEFAULT_SETTINGS, type UserSettings } from '@/lib/types'
+import { useAuth } from '@/hooks/useAuth'
 
 interface SettingsState {
   settings: UserSettings

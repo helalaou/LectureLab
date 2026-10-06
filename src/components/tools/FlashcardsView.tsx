@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RotateCcw, Shuffle, Lightbulb, PartyPopper, Layers, List, ChevronLeft, ChevronRight } from 'lucide-react'
-import type { Flashcard } from '../../lib/types'
-import { listCardProgress, saveCardProgress } from '../../lib/db'
-import { cardKey, intervalLabel, NEW_CARD, review, type CardState } from '../../lib/srs'
-import { InlineMd } from '../Markdown'
-import { Button, Segmented, cx, Badge, Progress } from '../ui'
+import type { Flashcard } from '@/lib/types'
+import { listCardProgress, saveCardProgress } from '@/lib/db'
+import { cardKey, intervalLabel, NEW_CARD, review, type CardState } from '@/lib/srs'
+import { InlineMd } from '@/components/Markdown'
+import { Button, Segmented, cx, Badge, Progress } from '@/components/ui'
 
 type Mode = 'study' | 'browse'
 

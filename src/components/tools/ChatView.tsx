@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUp, Sparkles, Trash2, Square } from 'lucide-react'
-import { clearChat, listChat } from '../../lib/db'
-import { apiStream, ApiError } from '../../lib/api'
-import type { ChatMessage } from '../../lib/types'
-import Markdown from '../Markdown'
-import { cx, IconButton, useToast } from '../ui'
+import { clearChat, listChat } from '@/lib/db'
+import { apiStream, ApiError } from '@/lib/api'
+import type { ChatMessage } from '@/lib/types'
+import Markdown from '@/components/Markdown'
+import { cx, IconButton, useToast } from '@/components/ui'
 import { useNavigate } from 'react-router-dom'
 
 const SUGGESTIONS = [

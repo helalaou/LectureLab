@@ -7,8 +7,8 @@ import type {
   QuizQuestion,
   SummaryContent,
   Visual,
-} from './types'
-import { slug } from './format'
+} from '@/lib/types'
+import { slug } from '@/lib/format'
 
 export function download(filename: string, data: BlobPart, mime = 'text/plain;charset=utf-8') {
   const url = URL.createObjectURL(new Blob([data], { type: mime }))

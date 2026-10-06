@@ -3,15 +3,15 @@
  * rows in the `sources` table, with live progress the UI can subscribe to.
  */
 import { useSyncExternalStore } from 'react'
-import { auth } from './firebase'
-import * as db from './db'
-import { uploadAudio, MAX_STORED_AUDIO } from './storage'
-import { deleteStoredRecording, loadStoredRecording, type RecordingMeta } from './audio/recorder'
-import { fileToChunks } from './audio/decode'
-import { transcribeChunks } from './audio/transcribe'
-import { extractText } from './docs'
-import { defaultLectureTitle } from './format'
-import type { Source, SourceKind } from './types'
+import { auth } from '@/lib/firebase'
+import * as db from '@/lib/db'
+import { uploadAudio, MAX_STORED_AUDIO } from '@/lib/storage'
+import { deleteStoredRecording, loadStoredRecording, type RecordingMeta } from '@/lib/audio/recorder'
+import { fileToChunks } from '@/lib/audio/decode'
+import { transcribeChunks } from '@/lib/audio/transcribe'
+import { extractText } from '@/lib/docs'
+import { defaultLectureTitle } from '@/lib/format'
+import type { Source, SourceKind } from '@/lib/types'
 
 // ------------------------------------------------------------------ job store
 
@@ -131,7 +131,7 @@ export async function processRecording(recordingId: string): Promise<{ lectureId
       mime_type: meta.mimeType,
     })
     sourceId = src.id
-    const { idb } = await import('./audio/idb')
+    const { idb } = await import('@/lib/audio/idb')
     await idb.set(`rec:${recordingId}:meta`, { ...meta, lectureId, sourceId })
   }
 
@@ -232,7 +232,7 @@ export async function deleteSource(src: Source) {
 
 /** Find the on-device recording that belongs to a failed source, if any. */
 export async function findRecordingForSource(sourceId: string): Promise<string | null> {
-  const { listStoredRecordings } = await import('./audio/recorder')
+  const { listStoredRecordings } = await import('@/lib/audio/recorder')
   const recs = (await listStoredRecordings()) as (RecordingMeta & { sourceId?: string })[]
   return recs.find((r) => r.sourceId === sourceId)?.id ?? null
 }

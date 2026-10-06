@@ -13,16 +13,16 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react'
-import { listLectures } from '../lib/db'
-import { createLecture } from '../lib/pipeline'
-import { listStoredRecordings, type RecordingMeta } from '../lib/audio/recorder'
-import { fmtDate, relativeTime } from '../lib/format'
-import type { Lecture, OutputType, SourceKind } from '../lib/types'
-import { useCourses, COURSE_COLORS } from '../hooks/useCourses'
-import { useAuth } from '../hooks/useAuth'
-import CourseSelect from '../components/CourseSelect'
-import { Button, Empty, Modal, PageSpinner, cx, useToast, IconButton } from '../components/ui'
-import { OUTPUT_META } from '../components/tools/meta'
+import { listLectures } from '@/lib/db'
+import { createLecture } from '@/lib/pipeline'
+import { listStoredRecordings, type RecordingMeta } from '@/lib/audio/recorder'
+import { fmtDate, relativeTime } from '@/lib/format'
+import type { Lecture, OutputType, SourceKind } from '@/lib/types'
+import { useCourses, COURSE_COLORS } from '@/hooks/useCourses'
+import { useAuth } from '@/hooks/useAuth'
+import CourseSelect from '@/components/CourseSelect'
+import { Button, Empty, Modal, PageSpinner, cx, useToast, IconButton } from '@/components/ui'
+import { OUTPUT_META } from '@/components/tools/meta'
 
 type LectureRow = Lecture
 

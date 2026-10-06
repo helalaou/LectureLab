@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Search } from 'lucide-react'
-import type { GlossaryTerm } from '../../lib/types'
-import { InlineMd } from '../Markdown'
+import type { GlossaryTerm } from '@/lib/types'
+import { InlineMd } from '@/components/Markdown'
 
 export default function GlossaryView({ terms }: { terms: GlossaryTerm[] }) {
   const [q, setQ] = useState('')

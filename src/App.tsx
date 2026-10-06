@@ -1,16 +1,16 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Layout from './components/Layout'
-import { PageSpinner } from './components/ui'
-import { useAuth } from './hooks/useAuth'
-import { firebaseConfigured } from './lib/firebase'
-import Login from './pages/Login'
-import SetupNeeded from './pages/SetupNeeded'
+import Layout from '@/components/Layout'
+import { PageSpinner } from '@/components/ui'
+import { useAuth } from '@/hooks/useAuth'
+import { firebaseConfigured } from '@/lib/firebase'
+import Login from '@/pages/Login'
+import SetupNeeded from '@/pages/SetupNeeded'
 
-const Home = lazy(() => import('./pages/Home'))
-const LecturePage = lazy(() => import('./pages/LecturePage'))
-const RecordPage = lazy(() => import('./pages/RecordPage'))
-const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const Home = lazy(() => import('@/pages/Home'))
+const LecturePage = lazy(() => import('@/pages/LecturePage'))
+const RecordPage = lazy(() => import('@/pages/RecordPage'))
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
 
 export default function App() {
   const { user, loading } = useAuth()

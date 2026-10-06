@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { CheckCircle2, XCircle, RotateCcw, Trophy, ArrowRight } from 'lucide-react'
-import type { QuizQuestion } from '../../lib/types'
-import { InlineMd } from '../Markdown'
-import { Button, Badge, Progress, cx } from '../ui'
+import type { QuizQuestion } from '@/lib/types'
+import { InlineMd } from '@/components/Markdown'
+import { Button, Badge, Progress, cx } from '@/components/ui'
 
 interface Answer {
   choice?: number

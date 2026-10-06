@@ -10,7 +10,7 @@ import {
   MessageCircle,
   type LucideIcon,
 } from 'lucide-react'
-import type { OutputType } from '../../lib/types'
+import type { OutputType } from '@/lib/types'
 
 export interface ToolMeta {
   label: string

@@ -15,15 +15,15 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react'
-import { useSettings } from '../hooks/useSettings'
-import { useAuth } from '../hooks/useAuth'
-import { useAccess } from '../hooks/useAccess'
-import { listMicrophones, micConstraints, type MicPrefs } from '../lib/audio/recorder'
-import { getMicPrefs, setMicPrefs } from '../lib/micPrefs'
-import { apiBlob, apiJson } from '../lib/api'
-import { deleteAllData } from '../lib/db'
-import { Button, Segmented, Toggle, useToast, cx, Badge } from '../components/ui'
-import type { UserSettings } from '../lib/types'
+import { useSettings } from '@/hooks/useSettings'
+import { useAuth } from '@/hooks/useAuth'
+import { useAccess } from '@/hooks/useAccess'
+import { listMicrophones, micConstraints, type MicPrefs } from '@/lib/audio/recorder'
+import { getMicPrefs, setMicPrefs } from '@/lib/micPrefs'
+import { apiBlob, apiJson } from '@/lib/api'
+import { deleteAllData } from '@/lib/db'
+import { Button, Segmented, Toggle, useToast, cx, Badge } from '@/components/ui'
+import type { UserSettings } from '@/lib/types'
 
 const TEXT_MODELS = [
   { value: 'gpt-6-luna', label: 'GPT-6 Luna (recommended: fast and cheapest)' },

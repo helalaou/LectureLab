@@ -2,8 +2,8 @@
  * Keeps track of in-flight AI generations so progress survives switching tabs.
  */
 import { useSyncExternalStore } from 'react'
-import { apiStream } from './api'
-import type { Output, OutputType } from './types'
+import { apiStream } from '@/lib/api'
+import type { Output, OutputType } from '@/lib/types'
 
 export interface GenOptions {
   focus?: string
