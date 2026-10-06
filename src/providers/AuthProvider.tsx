@@ -14,25 +14,36 @@ import { AuthContext, type AuthState } from '@/hooks/useAuth'
 
 const EMAIL_KEY = 'll-signin-email'
 
+function storedEmail(): string {
+  try {
+    return localStorage.getItem(EMAIL_KEY) || ''
+  } catch {
+    return ''
+  }
+}
+
+async function completeEmailLink(email: string) {
+  await signInWithEmailLink(auth, email, window.location.href)
+  window.history.replaceState(null, '', window.location.pathname)
+  try {
+    localStorage.removeItem(EMAIL_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [emailLinkNeedsEmail, setEmailLinkNeedsEmail] = useState(
+    () => isSignInWithEmailLink(auth, window.location.href) && !storedEmail(),
+  )
 
   useEffect(() => {
-    // Finish an email-link sign-in if we arrived from the email.
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-      let email = ''
-      try {
-        email = localStorage.getItem(EMAIL_KEY) || ''
-      } catch {
-        /* ignore */
-      }
-      if (!email) email = window.prompt('Confirm your email to finish signing in') || ''
-      if (email) {
-        signInWithEmailLink(auth, email, window.location.href)
-          .then(() => window.history.replaceState(null, '', window.location.pathname))
-          .catch((e) => console.error(e))
-      }
+    // Finish an email-link sign-in if we arrived from the email on the same device.
+    const email = storedEmail()
+    if (email && isSignInWithEmailLink(auth, window.location.href)) {
+      completeEmailLink(email).catch((e) => console.error(e))
     }
     return onAuthStateChanged(auth, (u) => {
       setUser(u)
@@ -55,6 +66,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         /* ignore */
       }
+    },
+    emailLinkNeedsEmail,
+    async finishEmailLink(email: string) {
+      await completeEmailLink(email.trim())
+      setEmailLinkNeedsEmail(false)
     },
     async signOut() {
       await fbSignOut(auth)

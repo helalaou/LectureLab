@@ -4,6 +4,7 @@ import { Mic, Upload, Layers, Headphones, Sparkles, Brain } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { Logo } from '@/components/Layout'
 import { Button } from '@/components/ui'
+import { cn } from '@/lib/cn'
 
 const FEATURES = [
   {
@@ -50,7 +51,7 @@ function GoogleIcon() {
 }
 
 export default function Login() {
-  const { signInWithGoogle, signInWithEmail } = useAuth()
+  const { signInWithGoogle, signInWithEmail, emailLinkNeedsEmail, finishEmailLink } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [email, setEmail] = useState('')
@@ -92,14 +93,21 @@ export default function Login() {
               </Button>
               <span className="muted text-sm">Free and open source. Your lectures stay private.</span>
             </div>
+            {emailLinkNeedsEmail && (
+              <p className="mt-6 text-sm font-medium">Confirm your email to finish signing in.</p>
+            )}
             <form
-              className="mt-5 flex max-w-md flex-col gap-2 sm:flex-row"
+              className={cn('flex max-w-md flex-col gap-2 sm:flex-row', emailLinkNeedsEmail ? 'mt-2' : 'mt-5')}
               onSubmit={async (e) => {
                 e.preventDefault()
                 if (!email.trim()) return
                 setEmailState('sending')
                 setError(null)
                 try {
+                  if (emailLinkNeedsEmail) {
+                    await finishEmailLink(email)
+                    return
+                  }
                   await signInWithEmail(email)
                   setEmailState('sent')
                 } catch (err) {
@@ -111,12 +119,12 @@ export default function Login() {
               <input
                 className="input"
                 type="email"
-                placeholder="or sign in with your email"
+                placeholder={emailLinkNeedsEmail ? 'you@example.com' : 'or sign in with your email'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Button type="submit" variant="soft" loading={emailState === 'sending'}>
-                Email me a link
+                {emailLinkNeedsEmail ? 'Finish signing in' : 'Email me a link'}
               </Button>
             </form>
             {emailState === 'sent' && (

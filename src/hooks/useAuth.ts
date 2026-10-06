@@ -6,6 +6,9 @@ export interface AuthState {
   loading: boolean
   signInWithGoogle: () => Promise<void>
   signInWithEmail: (email: string) => Promise<void>
+  /** True when the user opened an email sign-in link on a device that doesn't know their email. */
+  emailLinkNeedsEmail: boolean
+  finishEmailLink: (email: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
