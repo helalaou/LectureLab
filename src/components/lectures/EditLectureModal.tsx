@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { updateLecture } from '@/lib/db'
 import type { Lecture } from '@/lib/types'
 import { useCourses } from '@/hooks/useCourses'
-import CourseSelect from '@/components/CourseSelect'
+import CoursePicker from '@/components/courses/CoursePicker'
 import { Button, Modal } from '@/components/ui'
 
 export function EditLectureModal({
@@ -43,7 +43,7 @@ export function EditLectureModal({
         </div>
         <div>
           <label className="label">Course</label>
-          <CourseSelect courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
+          <CoursePicker courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
         </div>
         <div>
           <label className="label">Date</label>

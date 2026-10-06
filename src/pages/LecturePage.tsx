@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, MoreHorizontal, Pencil, Trash2, FolderInput, CalendarDays, Library, Loader2 } from 'lucide-react'
-import { listOutputs, watchLecture, watchSources } from '@/lib/db'
+import { listOutputs, updateLecture, watchLecture, watchSources } from '@/lib/db'
 import { deleteLecture } from '@/lib/pipeline'
 import { generate, runKey, useRunning } from '@/lib/genStore'
 import { exportAnki, exportCsv } from '@/lib/export'
@@ -19,7 +19,7 @@ import type {
   SummaryContent,
   Visual,
 } from '@/lib/types'
-import { useCourses, COURSE_COLORS } from '@/hooks/useCourses'
+import { useCourses } from '@/hooks/useCourses'
 import SourcesPanel, { AddSourceModal } from '@/components/SourcesPanel'
 import ToolPanel from '@/components/tools/ToolPanel'
 import { OUTPUT_META, TAB_ORDER, CHAT_META } from '@/components/tools/meta'
@@ -34,9 +34,11 @@ import Markdown from '@/components/Markdown'
 import { IconButton, Menu, MenuItem, PageSpinner } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/hooks/useToast'
+import { useDialog } from '@/hooks/useDialog'
 import { FileSpreadsheet, Layers } from 'lucide-react'
 import { ApiError } from '@/lib/api'
 import { EditLectureModal } from '@/components/lectures/EditLectureModal'
+import { LectureCourseMenu } from '@/components/courses/LectureCourseMenu'
 
 type Tab = OutputType | 'sources' | 'chat'
 
@@ -56,6 +58,7 @@ export default function LecturePage() {
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
   const toast = useToast()
+  const dialog = useDialog()
   const { courses, create: createCourse } = useCourses()
   const running = useRunning()
 
@@ -104,7 +107,6 @@ export default function LecturePage() {
   }, [tab, lectureLoaded])
 
   const canGenerate = sources.some((s) => s.status === 'ready' && s.content.trim())
-  const course = courses.find((c) => c.id === lecture?.course_id)
 
   const setOutput = useCallback((o: Output) => {
     setOutputs((m) => ({ ...m, [o.type]: o }))
@@ -199,12 +201,15 @@ export default function LecturePage() {
         <div className="mt-2 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="muted flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-              {course && (
-                <span className="flex items-center gap-1.5">
-                  <span className={cn('size-2 rounded-full', COURSE_COLORS[course.color])} />
-                  {course.name}
-                </span>
-              )}
+              <LectureCourseMenu
+                courses={courses}
+                courseId={lecture.course_id}
+                onCreate={createCourse}
+                onChange={async (courseId) => {
+                  await updateLecture(id, { course_id: courseId })
+                  setLecture((l) => l && { ...l, course_id: courseId })
+                }}
+              />
               <span className="flex items-center gap-1">
                 <CalendarDays className="size-3.5" />
                 {new Date(lecture.lecture_date + 'T12:00:00').toLocaleDateString(undefined, {
@@ -250,7 +255,13 @@ export default function LecturePage() {
                   icon={<Trash2 className="size-4" />}
                   onClick={async () => {
                     close()
-                    if (!confirm('Delete this lecture, its recordings and all study material?')) return
+                    const ok = await dialog.confirm({
+                      title: 'Delete this lecture?',
+                      message: 'Its recordings, sources and all study material are deleted too.',
+                      confirmLabel: 'Delete lecture',
+                      danger: true,
+                    })
+                    if (!ok) return
                     await deleteLecture(id)
                     navigate('/')
                   }}

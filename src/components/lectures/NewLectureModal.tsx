@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createLecture } from '@/lib/pipeline'
 import { useCourses } from '@/hooks/useCourses'
-import CourseSelect from '@/components/CourseSelect'
+import CoursePicker from '@/components/courses/CoursePicker'
 import { Button, Modal } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 
@@ -54,7 +54,7 @@ export function NewLectureModal({
         </div>
         <div>
           <label className="label">Course</label>
-          <CourseSelect courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
+          <CoursePicker courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
         </div>
         <p className="muted text-sm">
           Next you'll add sources: recordings, files, slides or notes. You can add as many as you like.

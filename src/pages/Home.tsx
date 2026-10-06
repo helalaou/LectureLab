@@ -1,30 +1,19 @@
 import { APP_NAME } from '@shared/app'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  Plus,
-  Search,
-  Mic,
-  FileText,
-  AudioLines,
-  Type,
-  ChevronRight,
-  HardDriveDownload,
-  BookOpen,
-  Pencil,
-  Trash2,
-} from 'lucide-react'
+import { Plus, Search, Mic, FileText, AudioLines, Type, ChevronRight, HardDriveDownload, BookOpen } from 'lucide-react'
 import { listLectures } from '@/lib/db'
 import { listStoredRecordings, type RecordingMeta } from '@/lib/audio/recorder'
 import { fmtDate, relativeTime } from '@/lib/format'
 import type { Lecture, OutputType, SourceKind } from '@/lib/types'
 import { useCourses, COURSE_COLORS } from '@/hooks/useCourses'
 import { useAuth } from '@/hooks/useAuth'
-import { Button, Empty, Modal, PageSpinner, IconButton } from '@/components/ui'
+import { Button, Empty, PageSpinner } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/hooks/useToast'
 import { OUTPUT_META } from '@/components/tools/meta'
 import { NewLectureModal } from '@/components/lectures/NewLectureModal'
+import { ManageCoursesModal } from '@/components/courses/ManageCoursesModal'
 
 type LectureRow = Lecture
 
@@ -67,6 +56,12 @@ export default function Home() {
             .includes(q)),
     )
   }, [lectures, query, courseFilter, courses])
+
+  const lectureCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const l of lectures || []) if (l.course_id) counts[l.course_id] = (counts[l.course_id] || 0) + 1
+    return counts
+  }, [lectures])
 
   const firstName = (user?.displayName ?? undefined)?.split(' ')[0]
 
@@ -145,7 +140,7 @@ export default function Home() {
               onClick={() => setManageOpen(true)}
               className="text-accent-600 dark:text-accent-400 shrink-0 rounded-full px-3 py-1.5 text-sm font-medium"
             >
-              Manage courses
+              {courses.length ? 'Manage courses' : '+ Add a course'}
             </button>
           </div>
         </div>
@@ -246,46 +241,19 @@ export default function Home() {
         onCreated={(id) => navigate(`/lecture/${id}?add=1`)}
       />
 
-      <Modal open={manageOpen} onClose={() => setManageOpen(false)} title="Courses">
-        {courses.length === 0 && <p className="muted text-sm">No courses yet. Add one when you create a lecture.</p>}
-        <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-          {courses.map((c) => (
-            <li key={c.id} className="flex items-center gap-3 py-2.5">
-              <span className={cn('size-3 rounded-full', COURSE_COLORS[c.color])} />
-              <span className="flex-1 font-medium">{c.name}</span>
-              <IconButton
-                label="Rename"
-                onClick={() => {
-                  const n = prompt('Rename course', c.name)
-                  if (n?.trim()) rename(c.id, n.trim())
-                }}
-              >
-                <Pencil className="size-4" />
-              </IconButton>
-              <IconButton
-                label="Delete"
-                onClick={() => {
-                  if (confirm(`Delete "${c.name}"? Lectures in it are kept, just without a course.`)) remove(c.id)
-                }}
-              >
-                <Trash2 className="size-4" />
-              </IconButton>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-4">
-          <Button
-            variant="secondary"
-            icon={<Plus className="size-4" />}
-            onClick={async () => {
-              const n = prompt('Course name (e.g. "BIO 101")')
-              if (n?.trim()) await create(n)
-            }}
-          >
-            Add course
-          </Button>
-        </div>
-      </Modal>
+      <ManageCoursesModal
+        open={manageOpen}
+        onClose={() => setManageOpen(false)}
+        courses={courses}
+        lectureCounts={lectureCounts}
+        onCreate={create}
+        onRename={rename}
+        onRemove={async (cid) => {
+          await remove(cid)
+          if (courseFilter === cid) setCourseFilter('all')
+          setLectures((list) => list && list.map((l) => (l.course_id === cid ? { ...l, course_id: null } : l)))
+        }}
+      />
     </div>
   )
 }

@@ -13,10 +13,11 @@ import { getMicPrefs } from '@/lib/micPrefs'
 import { defaultLectureTitle, fmtDuration, relativeTime } from '@/lib/format'
 import { getLecture } from '@/lib/db'
 import { useCourses } from '@/hooks/useCourses'
-import CourseSelect from '@/components/CourseSelect'
+import CoursePicker from '@/components/courses/CoursePicker'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/hooks/useToast'
+import { useDialog } from '@/hooks/useDialog'
 
 type Phase = 'setup' | 'recording' | 'saving'
 const BARS = 56
@@ -26,6 +27,7 @@ export default function RecordPage() {
   const lectureId = params.get('lecture') || undefined
   const navigate = useNavigate()
   const toast = useToast()
+  const dialog = useDialog()
   const { courses, create } = useCourses()
 
   const [phase, setPhase] = useState<Phase>('setup')
@@ -134,7 +136,13 @@ export default function RecordPage() {
   }
 
   async function discard() {
-    if (!confirm('Discard this recording? It cannot be recovered.')) return
+    const ok = await dialog.confirm({
+      title: 'Discard this recording?',
+      message: 'It cannot be recovered.',
+      confirmLabel: 'Discard',
+      danger: true,
+    })
+    if (!ok) return
     await recRef.current?.discard()
     recRef.current = null
     setPhase('setup')
@@ -261,7 +269,7 @@ export default function RecordPage() {
             </div>
             <div>
               <label className="label">Course</label>
-              <CourseSelect courses={courses} value={courseId} onChange={setCourseId} onCreate={create} />
+              <CoursePicker courses={courses} value={courseId} onChange={setCourseId} onCreate={create} />
             </div>
           </>
         )}
@@ -328,7 +336,13 @@ export default function RecordPage() {
                   size="sm"
                   variant="ghost"
                   onClick={async () => {
-                    if (!confirm('Delete this recording from the device?')) return
+                    const ok = await dialog.confirm({
+                      title: 'Delete this recording from the device?',
+                      message: 'It has not been processed yet, so it cannot be recovered.',
+                      confirmLabel: 'Delete',
+                      danger: true,
+                    })
+                    if (!ok) return
                     await deleteStoredRecording(r.id)
                     refreshStored()
                   }}
