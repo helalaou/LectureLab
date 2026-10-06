@@ -4,7 +4,8 @@ import type { Flashcard } from '@/lib/types'
 import { listCardProgress, saveCardProgress } from '@/lib/db'
 import { cardKey, intervalLabel, NEW_CARD, review, type CardState } from '@/lib/srs'
 import { InlineMd } from '@/components/Markdown'
-import { Button, Segmented, cx, Badge, Progress } from '@/components/ui'
+import { Button, Segmented, Badge, Progress } from '@/components/ui'
+import { cn } from '@/lib/cn'
 
 type Mode = 'study' | 'browse'
 
@@ -192,7 +193,7 @@ function StudySession({
       </div>
 
       <button className="flip block w-full text-left" onClick={() => setFlipped((f) => !f)} aria-label="Flip card">
-        <div className={cx('flip-inner relative min-h-72 sm:min-h-80', flipped && 'flipped')}>
+        <div className={cn('flip-inner relative min-h-72 sm:min-h-80', flipped && 'flipped')}>
           <div className="flip-face card absolute inset-0 flex flex-col overflow-y-auto p-6">
             <div className="flex items-center justify-between">
               <Badge>{card.topic}</Badge>
@@ -257,7 +258,7 @@ function StudySession({
             <button
               key={g}
               onClick={() => grade(g)}
-              className={cx('flex flex-col items-center rounded-xl py-2.5 text-sm font-semibold transition', cls)}
+              className={cn('flex flex-col items-center rounded-xl py-2.5 text-sm font-semibold transition', cls)}
             >
               {label}
               <span className="text-[11px] font-normal opacity-75">{intervalLabel(state, g)}</span>

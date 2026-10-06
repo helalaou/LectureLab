@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
   GoogleAuthProvider,
   isSignInWithEmailLink,
@@ -10,16 +10,8 @@ import {
   type User,
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { AuthContext, type AuthState } from '@/hooks/useAuth'
 
-interface AuthState {
-  user: User | null
-  loading: boolean
-  signInWithGoogle: () => Promise<void>
-  signInWithEmail: (email: string) => Promise<void>
-  signOut: () => Promise<void>
-}
-
-const Ctx = createContext<AuthState>(null as unknown as AuthState)
 const EMAIL_KEY = 'll-signin-email'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -68,7 +60,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fbSignOut(auth)
     },
   }
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
-
-export const useAuth = () => useContext(Ctx)

@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { CheckCircle2, XCircle, RotateCcw, Trophy, ArrowRight } from 'lucide-react'
 import type { QuizQuestion } from '@/lib/types'
 import { InlineMd } from '@/components/Markdown'
-import { Button, Badge, Progress, cx } from '@/components/ui'
+import { Button, Badge, Progress } from '@/components/ui'
+import { cn } from '@/lib/cn'
 
 interface Answer {
   choice?: number
@@ -39,7 +40,7 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
       <div className="mx-auto max-w-2xl space-y-4">
         <div className="card px-6 py-10 text-center">
           <Trophy
-            className={cx(
+            className={cn(
               'mx-auto size-12',
               pct >= 80 ? 'text-amber-500' : pct >= 60 ? 'text-accent-600' : 'text-zinc-400',
             )}
@@ -135,7 +136,7 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
                   key={idx}
                   onClick={() => choose(idx)}
                   disabled={answered}
-                  className={cx(
+                  className={cn(
                     'flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-[15px] transition',
                     !answered &&
                       'hover:border-accent-400 hover:bg-accent-50/50 dark:hover:border-accent-600 dark:hover:bg-accent-950/30 border-zinc-300 dark:border-zinc-700',
@@ -150,7 +151,7 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
                   )}
                 >
                   <span
-                    className={cx(
+                    className={cn(
                       'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold',
                       answered && isCorrect
                         ? 'border-emerald-500 bg-emerald-500 text-white'
@@ -215,13 +216,13 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
 
         {answered && (
           <div
-            className={cx(
+            className={cn(
               'mt-5 rounded-xl p-4',
               a.correct ? 'bg-emerald-50 dark:bg-emerald-950/30' : 'bg-red-50 dark:bg-red-950/30',
             )}
           >
             <div
-              className={cx(
+              className={cn(
                 'flex items-center gap-2 font-semibold',
                 a.correct ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400',
               )}

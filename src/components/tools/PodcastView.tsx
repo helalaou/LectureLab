@@ -7,7 +7,9 @@ import { audioUrl, deleteAudio, fetchAudioBlob, uploadAudio } from '@/lib/storag
 import { apiBlob, ApiError } from '@/lib/api'
 import { download } from '@/lib/export'
 import { slug } from '@/lib/format'
-import { Button, Progress, cx, useToast } from '@/components/ui'
+import { Button, Progress } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useToast } from '@/hooks/useToast'
 
 type PodcastData = PodcastContent & { _audio_offsets?: number[] }
 
@@ -170,7 +172,7 @@ export default function PodcastView({
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
-                    className={cx(
+                    className={cn(
                       'rounded-lg px-2.5 py-1 text-sm font-medium',
                       speed === s
                         ? 'bg-accent-600 text-white'
@@ -222,13 +224,13 @@ export default function PodcastView({
               id={`pline-${i}`}
               key={i}
               onClick={() => seekTo(i)}
-              className={cx(
+              className={cn(
                 'flex w-full gap-3 rounded-xl p-2 text-left transition',
                 current === i ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50',
               )}
             >
               <span
-                className={cx(
+                className={cn(
                   'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
                   s.speaker === 'A'
                     ? 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200'

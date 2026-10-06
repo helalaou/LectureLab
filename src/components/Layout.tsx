@@ -1,10 +1,10 @@
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { BookOpen, Mic, Settings as SettingsIcon } from 'lucide-react'
-import { cx } from '@/components/ui'
+import { cn } from '@/lib/cn'
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link to="/" className={cx('flex items-center gap-2 font-semibold tracking-tight', className)}>
+    <Link to="/" className={cn('flex items-center gap-2 font-semibold tracking-tight', className)}>
       <span className="bg-accent-600 shadow-accent-600/30 flex size-8 items-center justify-center rounded-xl text-white shadow-sm">
         <svg viewBox="0 0 64 64" className="size-5" aria-hidden>
           <path
@@ -43,7 +43,7 @@ export default function Layout() {
                 to={to}
                 end={end}
                 className={({ isActive }) =>
-                  cx(
+                  cn(
                     'flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium transition-colors',
                     to === '/record'
                       ? 'bg-accent-600 hover:bg-accent-700 ml-1 text-white'
@@ -74,7 +74,7 @@ export default function Layout() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                cx(
+                cn(
                   'flex flex-col items-center justify-center gap-1 text-[11px] font-medium',
                   isActive ? 'text-accent-600 dark:text-accent-400' : 'text-zinc-500 dark:text-zinc-400',
                 )

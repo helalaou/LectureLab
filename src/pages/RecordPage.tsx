@@ -14,7 +14,9 @@ import { defaultLectureTitle, fmtDuration, relativeTime } from '@/lib/format'
 import { getLecture } from '@/lib/db'
 import { useCourses } from '@/hooks/useCourses'
 import CourseSelect from '@/components/CourseSelect'
-import { Button, cx, useToast } from '@/components/ui'
+import { Button } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useToast } from '@/hooks/useToast'
 
 type Phase = 'setup' | 'recording' | 'saving'
 const BARS = 56
@@ -152,14 +154,14 @@ export default function RecordPage() {
     return (
       <div className="mx-auto flex max-w-xl flex-col items-center pt-6 text-center sm:pt-12">
         <div
-          className={cx(
+          className={cn(
             'flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium',
             paused
               ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
               : 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300',
           )}
         >
-          <span className={cx('size-2 rounded-full', paused ? 'bg-amber-500' : 'animate-pulse bg-red-500')} />
+          <span className={cn('size-2 rounded-full', paused ? 'bg-amber-500' : 'animate-pulse bg-red-500')} />
           {phase === 'saving' ? 'Saving…' : paused ? 'Paused' : 'Recording'}
         </div>
         <div className="mt-6 font-mono text-6xl font-semibold tracking-tight tabular-nums sm:text-7xl">
@@ -173,7 +175,7 @@ export default function RecordPage() {
           {levels.map((l, i) => (
             <span
               key={i}
-              className={cx(
+              className={cn(
                 'w-1 rounded-full transition-[height] duration-100',
                 paused ? 'bg-zinc-300 dark:bg-zinc-700' : 'bg-accent-500',
               )}

@@ -1,14 +1,13 @@
 import { useState, type ReactNode } from 'react'
-import { RefreshCw, Download, FileDown, Sparkles, Printer, Wand2 } from 'lucide-react'
-import { generate, runKey, useRunning, type GenOptions } from '@/lib/genStore'
-import { exportMarkdown, toMarkdown } from '@/lib/export'
-import { printNode } from '@/lib/print'
-import type { Output, OutputType } from '@/lib/types'
-import { Button, Menu, MenuItem, Modal, Segmented, useToast, Progress } from '@/components/ui'
+import { Download, FileDown, Printer, RefreshCw, Sparkles, Wand2 } from 'lucide-react'
 import Markdown from '@/components/Markdown'
 import { OUTPUT_META } from '@/components/tools/meta'
-import { ApiError } from '@/lib/api'
-import { useNavigate } from 'react-router-dom'
+import { Button, Menu, MenuItem, Modal, Progress, Segmented } from '@/components/ui'
+import { useGenerate } from '@/hooks/useGenerate'
+import { exportMarkdown, toMarkdown } from '@/lib/export'
+import { runKey, useRunning, type GenOptions } from '@/lib/genStore'
+import { printNode } from '@/lib/print'
+import type { Output, OutputType } from '@/lib/types'
 
 function OptionsForm({
   type,
@@ -94,23 +93,6 @@ function OptionsForm({
       </div>
     </div>
   )
-}
-
-/** Runs a generation and reports errors in a friendly way. */
-export function useGenerate(lectureId: string, onDone: (o: Output) => void) {
-  const toast = useToast()
-  const navigate = useNavigate()
-  return async (type: OutputType, options: GenOptions = {}) => {
-    try {
-      const out = await generate(lectureId, type, options)
-      onDone(out)
-      toast(`${OUTPUT_META[type].label} ready`, 'success')
-    } catch (e) {
-      const err = e as ApiError
-      toast(err.message, 'error')
-      if (err.code === 'no_key') navigate('/settings#api-key')
-    }
-  }
 }
 
 /**
