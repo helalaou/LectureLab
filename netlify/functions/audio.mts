@@ -1,7 +1,7 @@
 import type { Config } from '@netlify/functions'
 import { AUDIO_URL_TTL_SECONDS } from '../../shared/limits.ts'
 import { errorResponse, HttpError, json, requireUser } from '../lib/server.ts'
-import { deleteAudio, PART_SIZE, sign, store, verifySignature, type AudioMeta } from '../lib/audio.ts'
+import { deleteAudio, metaKey, PART_SIZE, partKey, sign, store, verifySignature, type AudioMeta } from '../lib/audio.ts'
 
 /**
  * Audio files (recordings, uploads, podcasts) stored in Netlify Blobs.
@@ -40,10 +40,10 @@ export default async (req: Request) => {
     const body = await req.arrayBuffer()
     if (body.byteLength > PART_SIZE) throw new HttpError(413, 'Part too large.')
     const s = store()
-    await s.set(`${key}#${part}`, body)
+    await s.set(partKey(key, part), body)
     if (part === parts - 1) {
       const meta: AudioMeta = { size, parts, partSize: PART_SIZE, type }
-      await s.setJSON(`${key}#meta`, meta)
+      await s.setJSON(metaKey(key), meta)
     }
     return json({ ok: true })
   } catch (e) {
@@ -55,7 +55,7 @@ async function serve(req: Request, key: string, url: URL): Promise<Response> {
   const exp = Number(url.searchParams.get('exp'))
   if (!verifySignature(key, exp, url.searchParams.get('sig') || '')) throw new HttpError(403, 'Link expired.')
   const s = store()
-  const meta = (await s.get(`${key}#meta`, { type: 'json' })) as AudioMeta | null
+  const meta = (await s.get(metaKey(key), { type: 'json' })) as AudioMeta | null
   if (!meta) throw new HttpError(404, 'Audio not found.')
 
   // Parse "bytes=start-end"; serve at most one stored part per response.
@@ -71,7 +71,7 @@ async function serve(req: Request, key: string, url: URL): Promise<Response> {
   const partIndex = Math.floor(start / meta.partSize)
   const partStart = partIndex * meta.partSize
   end = Math.min(end, partStart + meta.partSize - 1, meta.size - 1)
-  const buf = (await s.get(`${key}#${partIndex}`, { type: 'arrayBuffer' })) as ArrayBuffer | null
+  const buf = (await s.get(partKey(key, partIndex), { type: 'arrayBuffer' })) as ArrayBuffer | null
   if (!buf) throw new HttpError(404, 'Audio part missing.')
   const slice = buf.slice(start - partStart, end - partStart + 1)
   const headers = {

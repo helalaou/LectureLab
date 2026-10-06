@@ -19,11 +19,18 @@ export interface AudioMeta {
 
 export const store = () => getStore({ name: 'audio', consistency: 'strong' })
 
+/**
+ * Blob keys for a file's parts and metadata. Avoid characters like `#` or `?`:
+ * the Blobs client puts keys in a URL, so anything after them is dropped.
+ */
+export const partKey = (key: string, i: number) => `${key}.part${i}`
+export const metaKey = (key: string) => `${key}.meta`
+
 export async function deleteAudio(key: string) {
   const s = store()
-  const meta = (await s.get(`${key}#meta`, { type: 'json' })) as AudioMeta | null
+  const meta = (await s.get(metaKey(key), { type: 'json' })) as AudioMeta | null
   const n = meta?.parts ?? 0
-  await Promise.all([...Array.from({ length: n }, (_, i) => s.delete(`${key}#${i}`)), s.delete(`${key}#meta`)])
+  await Promise.all([...Array.from({ length: n }, (_, i) => s.delete(partKey(key, i))), s.delete(metaKey(key))])
 }
 
 export function sign(key: string, exp: number): string {
