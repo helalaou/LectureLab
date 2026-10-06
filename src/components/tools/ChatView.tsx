@@ -7,6 +7,7 @@ import Markdown from '@/components/Markdown'
 import { IconButton } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/hooks/useToast'
+import { useDialog } from '@/hooks/useDialog'
 import { useNavigate } from 'react-router-dom'
 
 const SUGGESTIONS = [
@@ -23,6 +24,7 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const dialog = useDialog()
   const endRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
   const toast = useToast()
@@ -99,7 +101,12 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
           <IconButton
             label="Clear chat"
             onClick={async () => {
-              if (!confirm('Clear this conversation?')) return
+              const ok = await dialog.confirm({
+                title: 'Clear this conversation?',
+                confirmLabel: 'Clear',
+                danger: true,
+              })
+              if (!ok) return
               await clearChat(lectureId)
               setMessages([])
             }}

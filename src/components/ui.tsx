@@ -220,6 +220,8 @@ export function Segmented<T extends string>({
 
 // ------------------------------------------------------------------ Modal / bottom sheet
 
+const openModals: symbol[] = []
+
 export function Modal({
   open,
   onClose,
@@ -235,12 +237,16 @@ export function Modal({
 }) {
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const id = Symbol('modal')
+    openModals.push(id)
+    // Escape closes only the top-most modal (e.g. a confirm opened from another modal).
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && openModals.at(-1) === id && onClose()
     document.addEventListener('keydown', onKey)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
+      openModals.splice(openModals.indexOf(id), 1)
       document.body.style.overflow = prev
     }
   }, [open, onClose])
@@ -278,9 +284,11 @@ export function Modal({
 export function Menu({
   trigger,
   children,
+  align = 'right',
 }: {
   trigger: (open: () => void) => ReactNode
   children: (close: () => void) => ReactNode
+  align?: 'left' | 'right'
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -296,7 +304,12 @@ export function Menu({
     <div className="relative" ref={ref}>
       {trigger(() => setOpen((o) => !o))}
       {open && (
-        <div className="absolute right-0 z-40 mt-1 min-w-52 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+        <div
+          className={clsx(
+            'absolute z-40 mt-1 max-h-[60vh] min-w-52 overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-xl dark:border-zinc-800 dark:bg-zinc-900',
+            align === 'left' ? 'left-0' : 'right-0',
+          )}
+        >
           {children(() => setOpen(false))}
         </div>
       )}

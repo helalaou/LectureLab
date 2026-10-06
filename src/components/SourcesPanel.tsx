@@ -21,6 +21,7 @@ import { audioUrl as getAudioUrl } from '@/lib/storage'
 import { fmtDuration, wordCount } from '@/lib/format'
 import { Button, Modal, Progress, IconButton, Badge } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { useDialog } from '@/hooks/useDialog'
 import { cn } from '@/lib/cn'
 
 const KIND = {
@@ -183,6 +184,7 @@ export function AddSourceModal({
 
 function SourceItem({ source }: { source: Source }) {
   const job = useJobs()[source.id]
+  const dialog = useDialog()
   const [open, setOpen] = useState(false)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [time, setTime] = useState(0)
@@ -246,7 +248,12 @@ function SourceItem({ source }: { source: Source }) {
           <IconButton
             label="Delete source"
             onClick={async () => {
-              if (!confirm(`Delete "${source.title}"?`)) return
+              const ok = await dialog.confirm({
+                title: `Delete "${source.title}"?`,
+                confirmLabel: 'Delete',
+                danger: true,
+              })
+              if (!ok) return
               await deleteSource(source)
             }}
           >
