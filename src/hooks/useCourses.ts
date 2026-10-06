@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { createCourse, deleteCourse, listCourses, renameCourse } from '../lib/db'
-import type { Course } from '../lib/types'
+import { createCourse, deleteCourse, listCourses, renameCourse } from '@/lib/db'
+import type { Course } from '@/lib/types'
 
 export const COURSE_COLORS: Record<string, string> = {
   indigo: 'bg-indigo-500',

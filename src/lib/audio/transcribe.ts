@@ -1,7 +1,7 @@
-import { ApiError } from '../api'
-import { authHeader } from '../api'
-import type { Segment } from '../types'
-import type { StoredChunk } from './recorder'
+import { ApiError } from '@/lib/api'
+import { authHeader } from '@/lib/api'
+import type { Segment } from '@/lib/types'
+import type { StoredChunk } from '@/lib/audio/recorder'
 
 interface Ctx {
   courseName?: string

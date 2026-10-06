@@ -7,14 +7,14 @@ import {
   listStoredRecordings,
   deleteStoredRecording,
   type RecordingMeta,
-} from '../lib/audio/recorder'
-import { processRecording } from '../lib/pipeline'
-import { getMicPrefs } from '../lib/micPrefs'
-import { defaultLectureTitle, fmtDuration, relativeTime } from '../lib/format'
-import { getLecture } from '../lib/db'
-import { useCourses } from '../hooks/useCourses'
-import CourseSelect from '../components/CourseSelect'
-import { Button, cx, useToast } from '../components/ui'
+} from '@/lib/audio/recorder'
+import { processRecording } from '@/lib/pipeline'
+import { getMicPrefs } from '@/lib/micPrefs'
+import { defaultLectureTitle, fmtDuration, relativeTime } from '@/lib/format'
+import { getLecture } from '@/lib/db'
+import { useCourses } from '@/hooks/useCourses'
+import CourseSelect from '@/components/CourseSelect'
+import { Button, cx, useToast } from '@/components/ui'
 
 type Phase = 'setup' | 'recording' | 'saving'
 const BARS = 56

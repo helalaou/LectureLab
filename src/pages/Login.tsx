@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Mic, Upload, Layers, Headphones, Sparkles, Brain } from 'lucide-react'
-import { useAuth } from '../hooks/useAuth'
-import { Logo } from '../components/Layout'
-import { Button } from '../components/ui'
+import { useAuth } from '@/hooks/useAuth'
+import { Logo } from '@/components/Layout'
+import { Button } from '@/components/ui'
 
 const FEATURES = [
   {

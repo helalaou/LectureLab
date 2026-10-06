@@ -2,7 +2,7 @@
  * Audio files live in Netlify Blobs, behind the /api/audio function.
  * Uploads are split into 3 MB parts; playback uses short-lived signed URLs.
  */
-import { authHeader } from './api'
+import { authHeader } from '@/lib/api'
 
 const PART_SIZE = 3 * 1024 * 1024
 export const MAX_STORED_AUDIO = 100 * 1024 * 1024

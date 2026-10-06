@@ -1,4 +1,4 @@
-import type { MicPrefs } from './audio/recorder'
+import type { MicPrefs } from '@/lib/audio/recorder'
 
 const KEY = 'll-mic'
 

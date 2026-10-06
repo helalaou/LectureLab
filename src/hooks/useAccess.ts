@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiJson } from '../lib/api'
-import type { Access } from '../lib/types'
+import { apiJson } from '@/lib/api'
+import type { Access } from '@/lib/types'
 
 export function useAccess() {
   const [access, setAccess] = useState<Access | null>(null)

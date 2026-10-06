@@ -1,7 +1,7 @@
 import { Lightbulb, Star, GraduationCap, CalendarCheck, HelpCircle } from 'lucide-react'
 import type { ReactNode } from 'react'
-import type { SummaryContent } from '../../lib/types'
-import { InlineMd } from '../Markdown'
+import type { SummaryContent } from '@/lib/types'
+import { InlineMd } from '@/components/Markdown'
 
 function Block({ icon, title, items, tone }: { icon: ReactNode; title: string; items: string[]; tone: string }) {
   if (!items.length) return null

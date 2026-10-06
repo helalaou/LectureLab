@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import { Maximize2, Download } from 'lucide-react'
-import type { Visual } from '../../lib/types'
-import Mermaid from '../Mermaid'
-import Markdown from '../Markdown'
-import { IconButton, Modal, Badge } from '../ui'
-import { download } from '../../lib/export'
-import { slug } from '../../lib/format'
+import type { Visual } from '@/lib/types'
+import Mermaid from '@/components/Mermaid'
+import Markdown from '@/components/Markdown'
+import { IconButton, Modal, Badge } from '@/components/ui'
+import { download } from '@/lib/export'
+import { slug } from '@/lib/format'
 
 const KIND_LABEL: Record<Visual['kind'], string> = {
   mindmap: 'Mind map',

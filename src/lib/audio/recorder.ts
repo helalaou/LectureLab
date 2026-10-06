@@ -1,6 +1,6 @@
-import { idb } from './idb'
-import { CHUNK_SECONDS, findCut, Resampler, TARGET_RATE } from './chunker'
-import { encodeWav } from './wav'
+import { idb } from '@/lib/audio/idb'
+import { CHUNK_SECONDS, findCut, Resampler, TARGET_RATE } from '@/lib/audio/chunker'
+import { encodeWav } from '@/lib/audio/wav'
 
 export interface MicPrefs {
   deviceId?: string

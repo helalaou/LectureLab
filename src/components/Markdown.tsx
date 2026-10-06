@@ -4,7 +4,7 @@ import remarkMath from 'remark-math'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import rehypeKatex from 'rehype-katex'
-import { cx } from './ui'
+import { cx } from '@/components/ui'
 
 // Allow <details>/<summary> (used for hidden answers) and the classes math rendering needs.
 const schema = {

@@ -1,6 +1,6 @@
-import { splitAll, TARGET_RATE } from './chunker'
-import { encodeWav } from './wav'
-import type { StoredChunk } from './recorder'
+import { splitAll, TARGET_RATE } from '@/lib/audio/chunker'
+import { encodeWav } from '@/lib/audio/wav'
+import type { StoredChunk } from '@/lib/audio/recorder'
 
 export const MAX_MEDIA_BYTES = 500 * 1024 * 1024
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import type { Course } from '../lib/types'
-import { Button } from './ui'
+import type { Course } from '@/lib/types'
+import { Button } from '@/components/ui'
 
 /** A course <select> with an inline "new course" field. */
 export default function CourseSelect({
