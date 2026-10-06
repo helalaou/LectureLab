@@ -90,3 +90,36 @@ Users can change models in **Settings → Advanced**. Every AI call is logged in
 
 ---
 
+## Project layout
+
+```
+src/
+  pages/            Home, LecturePage, RecordPage, SettingsPage, Login
+  components/tools/ one view per study tool (Summary, Flashcards, Quiz, Podcast…)
+  lib/audio/        recorder (AudioWorklet + MediaRecorder), chunker, WAV encoder, decoder, transcription
+  lib/pipeline.ts   turns recordings/files/text into `sources` rows
+  lib/genStore.ts   in-flight AI generations (survive tab switches)
+  lib/db.ts         all Firestore reads/writes
+  lib/storage.ts    audio upload/playback via /api/audio
+netlify/
+  functions/        API endpoints
+  lib/prompts.ts    ← all AI prompts and JSON schemas
+  lib/firestore.ts  tiny Firestore REST client (acts as the signed-in user)
+firestore.rules
+```
+
+## Notes & limits
+
+- Uploaded audio larger than 100 MB is transcribed but not stored for playback. Recordings made in the app are compressed (~15 MB per hour), so they're always stored.
+- Firestore documents max out at 1 MB, so extremely long documents (several hundred pages) are trimmed.
+- Scanned PDFs (images only) can't be read yet. OCR is a good first contribution.
+- Transcription runs in ~1-minute pieces with quiet-point splitting. Transcript timestamps are approximate (±a few seconds).
+- Netlify streaming functions can run up to 60 s. Very long lectures on the "detailed" setting may need the "standard" level.
+
+## Contributing
+
+PRs welcome! Ideas: OCR for scanned slides, cross-lecture exam prep, PWA install, sharing decks with classmates, more languages for the UI.
+
+## License
+
+MIT
