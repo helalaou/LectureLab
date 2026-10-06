@@ -1,3 +1,4 @@
+import { MAX_PROMPT_SOURCE_CHARS } from '../../shared/limits.ts'
 import { HttpError, type User } from './server.ts'
 
 const KIND_LABEL: Record<string, string> = {
@@ -6,9 +7,6 @@ const KIND_LABEL: Record<string, string> = {
   document: 'Document',
   text: 'Typed / pasted notes',
 }
-
-/** Roughly 150k tokens. Plenty for several lectures, and keeps costs sane. */
-const MAX_CHARS = 600_000
 
 interface Segment {
   start: number
@@ -71,8 +69,8 @@ export async function loadLecture(user: User, lectureId: string, opts: { timesta
 
   let sourcesText = blocks.join('\n\n')
   let truncated = false
-  if (sourcesText.length > MAX_CHARS) {
-    sourcesText = sourcesText.slice(0, MAX_CHARS) + '\n\n[…material truncated because it was very long…]'
+  if (sourcesText.length > MAX_PROMPT_SOURCE_CHARS) {
+    sourcesText = sourcesText.slice(0, MAX_PROMPT_SOURCE_CHARS) + '\n\n[…material truncated because it was very long…]'
     truncated = true
   }
 

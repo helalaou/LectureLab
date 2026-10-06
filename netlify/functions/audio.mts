@@ -1,4 +1,5 @@
 import type { Config } from '@netlify/functions'
+import { AUDIO_URL_TTL_SECONDS } from '../../shared/limits.ts'
 import { errorResponse, HttpError, json, requireUser } from '../lib/server.ts'
 import { deleteAudio, PART_SIZE, sign, store, verifySignature, type AudioMeta } from '../lib/audio.ts'
 
@@ -26,7 +27,7 @@ export default async (req: Request) => {
       return json({ ok: true })
     }
     if (req.method === 'POST') {
-      const exp = Math.floor(Date.now() / 1000) + 6 * 3600
+      const exp = Math.floor(Date.now() / 1000) + AUDIO_URL_TTL_SECONDS
       return json({ url: `/api/audio?key=${encodeURIComponent(key)}&exp=${exp}&sig=${sign(key, exp)}` })
     }
     // PUT one part

@@ -5,7 +5,8 @@
 import { useSyncExternalStore } from 'react'
 import { auth } from '@/lib/firebase'
 import * as db from '@/lib/db'
-import { uploadAudio, MAX_STORED_AUDIO } from '@/lib/storage'
+import { MAX_STORED_AUDIO_BYTES } from '@shared/limits'
+import { uploadAudio } from '@/lib/storage'
 import { deleteStoredRecording, loadStoredRecording, type RecordingMeta } from '@/lib/audio/recorder'
 import { fileToChunks } from '@/lib/audio/decode'
 import { transcribeChunks } from '@/lib/audio/transcribe'
@@ -100,7 +101,7 @@ async function uploadSourceAudio(
   mime: string,
   onProgress?: (p: number) => void,
 ): Promise<string | null> {
-  if (blob.size > MAX_STORED_AUDIO || blob.size === 0) return null
+  if (blob.size > MAX_STORED_AUDIO_BYTES || blob.size === 0) return null
   const key = `${auth.currentUser!.uid}/${lectureId}/${sourceId}.${extFor(mime)}`
   try {
     await uploadAudio(key, blob.type ? blob : new Blob([blob], { type: mime }), onProgress)

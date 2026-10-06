@@ -19,7 +19,7 @@ export default tseslint.config(
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['netlify/**/*.{ts,mts}', '*.config.{js,ts}'],
+    files: ['netlify/**/*.{ts,mts}', 'shared/**/*.ts', '*.config.{js,ts}'],
     languageOptions: { ecmaVersion: 2022, globals: globals.node },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],

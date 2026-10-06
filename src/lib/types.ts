@@ -118,27 +118,7 @@ export interface ChatMessage {
   created_at: string
 }
 
-export interface UserSettings {
-  theme: 'light' | 'dark' | 'system'
-  transcription_model: string
-  text_model: string
-  tts_model: string
-  host_a_voice: string
-  host_b_voice: string
-  detail_level: 'concise' | 'standard' | 'detailed'
-  output_language: string
-}
-
-export const DEFAULT_SETTINGS: UserSettings = {
-  theme: 'system',
-  transcription_model: 'gpt-transcribe',
-  text_model: 'gpt-6-luna',
-  tts_model: 'gpt-4o-mini-tts',
-  host_a_voice: 'marin',
-  host_b_voice: 'cedar',
-  detail_level: 'standard',
-  output_language: 'English',
-}
+export { DEFAULT_SETTINGS, type UserSettings } from '@shared/settings'
 
 export interface Access {
   hasOwnKey: boolean

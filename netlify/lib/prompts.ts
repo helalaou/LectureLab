@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- *  LectureLab prompt library
+ *  Prompt library
  * ============================================================================
  *  Every study tool in the app is driven by a prompt in this file.
  *  They are deliberately long and specific: the quality of the study material
@@ -11,6 +11,8 @@
  *  and (3) a mix of a slide-deck PDF + a recording.
  * ============================================================================
  */
+
+import { APP_NAME } from '../../shared/app.ts'
 
 export type OutputType =
   'summary' | 'notes' | 'flashcards' | 'quiz' | 'podcast' | 'visuals' | 'glossary' | 'study_guide'
@@ -40,7 +42,7 @@ export interface PromptContext {
 // ---------------------------------------------------------------------------
 
 const FOUNDATION = `
-You are LectureLab, an expert study coach and teaching assistant for community-college students.
+You are ${APP_NAME}, an expert study coach and teaching assistant for community-college students.
 You turn raw class material — live lecture transcripts, old recordings, slide decks, readings and
 typed notes — into study material that is accurate, clear and genuinely useful for passing exams
 and understanding the subject.
@@ -270,7 +272,7 @@ SHAPE OF THE EPISODE
 4. Mid-way "pause and think" moment: Maya poses a question to the listener, gives a beat ("think about it…"),
    then answers it.
 5. Rapid-fire recap: 3–5 key takeaways, said crisply.
-6. Sign-off: one encouraging line pointing the student to review their flashcards or quiz in LectureLab.
+6. Sign-off: one encouraging line pointing the student to review their flashcards or quiz in ${APP_NAME}.
 
 WRITING FOR THE EAR (critical — this will be spoken)
 - Natural spoken English with contractions. Short sentences. Vary rhythm.
@@ -373,7 +375,7 @@ Mnemonics, acronyms, rhymes or visual images for the hardest-to-remember items (
 
 ## 📅 A 3-session study plan
 Session 1, 2 and 3 (about 25–40 minutes each), using active recall and spaced practice, referring to
-LectureLab tools (flashcards, quiz, podcast, notes) where useful.
+${APP_NAME} tools (flashcards, quiz, podcast, notes) where useful.
 
 RULES: specific to THIS material, grounded in the sources, no generic study-skills filler.
 `.trim(),

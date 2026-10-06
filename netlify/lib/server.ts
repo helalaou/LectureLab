@@ -7,7 +7,9 @@
  */
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto'
-import { Firestore, projectId } from './firestore.ts'
+import { DEFAULT_SETTINGS, type UserSettings } from '../../shared/settings.ts'
+import { ConfigError, env } from './env.ts'
+import { Firestore } from './firestore.ts'
 
 export class HttpError extends Error {
   status: number
@@ -17,12 +19,6 @@ export class HttpError extends Error {
     this.status = status
     this.code = code
   }
-}
-
-function env(name: string): string {
-  const v = process.env[name]
-  if (!v) throw new HttpError(500, `Server is missing the ${name} environment variable. See README → Setup.`)
-  return v
 }
 
 export interface User {
@@ -41,7 +37,7 @@ export async function requireUser(req: Request): Promise<User> {
   const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
   if (!token) throw new HttpError(401, 'You need to sign in first.')
   try {
-    const pid = projectId()
+    const pid = env.firebaseProjectId
     const { payload } = await jwtVerify(token, JWKS, { issuer: `https://securetoken.google.com/${pid}`, audience: pid })
     return {
       uid: String(payload.sub),
@@ -59,7 +55,7 @@ export async function requireUser(req: Request): Promise<User> {
 
 function encryptionKey(): Buffer {
   // Derive a fixed 32-byte key from whatever secret string the owner configured.
-  return createHash('sha256').update(env('KEY_ENCRYPTION_SECRET')).digest()
+  return createHash('sha256').update(env.encryptionSecret).digest()
 }
 
 export function encryptSecret(plain: string): string {
@@ -87,17 +83,9 @@ export interface AccessInfo {
   canUseAI: boolean
 }
 
-/** Emails allowed to use the owner's shared key: ALLOWED_EMAILS="a@x.com, b@y.com" */
-function allowlist(): string[] {
-  return (process.env.ALLOWED_EMAILS || '')
-    .split(/[\s,;]+/)
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean)
-}
-
 export async function getAccess(user: User): Promise<AccessInfo & { key: string | null; shared: boolean }> {
   const keyDoc = await user.db.get<{ encrypted: string; last4: string }>(`users/${user.uid}/private/openai`)
-  const allowlisted = !!user.email && user.emailVerified && allowlist().includes(user.email)
+  const allowlisted = !!user.email && user.emailVerified && env.allowedEmails.includes(user.email)
   let key: string | null = null
   let shared = false
   if (keyDoc?.encrypted) {
@@ -107,8 +95,9 @@ export async function getAccess(user: User): Promise<AccessInfo & { key: string 
       key = null
     }
   }
-  if (!key && allowlisted && process.env.OPENAI_API_KEY) {
-    key = process.env.OPENAI_API_KEY
+  const sharedKey = env.openaiApiKey
+  if (!key && allowlisted && sharedKey) {
+    key = sharedKey
     shared = true
   }
   return {
@@ -135,25 +124,7 @@ export async function requireOpenAIKey(user: User): Promise<{ key: string; share
 
 // ---------------------------------------------------------------- settings
 
-export interface UserSettings {
-  transcription_model: string
-  text_model: string
-  tts_model: string
-  host_a_voice: string
-  host_b_voice: string
-  detail_level: 'concise' | 'standard' | 'detailed'
-  output_language: string
-}
-
-export const DEFAULT_SETTINGS: UserSettings = {
-  transcription_model: 'gpt-transcribe',
-  text_model: 'gpt-6-luna',
-  tts_model: 'gpt-4o-mini-tts',
-  host_a_voice: 'marin',
-  host_b_voice: 'cedar',
-  detail_level: 'standard',
-  output_language: 'English',
-}
+export type { UserSettings }
 
 export async function getSettings(user: User): Promise<UserSettings> {
   const doc = await user.db.get<{ settings?: Partial<UserSettings> }>(`users/${user.uid}`)
@@ -187,6 +158,7 @@ export function json(data: unknown, status = 200): Response {
 }
 
 export function errorResponse(err: unknown): Response {
+  if (err instanceof ConfigError) return json({ error: err.message, code: 'config' }, 500)
   if (err instanceof HttpError) return json({ error: err.message, code: err.code }, err.status)
   console.error(err)
   const message = err instanceof Error ? err.message : 'Unexpected server error'

@@ -5,8 +5,10 @@
  */
 import { getStore } from '@netlify/blobs'
 import { createHmac, timingSafeEqual } from 'node:crypto'
+import { AUDIO_PART_BYTES } from '../../shared/limits.ts'
+import { env } from './env.ts'
 
-export const PART_SIZE = 3 * 1024 * 1024
+export const PART_SIZE = AUDIO_PART_BYTES
 
 export interface AudioMeta {
   size: number
@@ -24,14 +26,8 @@ export async function deleteAudio(key: string) {
   await Promise.all([...Array.from({ length: n }, (_, i) => s.delete(`${key}#${i}`)), s.delete(`${key}#meta`)])
 }
 
-function secret(): string {
-  const v = process.env.KEY_ENCRYPTION_SECRET
-  if (!v) throw new Error('Server is missing KEY_ENCRYPTION_SECRET')
-  return v
-}
-
 export function sign(key: string, exp: number): string {
-  return createHmac('sha256', secret()).update(`${key}|${exp}`).digest('base64url')
+  return createHmac('sha256', env.encryptionSecret).update(`${key}|${exp}`).digest('base64url')
 }
 
 export function verifySignature(key: string, exp: number, sig: string): boolean {

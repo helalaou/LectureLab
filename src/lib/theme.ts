@@ -1,6 +1,6 @@
-import type { UserSettings } from '@/lib/types'
+import type { Theme } from '@shared/settings'
 
-export type Theme = UserSettings['theme']
+export type { Theme }
 
 const STORAGE_KEY = 'll-theme'
 
