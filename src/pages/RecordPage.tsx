@@ -236,14 +236,14 @@ export default function RecordPage() {
   // ------------------------------------------------------------------ setup UI
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Record a class</h1>
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Record a lecture</h1>
       <p className="muted mt-1">
         {existingTitle ? (
           <>
             The recording will be added to <b className="text-zinc-800 dark:text-zinc-200">{existingTitle}</b>.
           </>
         ) : (
-          'Start recording when class begins. You can pause during breaks.'
+          'Start recording when the session begins. You can pause during breaks.'
         )}
       </p>
 

@@ -89,7 +89,7 @@ export default function Home() {
             icon={<Mic className="size-4" />}
             onClick={() => navigate('/record')}
           >
-            Record class
+            Record lecture
           </Button>
         </div>
       </div>
@@ -160,7 +160,7 @@ export default function Home() {
             action={
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Button icon={<Mic className="size-4" />} onClick={() => navigate('/record')}>
-                  Record a class
+                  Record a lecture
                 </Button>
                 <Button variant="secondary" icon={<Plus className="size-4" />} onClick={() => setNewOpen(true)}>
                   Upload files or notes
