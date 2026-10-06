@@ -13,14 +13,7 @@
  */
 
 export type OutputType =
-  | 'summary'
-  | 'notes'
-  | 'flashcards'
-  | 'quiz'
-  | 'podcast'
-  | 'visuals'
-  | 'glossary'
-  | 'study_guide'
+  'summary' | 'notes' | 'flashcards' | 'quiz' | 'podcast' | 'visuals' | 'glossary' | 'study_guide'
 
 export interface GenerateOptions {
   /** Free-text extra instructions from the student, e.g. "focus on chapter 3". */
@@ -129,7 +122,8 @@ function sourcesBlock(ctx: PromptContext): string {
 
 const TASKS: Record<OutputType, (ctx: PromptContext) => string> = {
   // ------------------------------------------------------------------ SUMMARY
-  summary: () => `
+  summary: () =>
+    `
 TASK: Write a lecture SUMMARY — the thing a student reads in 3 minutes before class, or when they
 missed the lecture and need to know what happened.
 
@@ -153,7 +147,8 @@ Fill every field of the JSON schema:
 `.trim(),
 
   // ------------------------------------------------------------------ NOTES
-  notes: () => `
+  notes: () =>
+    `
 TASK: Write complete, beautifully organised STUDY NOTES in Markdown — the notes the best student in
 the class would have taken, cleaned up and made easy to review.
 
@@ -192,7 +187,8 @@ RULES
 `.trim(),
 
   // ------------------------------------------------------------------ FLASHCARDS
-  flashcards: (ctx) => `
+  flashcards: (ctx) =>
+    `
 TASK: Create high-quality FLASHCARDS for spaced-repetition review.
 ${ctx.options.count ? `Create exactly ${ctx.options.count} cards.` : 'Choose the number of cards yourself: roughly 1 card per distinct testable fact or idea — usually 12–40 depending on how much material there is. Quality over quantity.'}
 
@@ -218,7 +214,8 @@ PRINCIPLES OF GOOD CARDS (follow strictly)
 `.trim(),
 
   // ------------------------------------------------------------------ QUIZ
-  quiz: (ctx) => `
+  quiz: (ctx) =>
+    `
 TASK: Write a PRACTICE QUIZ that feels like a real exam for this course and teaches through its explanations.
 ${ctx.options.count ? `Write exactly ${ctx.options.count} questions.` : 'Write 10–15 questions depending on how much material there is.'}
 Difficulty: ${ctx.options.difficulty === 'easy' ? 'mostly easy recall and understanding questions' : ctx.options.difficulty === 'hard' ? 'mostly challenging application and analysis questions, including multi-step reasoning' : 'a mix — about 30% recall, 40% understanding, 30% application'}.
@@ -246,7 +243,12 @@ FOR EVERY QUESTION
   // ------------------------------------------------------------------ PODCAST
   podcast: (ctx) => {
     const len = ctx.options.length || 'standard'
-    const words = len === 'short' ? '600–800 words (about 4–5 minutes)' : len === 'long' ? '2,000–2,400 words (about 14–16 minutes)' : '1,200–1,500 words (about 8–10 minutes)'
+    const words =
+      len === 'short'
+        ? '600–800 words (about 4–5 minutes)'
+        : len === 'long'
+          ? '2,000–2,400 words (about 14–16 minutes)'
+          : '1,200–1,500 words (about 8–10 minutes)'
     return `
 TASK: Write the script for a two-host STUDY PODCAST episode that teaches this lecture, so the student
 can review while commuting, working out or doing chores. It will be read aloud by text-to-speech.
@@ -283,7 +285,8 @@ Also provide "title" (catchy, specific, max 10 words) and "description" (2 sente
   },
 
   // ------------------------------------------------------------------ VISUALS
-  visuals: () => `
+  visuals: () =>
+    `
 TASK: Create a set of 3–6 VISUAL STUDY AIDS that make the structure of this lecture easy to see and remember.
 Pick the formats that genuinely fit the material — don't force a timeline onto a lecture with no sequence.
 
@@ -320,7 +323,8 @@ MERMAID RULES — the diagram is rendered automatically and must parse on the fi
 `.trim(),
 
   // ------------------------------------------------------------------ GLOSSARY
-  glossary: () => `
+  glossary: () =>
+    `
 TASK: Build a GLOSSARY of every important term, name, acronym and formula in the material.
 
 For each entry:
@@ -336,7 +340,8 @@ on the material. Skip trivial everyday words.
 `.trim(),
 
   // ------------------------------------------------------------------ STUDY GUIDE
-  study_guide: () => `
+  study_guide: () =>
+    `
 TASK: Write an EXAM-PREP STUDY GUIDE in Markdown that tells the student exactly what to master
 and how to practise it. Think like a tutor preparing a student for the test on this material.
 
@@ -498,7 +503,11 @@ ${ctx.sourcesText}
 //  Transcription prompt (steers spelling of technical terms)
 // ---------------------------------------------------------------------------
 
-export function transcriptionPrompt(opts: { courseName?: string; lectureTitle?: string; previousText?: string }): string {
+export function transcriptionPrompt(opts: {
+  courseName?: string
+  lectureTitle?: string
+  previousText?: string
+}): string {
   const parts = [
     'This is a recording of a college class lecture. Transcribe the speech accurately with proper punctuation and capitalisation, using correct spelling for technical and academic terms.',
   ]

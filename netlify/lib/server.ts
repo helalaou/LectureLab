@@ -33,7 +33,9 @@ export interface User {
   db: Firestore
 }
 
-const JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'))
+const JWKS = createRemoteJWKSet(
+  new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'),
+)
 
 export async function requireUser(req: Request): Promise<User> {
   const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
@@ -162,7 +164,14 @@ export async function getSettings(user: User): Promise<UserSettings> {
 
 export async function logUsage(user: User, kind: string, amount: number, shared: boolean, model?: string) {
   try {
-    await user.db.add(`users/${user.uid}/usage`, { kind, amount, sharedKey: shared, model: model || null, email: user.email, created_at: new Date().toISOString() })
+    await user.db.add(`users/${user.uid}/usage`, {
+      kind,
+      amount,
+      sharedKey: shared,
+      model: model || null,
+      email: user.email,
+      created_at: new Date().toISOString(),
+    })
   } catch {
     /* never block the user on logging */
   }
@@ -193,9 +202,15 @@ export async function openAIError(res: Response): Promise<HttpError> {
   } catch {
     /* ignore */
   }
-  if (res.status === 401) return new HttpError(401, 'The OpenAI API key was rejected. Check the key in Settings.', 'bad_key')
+  if (res.status === 401)
+    return new HttpError(401, 'The OpenAI API key was rejected. Check the key in Settings.', 'bad_key')
   if (res.status === 429)
-    return new HttpError(429, 'OpenAI rate limit or quota reached. Wait a minute, or check billing on the OpenAI account. ' + detail, 'rate_limited')
-  if (res.status === 404) return new HttpError(400, `The selected model is not available for this key. ${detail}`, 'bad_model')
+    return new HttpError(
+      429,
+      'OpenAI rate limit or quota reached. Wait a minute, or check billing on the OpenAI account. ' + detail,
+      'rate_limited',
+    )
+  if (res.status === 404)
+    return new HttpError(400, `The selected model is not available for this key. ${detail}`, 'bad_model')
   return new HttpError(502, `OpenAI error (${res.status}): ${detail || res.statusText}`)
 }

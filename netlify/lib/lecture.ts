@@ -46,12 +46,18 @@ export async function loadLecture(user: User, lectureId: string, opts: { timesta
 
   const [sources, course] = await Promise.all([
     user.db.list<SourceDoc>(`${base}/sources`, { orderBy: 'created_at' }),
-    lecture.course_id ? user.db.get<{ name: string }>(`users/${user.uid}/courses/${lecture.course_id}`) : Promise.resolve(null),
+    lecture.course_id
+      ? user.db.get<{ name: string }>(`users/${user.uid}/courses/${lecture.course_id}`)
+      : Promise.resolve(null),
   ])
 
   const ready = sources.filter((s) => s.status === 'ready' && (s.content || '').trim().length > 0)
   if (!ready.length) {
-    throw new HttpError(400, 'This lecture has no transcribed or readable sources yet. Add a recording, a file or some notes first.', 'no_sources')
+    throw new HttpError(
+      400,
+      'This lecture has no transcribed or readable sources yet. Add a recording, a file or some notes first.',
+      'no_sources',
+    )
   }
 
   const blocks = ready.map((s, i) => {

@@ -10,7 +10,15 @@ import { OUTPUT_META } from './meta'
 import { ApiError } from '../../lib/api'
 import { useNavigate } from 'react-router-dom'
 
-function OptionsForm({ type, value, onChange }: { type: OutputType; value: GenOptions; onChange: (v: GenOptions) => void }) {
+function OptionsForm({
+  type,
+  value,
+  onChange,
+}: {
+  type: OutputType
+  value: GenOptions
+  onChange: (v: GenOptions) => void
+}) {
   return (
     <div className="space-y-4 text-left">
       {type === 'flashcards' && (
@@ -75,7 +83,11 @@ function OptionsForm({ type, value, onChange }: { type: OutputType; value: GenOp
         <label className="label">Anything to focus on? (optional)</label>
         <input
           className="input"
-          placeholder={type === 'quiz' ? 'e.g. "only chapter 4" or "more math problems"' : 'e.g. "focus on the formulas" or "explain it simpler"'}
+          placeholder={
+            type === 'quiz'
+              ? 'e.g. "only chapter 4" or "more math problems"'
+              : 'e.g. "focus on the formulas" or "explain it simpler"'
+          }
           value={value.focus ?? ''}
           onChange={(e) => onChange({ ...value, focus: e.target.value })}
         />
@@ -137,7 +149,7 @@ export default function ToolPanel<T>({
     return (
       <div className="card p-5 sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">
+          <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 flex size-10 items-center justify-center rounded-xl">
             <Wand2 className="size-5 animate-pulse" />
           </div>
           <div className="flex-1">
@@ -162,7 +174,7 @@ export default function ToolPanel<T>({
   if (!output) {
     return (
       <div className="card px-5 py-10 text-center sm:px-10">
-        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">
+        <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 mx-auto flex size-14 items-center justify-center rounded-2xl">
           <Icon className="size-7" />
         </div>
         <h3 className="mt-4 text-lg font-semibold">{meta.label}</h3>
@@ -170,12 +182,19 @@ export default function ToolPanel<T>({
         {canGenerate ? (
           <div className="mx-auto mt-6 max-w-sm">
             <OptionsForm type={type} value={options} onChange={setOptions} />
-            <Button className="mt-5 w-full" size="lg" icon={<Sparkles className="size-5" />} onClick={() => run(type, options)}>
+            <Button
+              className="mt-5 w-full"
+              size="lg"
+              icon={<Sparkles className="size-5" />}
+              onClick={() => run(type, options)}
+            >
               Create {meta.label.toLowerCase()}
             </Button>
           </div>
         ) : (
-          <p className="mt-6 text-sm font-medium text-amber-700 dark:text-amber-400">Add a recording, file or notes in the Sources tab first.</p>
+          <p className="mt-6 text-sm font-medium text-amber-700 dark:text-amber-400">
+            Add a recording, file or notes in the Sources tab first.
+          </p>
         )}
       </div>
     )
@@ -185,11 +204,24 @@ export default function ToolPanel<T>({
     <div>
       <div className="no-print mb-4 flex items-center justify-between gap-2">
         <p className="muted truncate text-xs">
-          Made {new Date(output.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-          {(output.content as { _truncated?: boolean })?._truncated && ' · sources were very long, so only the first part was used'}
+          Made{' '}
+          {new Date(output.created_at).toLocaleString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+          })}
+          {(output.content as { _truncated?: boolean })?._truncated &&
+            ' · sources were very long, so only the first part was used'}
         </p>
         <div className="flex shrink-0 gap-1.5">
-          <Button size="sm" variant="ghost" icon={<RefreshCw className="size-4" />} onClick={() => setRegenOpen(true)} disabled={!canGenerate}>
+          <Button
+            size="sm"
+            variant="ghost"
+            icon={<RefreshCw className="size-4" />}
+            onClick={() => setRegenOpen(true)}
+            disabled={!canGenerate}
+          >
             <span className="hidden sm:inline">Regenerate</span>
           </Button>
           <Menu
@@ -205,7 +237,10 @@ export default function ToolPanel<T>({
                   icon={<Printer className="size-4" />}
                   onClick={() => {
                     close()
-                    printNode(<Markdown>{toMarkdown(type, output.content, lectureTitle)}</Markdown>, `${lectureTitle} – ${meta.label}`)
+                    printNode(
+                      <Markdown>{toMarkdown(type, output.content, lectureTitle)}</Markdown>,
+                      `${lectureTitle} – ${meta.label}`,
+                    )
                   }}
                 >
                   Save as PDF
@@ -229,7 +264,9 @@ export default function ToolPanel<T>({
       {children(output)}
 
       <Modal open={regenOpen} onClose={() => setRegenOpen(false)} title={`Regenerate ${meta.label.toLowerCase()}`}>
-        <p className="muted mb-4 text-sm">This replaces the current version. Use it after adding new sources, or to change the focus.</p>
+        <p className="muted mb-4 text-sm">
+          This replaces the current version. Use it after adding new sources, or to change the focus.
+        </p>
         <OptionsForm type={type} value={options} onChange={setOptions} />
         <Button
           className="mt-5 w-full"

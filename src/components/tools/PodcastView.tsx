@@ -80,7 +80,13 @@ async function makeAudio(output: Output<PodcastData>): Promise<Output<PodcastDat
 
 const SPEEDS = [1, 1.25, 1.5, 1.75, 2]
 
-export default function PodcastView({ output, onChange }: { output: Output<PodcastData>; onChange: (o: Output) => void }) {
+export default function PodcastView({
+  output,
+  onChange,
+}: {
+  output: Output<PodcastData>
+  onChange: (o: Output) => void
+}) {
   const p = output.content
   const job = useAudioJobs()[output.id]
   const toast = useToast()
@@ -125,12 +131,12 @@ export default function PodcastView({ output, onChange }: { output: Output<Podca
   return (
     <div className="space-y-4">
       <div className="card overflow-hidden">
-        <div className="bg-gradient-to-br from-accent-600 to-violet-700 p-5 text-white sm:p-6">
-          <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-accent-100 uppercase">
+        <div className="from-accent-600 bg-gradient-to-br to-violet-700 p-5 text-white sm:p-6">
+          <div className="text-accent-100 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
             <Headphones className="size-4" /> Study podcast · Maya & Theo
           </div>
           <h2 className="mt-2 text-xl font-semibold text-balance">{p.title}</h2>
-          <p className="mt-1 text-sm text-accent-100">{p.description}</p>
+          <p className="text-accent-100 mt-1 text-sm">{p.description}</p>
         </div>
         <div className="p-4 sm:p-5">
           {job !== undefined ? (
@@ -151,7 +157,12 @@ export default function PodcastView({ output, onChange }: { output: Output<Podca
                   <button
                     key={s}
                     onClick={() => setSpeed(s)}
-                    className={cx('rounded-lg px-2.5 py-1 text-sm font-medium', speed === s ? 'bg-accent-600 text-white' : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300')}
+                    className={cx(
+                      'rounded-lg px-2.5 py-1 text-sm font-medium',
+                      speed === s
+                        ? 'bg-accent-600 text-white'
+                        : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300',
+                    )}
                   >
                     {s}×
                   </button>
@@ -198,12 +209,17 @@ export default function PodcastView({ output, onChange }: { output: Output<Podca
               id={`pline-${i}`}
               key={i}
               onClick={() => seekTo(i)}
-              className={cx('flex w-full gap-3 rounded-xl p-2 text-left transition', current === i ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50')}
+              className={cx(
+                'flex w-full gap-3 rounded-xl p-2 text-left transition',
+                current === i ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50',
+              )}
             >
               <span
                 className={cx(
                   'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
-                  s.speaker === 'A' ? 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-200',
+                  s.speaker === 'A'
+                    ? 'bg-accent-100 text-accent-700 dark:bg-accent-900 dark:text-accent-200'
+                    : 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-200',
                 )}
               >
                 {s.speaker === 'A' ? 'M' : 'T'}

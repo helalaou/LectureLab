@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { Mic, Pause, Play, Square, Trash2, Settings2, HardDriveDownload, ShieldCheck, Wifi, Sun } from 'lucide-react'
-import { LectureRecorder, listMicrophones, listStoredRecordings, deleteStoredRecording, type RecordingMeta } from '../lib/audio/recorder'
+import {
+  LectureRecorder,
+  listMicrophones,
+  listStoredRecordings,
+  deleteStoredRecording,
+  type RecordingMeta,
+} from '../lib/audio/recorder'
 import { processRecording } from '../lib/pipeline'
 import { getMicPrefs } from '../lib/micPrefs'
 import { defaultLectureTitle, fmtDuration, relativeTime } from '../lib/format'
@@ -44,7 +50,8 @@ export default function RecordPage() {
     const prefs = getMicPrefs()
     listMicrophones()
       .then((mics) => {
-        const m = mics.find((d) => d.deviceId === prefs.deviceId) || mics.find((d) => d.deviceId === 'default') || mics[0]
+        const m =
+          mics.find((d) => d.deviceId === prefs.deviceId) || mics.find((d) => d.deviceId === 'default') || mics[0]
         if (m?.label) setMicName(m.label.replace(/^Default - /, ''))
       })
       .catch(() => {})
@@ -144,19 +151,36 @@ export default function RecordPage() {
   if (phase !== 'setup') {
     return (
       <div className="mx-auto flex max-w-xl flex-col items-center pt-6 text-center sm:pt-12">
-        <div className={cx('flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium', paused ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300')}>
+        <div
+          className={cx(
+            'flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium',
+            paused
+              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+              : 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300',
+          )}
+        >
           <span className={cx('size-2 rounded-full', paused ? 'bg-amber-500' : 'animate-pulse bg-red-500')} />
           {phase === 'saving' ? 'Saving…' : paused ? 'Paused' : 'Recording'}
         </div>
-        <div className="mt-6 font-mono text-6xl font-semibold tracking-tight tabular-nums sm:text-7xl">{fmtDuration(seconds)}</div>
-        <p className="muted mt-2 truncate text-sm">{existingTitle ? `Adding to “${existingTitle}”` : title || defaultLectureTitle()}</p>
+        <div className="mt-6 font-mono text-6xl font-semibold tracking-tight tabular-nums sm:text-7xl">
+          {fmtDuration(seconds)}
+        </div>
+        <p className="muted mt-2 truncate text-sm">
+          {existingTitle ? `Adding to “${existingTitle}”` : title || defaultLectureTitle()}
+        </p>
 
         <div className="mt-10 flex h-24 w-full items-center justify-center gap-[3px]" aria-hidden>
           {levels.map((l, i) => (
             <span
               key={i}
-              className={cx('w-1 rounded-full transition-[height] duration-100', paused ? 'bg-zinc-300 dark:bg-zinc-700' : 'bg-accent-500')}
-              style={{ height: `${Math.max(4, Math.min(96, Math.sqrt(l) * 110))}px`, opacity: 0.35 + (i / BARS) * 0.65 }}
+              className={cx(
+                'w-1 rounded-full transition-[height] duration-100',
+                paused ? 'bg-zinc-300 dark:bg-zinc-700' : 'bg-accent-500',
+              )}
+              style={{
+                height: `${Math.max(4, Math.min(96, Math.sqrt(l) * 110))}px`,
+                opacity: 0.35 + (i / BARS) * 0.65,
+              }}
             />
           ))}
         </div>
@@ -192,11 +216,15 @@ export default function RecordPage() {
         <div className="card mt-10 w-full p-4 text-left text-sm">
           <div className="flex gap-3">
             <ShieldCheck className="size-5 shrink-0 text-emerald-600" />
-            <p className="muted">Audio is saved on this device every few seconds, so nothing is lost if the tab closes or the battery dies.</p>
+            <p className="muted">
+              Audio is saved on this device every few seconds, so nothing is lost if the tab closes or the battery dies.
+            </p>
           </div>
           <div className="mt-3 flex gap-3">
             <Sun className="size-5 shrink-0 text-amber-500" />
-            <p className="muted">Keep this page open. On phones, the screen is kept awake while you record. Plug in if it's a long class.</p>
+            <p className="muted">
+              Keep this page open. On phones, the screen is kept awake while you record. Plug in if it's a long class.
+            </p>
           </div>
         </div>
       </div>
@@ -207,14 +235,27 @@ export default function RecordPage() {
   return (
     <div className="mx-auto max-w-xl">
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Record a class</h1>
-      <p className="muted mt-1">{existingTitle ? <>The recording will be added to <b className="text-zinc-800 dark:text-zinc-200">{existingTitle}</b>.</> : 'Start recording when class begins. You can pause during breaks.'}</p>
+      <p className="muted mt-1">
+        {existingTitle ? (
+          <>
+            The recording will be added to <b className="text-zinc-800 dark:text-zinc-200">{existingTitle}</b>.
+          </>
+        ) : (
+          'Start recording when class begins. You can pause during breaks.'
+        )}
+      </p>
 
       <div className="card mt-6 space-y-4 p-5">
         {!lectureId && (
           <>
             <div>
               <label className="label">Lecture title (optional)</label>
-              <input className="input" placeholder="The AI can name it for you" value={title} onChange={(e) => setTitle(e.target.value)} />
+              <input
+                className="input"
+                placeholder="The AI can name it for you"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
             <div>
               <label className="label">Course</label>
@@ -224,10 +265,13 @@ export default function RecordPage() {
         )}
         <div className="flex items-center justify-between gap-3 rounded-xl bg-zinc-50 px-3.5 py-3 dark:bg-zinc-800/60">
           <div className="flex min-w-0 items-center gap-2.5">
-            <Mic className="size-4 shrink-0 text-accent-600" />
+            <Mic className="text-accent-600 size-4 shrink-0" />
             <span className="truncate text-sm">{micName}</span>
           </div>
-          <Link to="/settings#microphone" className="flex shrink-0 items-center gap-1 text-sm font-medium text-accent-600 dark:text-accent-400">
+          <Link
+            to="/settings#microphone"
+            className="text-accent-600 dark:text-accent-400 flex shrink-0 items-center gap-1 text-sm font-medium"
+          >
             <Settings2 className="size-4" /> Change
           </Link>
         </div>
@@ -237,7 +281,7 @@ export default function RecordPage() {
         <button
           onClick={start}
           disabled={starting}
-          className="group flex size-28 items-center justify-center rounded-full bg-accent-600 text-white shadow-xl shadow-accent-600/30 transition hover:scale-[1.03] hover:bg-accent-700 active:scale-95 disabled:opacity-60"
+          className="group bg-accent-600 shadow-accent-600/30 hover:bg-accent-700 flex size-28 items-center justify-center rounded-full text-white shadow-xl transition hover:scale-[1.03] active:scale-95 disabled:opacity-60"
           aria-label="Start recording"
         >
           <Mic className="size-11" />
@@ -253,7 +297,9 @@ export default function RecordPage() {
           <h2 className="flex items-center gap-2 font-semibold">
             <HardDriveDownload className="size-4" /> Saved on this device
           </h2>
-          <p className="muted mt-1 text-sm">These recordings were not finished (closed tab, no connection, or an error). Process them now.</p>
+          <p className="muted mt-1 text-sm">
+            These recordings were not finished (closed tab, no connection, or an error). Process them now.
+          </p>
           <ul className="mt-3 space-y-2">
             {stored.map((r) => (
               <li key={r.id} className="card flex items-center gap-3 p-3.5">

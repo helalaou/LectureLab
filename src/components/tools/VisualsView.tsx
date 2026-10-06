@@ -19,7 +19,11 @@ const KIND_LABEL: Record<Visual['kind'], string> = {
 function VisualCard({ v }: { v: Visual }) {
   const [full, setFull] = useState(false)
   const svgRef = useRef<string | null>(null)
-  const body = v.mermaid ? <Mermaid code={v.mermaid} onSvg={(s) => (svgRef.current = s)} /> : <Markdown>{v.markdown}</Markdown>
+  const body = v.mermaid ? (
+    <Mermaid code={v.mermaid} onSvg={(s) => (svgRef.current = s)} />
+  ) : (
+    <Markdown>{v.markdown}</Markdown>
+  )
   return (
     <div className="card overflow-hidden">
       <div className="flex items-start justify-between gap-3 p-4 pb-0">
@@ -30,7 +34,10 @@ function VisualCard({ v }: { v: Visual }) {
         </div>
         <div className="no-print flex shrink-0">
           {v.mermaid && (
-            <IconButton label="Download image" onClick={() => svgRef.current && download(`${slug(v.title)}.svg`, svgRef.current, 'image/svg+xml')}>
+            <IconButton
+              label="Download image"
+              onClick={() => svgRef.current && download(`${slug(v.title)}.svg`, svgRef.current, 'image/svg+xml')}
+            >
               <Download className="size-4" />
             </IconButton>
           )}

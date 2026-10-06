@@ -11,6 +11,8 @@ const config = {
 
 export const firebaseConfigured = Boolean(config.apiKey && config.projectId && config.authDomain)
 
-export const app = initializeApp(firebaseConfigured ? config : { apiKey: 'x', projectId: 'demo-lecturelab', authDomain: 'localhost', appId: 'x' })
+export const app = initializeApp(
+  firebaseConfigured ? config : { apiKey: 'x', projectId: 'demo-lecturelab', authDomain: 'localhost', appId: 'x' },
+)
 export const auth = getAuth(app)
 export const db = initializeFirestore(app, { ignoreUndefinedProperties: true })

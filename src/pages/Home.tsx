@@ -1,6 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Search, Mic, FileText, AudioLines, Type, ChevronRight, HardDriveDownload, BookOpen, Pencil, Trash2 } from 'lucide-react'
+import {
+  Plus,
+  Search,
+  Mic,
+  FileText,
+  AudioLines,
+  Type,
+  ChevronRight,
+  HardDriveDownload,
+  BookOpen,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
 import { listLectures } from '../lib/db'
 import { createLecture } from '../lib/pipeline'
 import { listStoredRecordings, type RecordingMeta } from '../lib/audio/recorder'
@@ -45,7 +57,12 @@ export default function Home() {
     return (lectures || []).filter(
       (l) =>
         (courseFilter === 'all' || (courseFilter === 'none' ? !l.course_id : l.course_id === courseFilter)) &&
-        (!q || l.title.toLowerCase().includes(q) || courses.find((c) => c.id === l.course_id)?.name.toLowerCase().includes(q)),
+        (!q ||
+          l.title.toLowerCase().includes(q) ||
+          courses
+            .find((c) => c.id === l.course_id)
+            ?.name.toLowerCase()
+            .includes(q)),
     )
   }, [lectures, query, courseFilter, courses])
 
@@ -64,17 +81,25 @@ export default function Home() {
           <Button variant="secondary" icon={<Plus className="size-4" />} onClick={() => setNewOpen(true)}>
             New lecture
           </Button>
-          <Button className="hidden sm:inline-flex" icon={<Mic className="size-4" />} onClick={() => navigate('/record')}>
+          <Button
+            className="hidden sm:inline-flex"
+            icon={<Mic className="size-4" />}
+            onClick={() => navigate('/record')}
+          >
             Record class
           </Button>
         </div>
       </div>
 
       {pending.length > 0 && (
-        <Link to="/record" className="mt-5 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+        <Link
+          to="/record"
+          className="mt-5 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+        >
           <HardDriveDownload className="size-5 shrink-0" />
           <div className="flex-1 text-sm">
-            <b>{pending.length === 1 ? '1 recording' : `${pending.length} recordings`} saved on this device</b> haven't been processed yet. Tap to finish them.
+            <b>{pending.length === 1 ? '1 recording' : `${pending.length} recordings`} saved on this device</b> haven't
+            been processed yet. Tap to finish them.
           </div>
           <ChevronRight className="size-5" />
         </Link>
@@ -84,7 +109,12 @@ export default function Home() {
         <div className="mt-6 space-y-3">
           <div className="relative">
             <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-zinc-400" />
-            <input className="input pl-10" placeholder="Search lectures" value={query} onChange={(e) => setQuery(e.target.value)} />
+            <input
+              className="input pl-10"
+              placeholder="Search lectures"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
           <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             {[{ id: 'all', name: 'All' }, ...courses, { id: 'none', name: 'No course' }].map((c) => (
@@ -98,11 +128,21 @@ export default function Home() {
                     : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300',
                 )}
               >
-                {'color' in c && <span className={cx('size-2 rounded-full', COURSE_COLORS[(c as { color: string }).color] || 'bg-zinc-400')} />}
+                {'color' in c && (
+                  <span
+                    className={cx(
+                      'size-2 rounded-full',
+                      COURSE_COLORS[(c as { color: string }).color] || 'bg-zinc-400',
+                    )}
+                  />
+                )}
                 {c.name}
               </button>
             ))}
-            <button onClick={() => setManageOpen(true)} className="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-accent-600 dark:text-accent-400">
+            <button
+              onClick={() => setManageOpen(true)}
+              className="text-accent-600 dark:text-accent-400 shrink-0 rounded-full px-3 py-1.5 text-sm font-medium"
+            >
               Manage courses
             </button>
           </div>
@@ -125,7 +165,8 @@ export default function Home() {
               </div>
             }
           >
-            Record your next class, or upload an old recording, slides or notes. LectureLab turns them into notes, flashcards, quizzes and more.
+            Record your next class, or upload an old recording, slides or notes. LectureLab turns them into notes,
+            flashcards, quizzes and more.
           </Empty>
         </div>
       ) : filtered.length === 0 ? (
@@ -138,7 +179,10 @@ export default function Home() {
             const kinds = (l.source_kinds || []) as SourceKind[]
             return (
               <li key={l.id}>
-                <Link to={`/lecture/${l.id}`} className="card group block p-4 transition hover:border-accent-300 hover:shadow-md dark:hover:border-accent-700">
+                <Link
+                  to={`/lecture/${l.id}`}
+                  className="card group hover:border-accent-300 dark:hover:border-accent-700 block p-4 transition hover:shadow-md"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       {course && (
@@ -147,9 +191,11 @@ export default function Home() {
                           <span className="truncate">{course.name}</span>
                         </div>
                       )}
-                      <h3 className="line-clamp-2 font-semibold group-hover:text-accent-700 dark:group-hover:text-accent-300">{l.title}</h3>
+                      <h3 className="group-hover:text-accent-700 dark:group-hover:text-accent-300 line-clamp-2 font-semibold">
+                        {l.title}
+                      </h3>
                     </div>
-                    <ChevronRight className="mt-1 size-5 shrink-0 text-zinc-300 group-hover:text-accent-500 dark:text-zinc-600" />
+                    <ChevronRight className="group-hover:text-accent-500 mt-1 size-5 shrink-0 text-zinc-300 dark:text-zinc-600" />
                   </div>
                   <div className="muted mt-3 flex items-center gap-3 text-xs">
                     <span>{fmtDate(l.lecture_date)}</span>
@@ -160,7 +206,7 @@ export default function Home() {
                       })}
                       {l.source_count || 0} source{l.source_count === 1 ? '' : 's'}
                     </span>
-                    {busy && <span className="font-medium text-accent-600 dark:text-accent-400">Processing…</span>}
+                    {busy && <span className="text-accent-600 dark:text-accent-400 font-medium">Processing…</span>}
                     <span className="ml-auto">{relativeTime(l.updated_at)}</span>
                   </div>
                   {(l.output_types || []).length > 0 && (
@@ -170,7 +216,10 @@ export default function Home() {
                         if (!m) return null
                         const I = m.icon
                         return (
-                          <span key={t} className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                          <span
+                            key={t}
+                            className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-1.5 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                          >
                             <I className="size-3" />
                             {m.short}
                           </span>
@@ -280,13 +329,21 @@ function NewLectureModal({
       >
         <div>
           <label className="label">Title</label>
-          <input className="input" autoFocus placeholder="Leave blank and the AI will name it" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input
+            className="input"
+            autoFocus
+            placeholder="Leave blank and the AI will name it"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <div>
           <label className="label">Course</label>
           <CourseSelect courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
         </div>
-        <p className="muted text-sm">Next you'll add sources: recordings, files, slides or notes. You can add as many as you like.</p>
+        <p className="muted text-sm">
+          Next you'll add sources: recordings, files, slides or notes. You can add as many as you like.
+        </p>
         <Button type="submit" className="w-full" loading={busy}>
           Create lecture
         </Button>
@@ -294,4 +351,3 @@ function NewLectureModal({
     </Modal>
   )
 }
-

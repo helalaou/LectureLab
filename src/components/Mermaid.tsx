@@ -48,14 +48,42 @@ export default function Mermaid({ code, onSvg }: { code: string; onSvg?: (svg: s
           fontFamily: 'Inter, ui-sans-serif, system-ui',
           themeVariables: dark
             ? {
-                darkMode: true, background: '#18181b', primaryColor: '#312e81', primaryTextColor: '#eef2ff', primaryBorderColor: '#6366f1',
-                secondaryColor: '#1e3a5f', tertiaryColor: '#27272a', lineColor: '#818cf8', textColor: '#e4e4e7', fontSize: '15px',
-                cScale0: '#4338ca', cScale1: '#0e7490', cScale2: '#047857', cScale3: '#b45309', cScale4: '#be123c', cScale5: '#6d28d9', cScale6: '#0369a1', cScale7: '#4d7c0f',
+                darkMode: true,
+                background: '#18181b',
+                primaryColor: '#312e81',
+                primaryTextColor: '#eef2ff',
+                primaryBorderColor: '#6366f1',
+                secondaryColor: '#1e3a5f',
+                tertiaryColor: '#27272a',
+                lineColor: '#818cf8',
+                textColor: '#e4e4e7',
+                fontSize: '15px',
+                cScale0: '#4338ca',
+                cScale1: '#0e7490',
+                cScale2: '#047857',
+                cScale3: '#b45309',
+                cScale4: '#be123c',
+                cScale5: '#6d28d9',
+                cScale6: '#0369a1',
+                cScale7: '#4d7c0f',
               }
             : {
-                primaryColor: '#e0e7ff', primaryTextColor: '#1e1b4b', primaryBorderColor: '#818cf8', secondaryColor: '#e0f2fe', tertiaryColor: '#f4f4f5',
-                lineColor: '#6366f1', textColor: '#27272a', fontSize: '15px',
-                cScale0: '#c7d2fe', cScale1: '#bae6fd', cScale2: '#a7f3d0', cScale3: '#fde68a', cScale4: '#fecdd3', cScale5: '#ddd6fe', cScale6: '#99f6e4', cScale7: '#d9f99d',
+                primaryColor: '#e0e7ff',
+                primaryTextColor: '#1e1b4b',
+                primaryBorderColor: '#818cf8',
+                secondaryColor: '#e0f2fe',
+                tertiaryColor: '#f4f4f5',
+                lineColor: '#6366f1',
+                textColor: '#27272a',
+                fontSize: '15px',
+                cScale0: '#c7d2fe',
+                cScale1: '#bae6fd',
+                cScale2: '#a7f3d0',
+                cScale3: '#fde68a',
+                cScale4: '#fecdd3',
+                cScale5: '#ddd6fe',
+                cScale6: '#99f6e4',
+                cScale7: '#d9f99d',
               },
           flowchart: { htmlLabels: true, curve: 'basis' },
         })
@@ -89,5 +117,10 @@ export default function Mermaid({ code, onSvg }: { code: string; onSvg?: (svg: s
     )
   }
   if (!svg) return <div className="h-48 animate-pulse rounded-xl bg-zinc-100 dark:bg-zinc-800" />
-  return <div className="flex justify-center overflow-x-auto [&_svg]:h-auto [&_svg]:max-w-full" dangerouslySetInnerHTML={{ __html: svg }} />
+  return (
+    <div
+      className="flex justify-center overflow-x-auto [&_svg]:h-auto [&_svg]:max-w-full"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  )
 }

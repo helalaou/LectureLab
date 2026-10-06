@@ -69,7 +69,9 @@ export async function* streamChat(req: ChatRequest): AsyncGenerator<string, { us
     }
   }
   if (finishReason === 'length') {
-    throw new Error('The answer was cut off because it got too long. Try "concise" detail level in Settings, or fewer items.')
+    throw new Error(
+      'The answer was cut off because it got too long. Try "concise" detail level in Settings, or fewer items.',
+    )
   }
   return { usage }
 }

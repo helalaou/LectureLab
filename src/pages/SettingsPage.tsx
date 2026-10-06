@@ -1,5 +1,20 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Sun, Moon, Monitor, Mic, KeyRound, Sparkles, User, CheckCircle2, AlertTriangle, Play, Loader2, ExternalLink, Eye, EyeOff } from 'lucide-react'
+import {
+  Sun,
+  Moon,
+  Monitor,
+  Mic,
+  KeyRound,
+  Sparkles,
+  User,
+  CheckCircle2,
+  AlertTriangle,
+  Play,
+  Loader2,
+  ExternalLink,
+  Eye,
+  EyeOff,
+} from 'lucide-react'
 import { useSettings } from '../hooks/useSettings'
 import { useAuth } from '../hooks/useAuth'
 import { useAccess } from '../hooks/useAccess'
@@ -26,14 +41,58 @@ const TTS_MODELS = [
   { value: 'gpt-realtime-2.1-mini', label: 'GPT Realtime 2.1 mini (newer)' },
   { value: 'tts-1', label: 'TTS-1 (classic, retiring Jan 2027)' },
 ]
-const VOICES = ['marin', 'cedar', 'alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer', 'verse']
-const LANGUAGES = ['English', 'Spanish', 'French', 'Arabic', 'Portuguese', 'Chinese (Simplified)', 'Vietnamese', 'Korean', 'Haitian Creole', 'Russian', 'Hindi', 'Tagalog', 'German', 'Italian', 'Japanese']
+const VOICES = [
+  'marin',
+  'cedar',
+  'alloy',
+  'ash',
+  'ballad',
+  'coral',
+  'echo',
+  'fable',
+  'nova',
+  'onyx',
+  'sage',
+  'shimmer',
+  'verse',
+]
+const LANGUAGES = [
+  'English',
+  'Spanish',
+  'French',
+  'Arabic',
+  'Portuguese',
+  'Chinese (Simplified)',
+  'Vietnamese',
+  'Korean',
+  'Haitian Creole',
+  'Russian',
+  'Hindi',
+  'Tagalog',
+  'German',
+  'Italian',
+  'Japanese',
+]
 
-function Section({ id, icon, title, description, children }: { id?: string; icon: ReactNode; title: string; description?: string; children: ReactNode }) {
+function Section({
+  id,
+  icon,
+  title,
+  description,
+  children,
+}: {
+  id?: string
+  icon: ReactNode
+  title: string
+  description?: string
+  children: ReactNode
+}) {
   return (
     <section id={id} className="card scroll-mt-24 p-5 sm:p-6">
       <div className="flex items-start gap-3">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300">{icon}</div>
+        <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 flex size-9 shrink-0 items-center justify-center rounded-xl">
+          {icon}
+        </div>
         <div>
           <h2 className="font-semibold">{title}</h2>
           {description && <p className="muted mt-0.5 text-sm">{description}</p>}
@@ -44,7 +103,19 @@ function Section({ id, icon, title, description, children }: { id?: string; icon
   )
 }
 
-function Select({ label, value, onChange, options, hint }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; hint?: string }) {
+function Select({
+  label,
+  value,
+  onChange,
+  options,
+  hint,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  options: { value: string; label: string }[]
+  hint?: string
+}) {
   const known = options.some((o) => o.value === value)
   return (
     <div>
@@ -82,9 +153,30 @@ export default function SettingsPage() {
           value={settings.theme}
           onChange={(theme) => set({ theme })}
           options={[
-            { value: 'light', label: <><Sun className="size-4" /> Light</> },
-            { value: 'dark', label: <><Moon className="size-4" /> Dark</> },
-            { value: 'system', label: <><Monitor className="size-4" /> Auto</> },
+            {
+              value: 'light',
+              label: (
+                <>
+                  <Sun className="size-4" /> Light
+                </>
+              ),
+            },
+            {
+              value: 'dark',
+              label: (
+                <>
+                  <Moon className="size-4" /> Dark
+                </>
+              ),
+            },
+            {
+              value: 'system',
+              label: (
+                <>
+                  <Monitor className="size-4" /> Auto
+                </>
+              ),
+            },
           ]}
         />
       </Section>
@@ -93,7 +185,11 @@ export default function SettingsPage() {
 
       <ApiKeySection />
 
-      <Section icon={<Sparkles className="size-5" />} title="Study material" description="How the AI writes your notes, cards and quizzes.">
+      <Section
+        icon={<Sparkles className="size-5" />}
+        title="Study material"
+        description="How the AI writes your notes, cards and quizzes."
+      >
         <div className="space-y-5">
           <div>
             <label className="label">Detail level</label>
@@ -117,12 +213,37 @@ export default function SettingsPage() {
           <details className="group rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
             <summary className="cursor-pointer text-sm font-medium">Advanced: AI models and podcast voices</summary>
             <div className="mt-4 space-y-4">
-              <Select label="Writing model" value={settings.text_model} onChange={(text_model) => set({ text_model })} options={TEXT_MODELS} />
-              <Select label="Transcription model" value={settings.transcription_model} onChange={(transcription_model) => set({ transcription_model })} options={TRANSCRIBE_MODELS} />
-              <Select label="Voice model" value={settings.tts_model} onChange={(tts_model) => set({ tts_model })} options={TTS_MODELS} />
+              <Select
+                label="Writing model"
+                value={settings.text_model}
+                onChange={(text_model) => set({ text_model })}
+                options={TEXT_MODELS}
+              />
+              <Select
+                label="Transcription model"
+                value={settings.transcription_model}
+                onChange={(transcription_model) => set({ transcription_model })}
+                options={TRANSCRIBE_MODELS}
+              />
+              <Select
+                label="Voice model"
+                value={settings.tts_model}
+                onChange={(tts_model) => set({ tts_model })}
+                options={TTS_MODELS}
+              />
               <div className="grid gap-4 sm:grid-cols-2">
-                <VoicePicker label="Host 1 · Maya" speaker="A" value={settings.host_a_voice} onChange={(host_a_voice) => set({ host_a_voice })} />
-                <VoicePicker label="Host 2 · Theo" speaker="B" value={settings.host_b_voice} onChange={(host_b_voice) => set({ host_b_voice })} />
+                <VoicePicker
+                  label="Host 1 · Maya"
+                  speaker="A"
+                  value={settings.host_a_voice}
+                  onChange={(host_a_voice) => set({ host_a_voice })}
+                />
+                <VoicePicker
+                  label="Host 2 · Theo"
+                  speaker="B"
+                  value={settings.host_b_voice}
+                  onChange={(host_b_voice) => set({ host_b_voice })}
+                />
               </div>
             </div>
           </details>
@@ -132,7 +253,9 @@ export default function SettingsPage() {
       <Section icon={<User className="size-5" />} title="Account">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {user?.photoURL && <img src={user.photoURL} alt="" className="size-10 rounded-full" referrerPolicy="no-referrer" />}
+            {user?.photoURL && (
+              <img src={user.photoURL} alt="" className="size-10 rounded-full" referrerPolicy="no-referrer" />
+            )}
             <div>
               <div className="font-medium">{user?.displayName || 'Signed in'}</div>
               <div className="muted text-sm">{user?.email}</div>
@@ -165,7 +288,10 @@ function MicrophoneSection() {
   const stopRef = useRef<() => void>(() => {})
   const toast = useToast()
 
-  const loadMics = () => listMicrophones().then(setMics).catch(() => {})
+  const loadMics = () =>
+    listMicrophones()
+      .then(setMics)
+      .catch(() => {})
   useEffect(() => {
     loadMics()
     navigator.mediaDevices?.addEventListener?.('devicechange', loadMics)
@@ -212,16 +338,30 @@ function MicrophoneSection() {
         stopRef.current = () => {}
       }
     } catch (e) {
-      toast((e as Error).name === 'NotAllowedError' ? 'Microphone permission is blocked for this site.' : (e as Error).message, 'error')
+      toast(
+        (e as Error).name === 'NotAllowedError'
+          ? 'Microphone permission is blocked for this site.'
+          : (e as Error).message,
+        'error',
+      )
     }
   }
 
   return (
-    <Section id="microphone" icon={<Mic className="size-5" />} title="Microphone" description="Plug in a USB or lapel mic for the best transcripts. This choice is saved on this device.">
+    <Section
+      id="microphone"
+      icon={<Mic className="size-5" />}
+      title="Microphone"
+      description="Plug in a USB or lapel mic for the best transcripts. This choice is saved on this device."
+    >
       <div className="space-y-4">
         <div>
           <label className="label">Input device</label>
-          <select className="input" value={prefs.deviceId ?? ''} onChange={(e) => save({ ...prefs, deviceId: e.target.value || undefined })}>
+          <select
+            className="input"
+            value={prefs.deviceId ?? ''}
+            onChange={(e) => save({ ...prefs, deviceId: e.target.value || undefined })}
+          >
             <option value="">System default</option>
             {mics
               .filter((m) => m.deviceId && m.deviceId !== 'default')
@@ -231,25 +371,56 @@ function MicrophoneSection() {
                 </option>
               ))}
           </select>
-          {mics.length > 0 && !mics[0].label && <p className="muted mt-1 text-xs">Click “Test microphone” once to see device names.</p>}
+          {mics.length > 0 && !mics[0].label && (
+            <p className="muted mt-1 text-xs">Click “Test microphone” once to see device names.</p>
+          )}
         </div>
 
         <div className="rounded-xl bg-zinc-50 p-4 dark:bg-zinc-800/50">
           <div className="flex items-center gap-3">
-            <Button size="sm" variant={testing ? 'secondary' : 'soft'} onClick={() => (testing ? stopRef.current() : startTest())}>
+            <Button
+              size="sm"
+              variant={testing ? 'secondary' : 'soft'}
+              onClick={() => (testing ? stopRef.current() : startTest())}
+            >
               {testing ? 'Stop test' : 'Test microphone'}
             </Button>
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
-              <div className={cx('h-full rounded-full transition-[width] duration-75', level > 0.85 ? 'bg-red-500' : level > 0.05 ? 'bg-emerald-500' : 'bg-zinc-400')} style={{ width: `${Math.min(100, Math.sqrt(level) * 100)}%` }} />
+              <div
+                className={cx(
+                  'h-full rounded-full transition-[width] duration-75',
+                  level > 0.85 ? 'bg-red-500' : level > 0.05 ? 'bg-emerald-500' : 'bg-zinc-400',
+                )}
+                style={{ width: `${Math.min(100, Math.sqrt(level) * 100)}%` }}
+              />
             </div>
           </div>
-          {testing && <p className="muted mt-2 text-xs">Talk normally. The bar should move into green. If it hits red, move the mic further away.</p>}
+          {testing && (
+            <p className="muted mt-2 text-xs">
+              Talk normally. The bar should move into green. If it hits red, move the mic further away.
+            </p>
+          )}
         </div>
 
         <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
-          <Toggle checked={prefs.noiseSuppression} onChange={(v) => save({ ...prefs, noiseSuppression: v })} label="Noise suppression" description="Reduces fans, AC hum and chatter." />
-          <Toggle checked={prefs.autoGainControl} onChange={(v) => save({ ...prefs, autoGainControl: v })} label="Automatic volume" description="Boosts a teacher who is far from the mic." />
-          <Toggle checked={prefs.echoCancellation} onChange={(v) => save({ ...prefs, echoCancellation: v })} label="Echo cancellation" description="Only needed if speakers are playing nearby. Usually best off in a classroom." />
+          <Toggle
+            checked={prefs.noiseSuppression}
+            onChange={(v) => save({ ...prefs, noiseSuppression: v })}
+            label="Noise suppression"
+            description="Reduces fans, AC hum and chatter."
+          />
+          <Toggle
+            checked={prefs.autoGainControl}
+            onChange={(v) => save({ ...prefs, autoGainControl: v })}
+            label="Automatic volume"
+            description="Boosts a teacher who is far from the mic."
+          />
+          <Toggle
+            checked={prefs.echoCancellation}
+            onChange={(v) => save({ ...prefs, echoCancellation: v })}
+            label="Echo cancellation"
+            description="Only needed if speakers are playing nearby. Usually best off in a classroom."
+          />
         </div>
       </div>
     </Section>
@@ -272,7 +443,11 @@ function ApiKeySection() {
       title="Your OpenAI API key"
       description="Optional if your email is on this app's free-access list. Otherwise, add your own key. You only pay OpenAI for what you use."
     >
-      {error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">{error}</p>}
+      {error && (
+        <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
+          {error}
+        </p>
+      )}
       {access && (
         <div className="mb-4 flex flex-wrap gap-2">
           {access.hasOwnKey ? (
@@ -317,7 +492,12 @@ function ApiKeySection() {
             value={key}
             onChange={(e) => setKey(e.target.value)}
           />
-          <button type="button" onClick={() => setShow((s) => !s)} className="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-zinc-600" aria-label={show ? 'Hide key' : 'Show key'}>
+          <button
+            type="button"
+            onClick={() => setShow((s) => !s)}
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
+            aria-label={show ? 'Hide key' : 'Show key'}
+          >
             {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </div>
@@ -339,11 +519,19 @@ function ApiKeySection() {
               Remove key
             </Button>
           )}
-          <a href="https://platform.openai.com/api-keys" target="_blank" rel="noreferrer" className="ml-auto flex items-center gap-1 text-sm font-medium text-accent-600 dark:text-accent-400">
+          <a
+            href="https://platform.openai.com/api-keys"
+            target="_blank"
+            rel="noreferrer"
+            className="text-accent-600 dark:text-accent-400 ml-auto flex items-center gap-1 text-sm font-medium"
+          >
             Get a key <ExternalLink className="size-3.5" />
           </a>
         </div>
-        <p className="muted text-xs">Your key is encrypted on the server and never sent back to the browser. With the default models, transcribing a 1-hour lecture costs about $0.30, and each study tool costs less than a cent.</p>
+        <p className="muted text-xs">
+          Your key is encrypted on the server and never sent back to the browser. With the default models, transcribing
+          a 1-hour lecture costs about $0.30, and each study tool costs less than a cent.
+        </p>
       </form>
     </Section>
   )
@@ -351,7 +539,17 @@ function ApiKeySection() {
 
 // ------------------------------------------------------------------ voices
 
-function VoicePicker({ label, speaker, value, onChange }: { label: string; speaker: 'A' | 'B'; value: string; onChange: (v: string) => void }) {
+function VoicePicker({
+  label,
+  speaker,
+  value,
+  onChange,
+}: {
+  label: string
+  speaker: 'A' | 'B'
+  value: string
+  onChange: (v: string) => void
+}) {
   const [loading, setLoading] = useState(false)
   const toast = useToast()
   return (
@@ -374,7 +572,10 @@ function VoicePicker({ label, speaker, value, onChange }: { label: string; speak
             try {
               const blob = await apiBlob('/api/tts', {
                 speaker,
-                text: speaker === 'A' ? "Hi, I'm Maya. Let's break down today's lecture together." : "And I'm Theo. I'll ask the questions you're probably thinking!",
+                text:
+                  speaker === 'A'
+                    ? "Hi, I'm Maya. Let's break down today's lecture together."
+                    : "And I'm Theo. I'll ask the questions you're probably thinking!",
               })
               const audio = new Audio(URL.createObjectURL(blob))
               await audio.play()
@@ -402,7 +603,9 @@ function DeleteData() {
   return (
     <div className="mt-6 border-t border-zinc-200 pt-5 dark:border-zinc-800">
       <h3 className="text-sm font-semibold text-red-600 dark:text-red-400">Danger zone</h3>
-      <p className="muted mt-1 text-sm">Permanently delete all your lectures, recordings, study material and your saved API key.</p>
+      <p className="muted mt-1 text-sm">
+        Permanently delete all your lectures, recordings, study material and your saved API key.
+      </p>
       <Button
         className="mt-3"
         variant="danger"

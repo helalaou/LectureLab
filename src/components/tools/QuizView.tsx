@@ -38,11 +38,22 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
     return (
       <div className="mx-auto max-w-2xl space-y-4">
         <div className="card px-6 py-10 text-center">
-          <Trophy className={cx('mx-auto size-12', pct >= 80 ? 'text-amber-500' : pct >= 60 ? 'text-accent-600' : 'text-zinc-400')} />
+          <Trophy
+            className={cx(
+              'mx-auto size-12',
+              pct >= 80 ? 'text-amber-500' : pct >= 60 ? 'text-accent-600' : 'text-zinc-400',
+            )}
+          />
           <div className="mt-3 text-4xl font-semibold tabular-nums">{pct}%</div>
           <p className="muted mt-1">
             {score} of {total} correct ·{' '}
-            {pct >= 90 ? 'Outstanding! You’re ready.' : pct >= 75 ? 'Solid work. Review the misses below.' : pct >= 50 ? 'Getting there. Go over the explanations, then try again.' : 'Good start. Read the notes, then retake it.'}
+            {pct >= 90
+              ? 'Outstanding! You’re ready.'
+              : pct >= 75
+                ? 'Solid work. Review the misses below.'
+                : pct >= 50
+                  ? 'Getting there. Go over the explanations, then try again.'
+                  : 'Good start. Read the notes, then retake it.'}
           </p>
           <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
             {wrong.length > 0 && wrong.length < total && (
@@ -126,16 +137,26 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
                   disabled={answered}
                   className={cx(
                     'flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-[15px] transition',
-                    !answered && 'border-zinc-300 hover:border-accent-400 hover:bg-accent-50/50 dark:border-zinc-700 dark:hover:border-accent-600 dark:hover:bg-accent-950/30',
-                    answered && isCorrect && 'border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40',
-                    answered && isChosen && !isCorrect && 'border-red-400 bg-red-50 dark:border-red-800 dark:bg-red-950/40',
+                    !answered &&
+                      'hover:border-accent-400 hover:bg-accent-50/50 dark:hover:border-accent-600 dark:hover:bg-accent-950/30 border-zinc-300 dark:border-zinc-700',
+                    answered &&
+                      isCorrect &&
+                      'border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40',
+                    answered &&
+                      isChosen &&
+                      !isCorrect &&
+                      'border-red-400 bg-red-50 dark:border-red-800 dark:bg-red-950/40',
                     answered && !isCorrect && !isChosen && 'border-zinc-200 opacity-60 dark:border-zinc-800',
                   )}
                 >
                   <span
                     className={cx(
                       'flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold',
-                      answered && isCorrect ? 'border-emerald-500 bg-emerald-500 text-white' : answered && isChosen ? 'border-red-500 bg-red-500 text-white' : 'border-zinc-300 dark:border-zinc-600',
+                      answered && isCorrect
+                        ? 'border-emerald-500 bg-emerald-500 text-white'
+                        : answered && isChosen
+                          ? 'border-red-500 bg-red-500 text-white'
+                          : 'border-zinc-300 dark:border-zinc-600',
                     )}
                   >
                     {q.type === 'true_false' ? (idx === 0 ? 'T' : 'F') : String.fromCharCode(65 + idx)}
@@ -149,7 +170,13 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
           </div>
         ) : (
           <div className="mt-5">
-            <textarea className="input min-h-28" placeholder="Type your answer…" value={draft} onChange={(e) => setDraft(e.target.value)} disabled={revealedShort} />
+            <textarea
+              className="input min-h-28"
+              placeholder="Type your answer…"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              disabled={revealedShort}
+            />
             {!revealedShort ? (
               <Button className="mt-3" onClick={() => setRevealedShort(true)} disabled={!draft.trim()}>
                 Check my answer
@@ -164,10 +191,18 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
                   <div className="mt-4">
                     <div className="mb-2 text-sm font-medium">Did your answer cover the key points?</div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="soft" onClick={() => setAnswers((x) => ({ ...x, [qi]: { text: draft, correct: true } }))}>
+                      <Button
+                        size="sm"
+                        variant="soft"
+                        onClick={() => setAnswers((x) => ({ ...x, [qi]: { text: draft, correct: true } }))}
+                      >
                         Yes, I got it
                       </Button>
-                      <Button size="sm" variant="secondary" onClick={() => setAnswers((x) => ({ ...x, [qi]: { text: draft, correct: false } }))}>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => setAnswers((x) => ({ ...x, [qi]: { text: draft, correct: false } }))}
+                      >
                         Not quite
                       </Button>
                     </div>
@@ -179,8 +214,18 @@ export default function QuizView({ questions }: { questions: QuizQuestion[] }) {
         )}
 
         {answered && (
-          <div className={cx('mt-5 rounded-xl p-4', a.correct ? 'bg-emerald-50 dark:bg-emerald-950/30' : 'bg-red-50 dark:bg-red-950/30')}>
-            <div className={cx('flex items-center gap-2 font-semibold', a.correct ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400')}>
+          <div
+            className={cx(
+              'mt-5 rounded-xl p-4',
+              a.correct ? 'bg-emerald-50 dark:bg-emerald-950/30' : 'bg-red-50 dark:bg-red-950/30',
+            )}
+          >
+            <div
+              className={cx(
+                'flex items-center gap-2 font-semibold',
+                a.correct ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400',
+              )}
+            >
               {a.correct ? <CheckCircle2 className="size-5" /> : <XCircle className="size-5" />}
               {a.correct ? 'Correct!' : 'Not quite'}
             </div>

@@ -1,4 +1,5 @@
-export type OutputType = 'summary' | 'notes' | 'flashcards' | 'quiz' | 'podcast' | 'visuals' | 'glossary' | 'study_guide'
+export type OutputType =
+  'summary' | 'notes' | 'flashcards' | 'quiz' | 'podcast' | 'visuals' | 'glossary' | 'study_guide'
 
 export interface Course {
   id: string

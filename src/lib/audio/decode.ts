@@ -8,8 +8,12 @@ export const MAX_MEDIA_BYTES = 500 * 1024 * 1024
  * Decode an uploaded audio/video file in the browser, convert it to 16 kHz mono
  * and split it into ~60 s WAV chunks ready for transcription.
  */
-export async function fileToChunks(file: File, onStage?: (s: string) => void): Promise<{ chunks: StoredChunk[]; durationSec: number }> {
-  if (file.size > MAX_MEDIA_BYTES) throw new Error('This file is over 500 MB. Please trim it or export just the audio first.')
+export async function fileToChunks(
+  file: File,
+  onStage?: (s: string) => void,
+): Promise<{ chunks: StoredChunk[]; durationSec: number }> {
+  if (file.size > MAX_MEDIA_BYTES)
+    throw new Error('This file is over 500 MB. Please trim it or export just the audio first.')
   onStage?.('Reading file…')
   const data = await file.arrayBuffer()
   onStage?.('Decoding audio…')

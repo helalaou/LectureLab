@@ -58,7 +58,12 @@ export async function createLecture(input: { title?: string; courseId?: string |
   return db.createLecture({ title: input.title?.trim() || defaultLectureTitle(), courseId: input.courseId || null })
 }
 
-async function insertSource(lectureId: string, kind: SourceKind, title: string, extra: Partial<Source> = {}): Promise<Source> {
+async function insertSource(
+  lectureId: string,
+  kind: SourceKind,
+  title: string,
+  extra: Partial<Source> = {},
+): Promise<Source> {
   const src = await db.addSource(lectureId, kind, title, extra)
   changed(lectureId)
   return src
@@ -88,7 +93,13 @@ function extFor(mime: string): string {
   return 'audio'
 }
 
-async function uploadSourceAudio(lectureId: string, sourceId: string, blob: Blob, mime: string, onProgress?: (p: number) => void): Promise<string | null> {
+async function uploadSourceAudio(
+  lectureId: string,
+  sourceId: string,
+  blob: Blob,
+  mime: string,
+  onProgress?: (p: number) => void,
+): Promise<string | null> {
   if (blob.size > MAX_STORED_AUDIO || blob.size === 0) return null
   const key = `${auth.currentUser!.uid}/${lectureId}/${sourceId}.${extFor(mime)}`
   try {
@@ -115,7 +126,10 @@ export async function processRecording(recordingId: string): Promise<{ lectureId
   // remember which lecture/source this recording belongs to, for retries
   let sourceId = (meta as RecordingMeta & { sourceId?: string }).sourceId
   if (!sourceId) {
-    const src = await insertSource(lectureId, 'recording', title, { duration_sec: meta.durationSec, mime_type: meta.mimeType })
+    const src = await insertSource(lectureId, 'recording', title, {
+      duration_sec: meta.durationSec,
+      mime_type: meta.mimeType,
+    })
     sourceId = src.id
     const { idb } = await import('./audio/idb')
     await idb.set(`rec:${recordingId}:meta`, { ...meta, lectureId, sourceId })
@@ -136,15 +150,23 @@ async function runRecordingJob(
   try {
     setJob({ sourceId, lectureId, stage: 'Uploading audio…' })
     await updateSource(sourceId, lectureId, { status: 'uploading', error: null })
-    const path = await uploadSourceAudio(lectureId, sourceId, audio, meta.mimeType, (p) => setJob({ sourceId, lectureId, stage: `Uploading audio… ${Math.round(p * 100)}%`, progress: p }))
+    const path = await uploadSourceAudio(lectureId, sourceId, audio, meta.mimeType, (p) =>
+      setJob({ sourceId, lectureId, stage: `Uploading audio… ${Math.round(p * 100)}%`, progress: p }),
+    )
     await updateSource(sourceId, lectureId, { status: 'transcribing', storage_path: path })
     const ctx = await lectureContext(lectureId)
     const { text, segments } = await transcribeChunks(chunks, {
       ...ctx,
-      onProgress: (d, t) => setJob({ sourceId, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
+      onProgress: (d, t) =>
+        setJob({ sourceId, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
     })
     if (!text.trim()) throw new Error('No speech was detected in this recording. Check your microphone in Settings.')
-    await updateSource(sourceId, lectureId, { status: 'ready', content: text, segments, duration_sec: meta.durationSec })
+    await updateSource(sourceId, lectureId, {
+      status: 'ready',
+      content: text,
+      segments,
+      duration_sec: meta.durationSec,
+    })
     await deleteStoredRecording(recordingId)
   } catch (e) {
     await updateSource(sourceId, lectureId, {
@@ -170,7 +192,8 @@ export async function addMediaFile(lectureId: string, file: File): Promise<void>
     const ctx = await lectureContext(lectureId)
     const { text, segments } = await transcribeChunks(chunks, {
       ...ctx,
-      onProgress: (d, t) => setJob({ sourceId: src.id, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
+      onProgress: (d, t) =>
+        setJob({ sourceId: src.id, lectureId, stage: `Transcribing… ${d}/${t} min`, progress: t ? d / t : 0 }),
     })
     if (!text.trim()) throw new Error('No speech was detected in this file.')
     await updateSource(src.id, lectureId, { status: 'ready', content: text, segments })
@@ -196,7 +219,10 @@ export async function addDocument(lectureId: string, file: File): Promise<void> 
 }
 
 export async function addText(lectureId: string, title: string, text: string): Promise<void> {
-  await insertSource(lectureId, 'text', title.trim() || 'My notes', { status: 'ready', content: text.trim() } as Partial<Source>)
+  await insertSource(lectureId, 'text', title.trim() || 'My notes', {
+    status: 'ready',
+    content: text.trim(),
+  } as Partial<Source>)
 }
 
 export async function deleteSource(src: Source) {

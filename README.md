@@ -4,14 +4,14 @@
 
 Built for community-college students. Free and open source (MIT). Runs on the free tiers of Firebase and Netlify.
 
-| | |
-|---|---|
-| 🎙️ **Record live** | Plug in any mic and hit record. Audio is saved to the device as you go, so a closed tab or dead battery never loses a class. |
-| 📚 **Multiple sources per lecture** | Mix recordings, audio/video files, PDFs, Word docs, text files and pasted notes. Every tool uses all of them together. |
-| ✨ **8 study tools + chat** | Summary · Notes · Flashcards (SM-2 spaced repetition) · Quiz · Podcast (OpenAI TTS) · Visuals (Mermaid) · Glossary · Study guide · Ask-the-lecture |
-| 📤 **Export** | PDF, Markdown, Anki deck, CSV (Quizlet/Excel) and MP3 |
-| 📱 **Mobile-first** | Works great on phones. Light and dark mode. |
-| 🔑 **Bring your own key** | The owner's OpenAI key is used only for emails in `ALLOWED_EMAILS`. Everyone else adds their own key in Settings (encrypted at rest). |
+|                                     |                                                                                                                                                    |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🎙️ **Record live**                  | Plug in any mic and hit record. Audio is saved to the device as you go, so a closed tab or dead battery never loses a class.                       |
+| 📚 **Multiple sources per lecture** | Mix recordings, audio/video files, PDFs, Word docs, text files and pasted notes. Every tool uses all of them together.                             |
+| ✨ **8 study tools + chat**         | Summary · Notes · Flashcards (SM-2 spaced repetition) · Quiz · Podcast (OpenAI TTS) · Visuals (Mermaid) · Glossary · Study guide · Ask-the-lecture |
+| 📤 **Export**                       | PDF, Markdown, Anki deck, CSV (Quizlet/Excel) and MP3                                                                                              |
+| 📱 **Mobile-first**                 | Works great on phones. Light and dark mode.                                                                                                        |
+| 🔑 **Bring your own key**           | The owner's OpenAI key is used only for emails in `ALLOWED_EMAILS`. Everyone else adds their own key in Settings (encrypted at rest).              |
 
 ---
 
@@ -54,15 +54,15 @@ All prompts live in **`netlify/lib/prompts.ts`**. They're long and opinionated, 
 1. Push this folder to GitHub, then go to Netlify → **Add new site → Import from Git**. The build settings come from `netlify.toml`.
 2. **Site configuration → Environment variables**, add:
 
-   | Variable | Value |
-   |---|---|
-   | `VITE_FIREBASE_API_KEY` | from step 1.2 |
-   | `VITE_FIREBASE_AUTH_DOMAIN` | from step 1.2 |
-   | `VITE_FIREBASE_PROJECT_ID` | from step 1.2 |
-   | `VITE_FIREBASE_APP_ID` | from step 1.2 |
-   | `OPENAI_API_KEY` | Your OpenAI key (used only for allowlisted emails) |
-   | `ALLOWED_EMAILS` | Comma-separated emails that may use your key, e.g. `you@gmail.com, neighbour@gmail.com` |
-   | `KEY_ENCRYPTION_SECRET` | A random string, e.g. output of `openssl rand -base64 32` |
+   | Variable                    | Value                                                                                   |
+   | --------------------------- | --------------------------------------------------------------------------------------- |
+   | `VITE_FIREBASE_API_KEY`     | from step 1.2                                                                           |
+   | `VITE_FIREBASE_AUTH_DOMAIN` | from step 1.2                                                                           |
+   | `VITE_FIREBASE_PROJECT_ID`  | from step 1.2                                                                           |
+   | `VITE_FIREBASE_APP_ID`      | from step 1.2                                                                           |
+   | `OPENAI_API_KEY`            | Your OpenAI key (used only for allowlisted emails)                                      |
+   | `ALLOWED_EMAILS`            | Comma-separated emails that may use your key, e.g. `you@gmail.com, neighbour@gmail.com` |
+   | `KEY_ENCRYPTION_SECRET`     | A random string, e.g. output of `openssl rand -base64 32`                               |
 
 3. Deploy. Audio storage (Netlify Blobs) needs no setup.
 
@@ -80,11 +80,11 @@ npm run dev                  # Netlify Dev on http://localhost:8888 (site + func
 
 ## Costs (default models)
 
-| Step | Model | Approx. cost |
-|---|---|---|
-| Transcription | `gpt-transcribe` | ~$0.27 per hour of audio |
-| Study tools / chat | `gpt-6-luna` | well under $0.01 per tool |
-| Podcast audio | `gpt-4o-mini-tts` | ~$0.05–0.15 per episode |
+| Step               | Model             | Approx. cost              |
+| ------------------ | ----------------- | ------------------------- |
+| Transcription      | `gpt-transcribe`  | ~$0.27 per hour of audio  |
+| Study tools / chat | `gpt-6-luna`      | well under $0.01 per tool |
+| Podcast audio      | `gpt-4o-mini-tts` | ~$0.05–0.15 per episode   |
 
 Users can change models in **Settings → Advanced**. Every AI call is logged in Firestore under `users/{uid}/usage` (kind, amount, model, whether the shared key was used), so you can see in the Firebase console how much each person uses your key.
 

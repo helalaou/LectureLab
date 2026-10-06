@@ -23,13 +23,18 @@ async function toError(res: Response): Promise<ApiError> {
     msg = body.error || msg
     code = body.code
   } catch {
-    if (res.status === 404) msg = 'The server functions are not running. Use "npm run dev" (Netlify Dev) locally, or deploy to Netlify.'
+    if (res.status === 404)
+      msg = 'The server functions are not running. Use "npm run dev" (Netlify Dev) locally, or deploy to Netlify.'
   }
   return new ApiError(res.status, msg, code)
 }
 
 export async function apiJson<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const headers = { ...(await authHeader()), ...(init.body && !(init.body instanceof FormData) ? { 'content-type': 'application/json' } : {}), ...(init.headers as Record<string, string>) }
+  const headers = {
+    ...(await authHeader()),
+    ...(init.body && !(init.body instanceof FormData) ? { 'content-type': 'application/json' } : {}),
+    ...(init.headers as Record<string, string>),
+  }
   const res = await fetch(path, { ...init, headers })
   if (!res.ok) throw await toError(res)
   return res.json()
@@ -80,5 +85,9 @@ export async function apiStream(path: string, body: unknown, onEvent: (e: Stream
       onEvent(evt)
     }
   }
-  if (!finished) throw new ApiError(504, 'The connection closed before the AI finished (it may have taken longer than 60 seconds). Try again, or pick a shorter option.')
+  if (!finished)
+    throw new ApiError(
+      504,
+      'The connection closed before the AI finished (it may have taken longer than 60 seconds). Try again, or pick a shorter option.',
+    )
 }

@@ -28,7 +28,7 @@
     font-feature-settings: 'cv11', 'ss01';
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-accent-500;
+    @apply outline-accent-500 outline-2 outline-offset-2;
   }
 }
 
@@ -37,7 +37,7 @@
     @apply rounded-2xl border border-zinc-200/80 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:border-zinc-800 dark:bg-zinc-900;
   }
   .input {
-    @apply w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-[15px] placeholder:text-zinc-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:placeholder:text-zinc-500;
+    @apply focus:border-accent-500 focus:ring-accent-500/20 w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-[15px] placeholder:text-zinc-400 focus:ring-2 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:placeholder:text-zinc-500;
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300;
@@ -46,7 +46,7 @@
     @apply text-zinc-500 dark:text-zinc-400;
   }
   .prose-study {
-    @apply prose prose-zinc max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-h1:text-2xl prose-h2:mt-10 prose-h2:border-b prose-h2:border-zinc-200 prose-h2:pb-2 prose-h2:text-xl dark:prose-h2:border-zinc-800 prose-h3:text-lg prose-a:text-accent-600 prose-blockquote:not-italic prose-blockquote:rounded-r-xl prose-blockquote:border-accent-400 prose-blockquote:bg-accent-50/60 prose-blockquote:py-1 prose-blockquote:font-normal dark:prose-blockquote:bg-accent-950/30 prose-code:before:content-none prose-code:after:content-none prose-table:text-sm prose-th:bg-zinc-100 dark:prose-th:bg-zinc-800 prose-th:px-3 prose-td:px-3;
+    @apply prose prose-zinc dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-semibold prose-h1:text-2xl prose-h2:mt-10 prose-h2:border-b prose-h2:border-zinc-200 prose-h2:pb-2 prose-h2:text-xl dark:prose-h2:border-zinc-800 prose-h3:text-lg prose-a:text-accent-600 prose-blockquote:not-italic prose-blockquote:rounded-r-xl prose-blockquote:border-accent-400 prose-blockquote:bg-accent-50/60 prose-blockquote:py-1 prose-blockquote:font-normal dark:prose-blockquote:bg-accent-950/30 prose-code:before:content-none prose-code:after:content-none prose-table:text-sm prose-th:bg-zinc-100 dark:prose-th:bg-zinc-800 prose-th:px-3 prose-td:px-3 max-w-none;
   }
   .prose-study blockquote p:first-of-type::before,
   .prose-study blockquote p:last-of-type::after {
@@ -56,7 +56,7 @@
     @apply my-4 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-800 dark:bg-zinc-900/60;
   }
   .prose-study summary {
-    @apply cursor-pointer font-medium text-accent-700 dark:text-accent-300;
+    @apply text-accent-700 dark:text-accent-300 cursor-pointer font-medium;
   }
   .prose-study .katex-display {
     @apply overflow-x-auto overflow-y-hidden py-1;

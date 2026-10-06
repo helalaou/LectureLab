@@ -49,8 +49,22 @@ export default function FlashcardsView({ cards, lectureId }: { cards: Flashcard[
             value={mode}
             onChange={setMode}
             options={[
-              { value: 'study', label: <><Layers className="size-4" /> Study</> },
-              { value: 'browse', label: <><List className="size-4" /> All cards</> },
+              {
+                value: 'study',
+                label: (
+                  <>
+                    <Layers className="size-4" /> Study
+                  </>
+                ),
+              },
+              {
+                value: 'browse',
+                label: (
+                  <>
+                    <List className="size-4" /> All cards
+                  </>
+                ),
+              },
             ]}
           />
         </div>
@@ -134,10 +148,13 @@ function StudySession({
       .sort((a, b) => a - b)[0]
     return (
       <div className="card px-6 py-12 text-center">
-        <PartyPopper className="mx-auto size-10 text-accent-600" />
+        <PartyPopper className="text-accent-600 mx-auto size-10" />
         <h3 className="mt-3 text-lg font-semibold">All caught up!</h3>
         <p className="muted mt-1">
-          {nextDue ? `Next review ${new Date(nextDue).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}.` : 'Come back later to review.'} Spacing out reviews is what makes it stick.
+          {nextDue
+            ? `Next review ${new Date(nextDue).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}.`
+            : 'Come back later to review.'}{' '}
+          Spacing out reviews is what makes it stick.
         </p>
         <Button
           className="mt-6"
@@ -185,7 +202,7 @@ function StudySession({
             </div>
             <div className="muted text-center text-xs">Tap to reveal answer</div>
           </div>
-          <div className="flip-face flip-back card absolute inset-0 flex flex-col overflow-y-auto border-accent-200 bg-accent-50/40 p-6 dark:border-accent-900 dark:bg-accent-950/20">
+          <div className="flip-face flip-back card border-accent-200 bg-accent-50/40 dark:border-accent-900 dark:bg-accent-950/20 absolute inset-0 flex flex-col overflow-y-auto p-6">
             <div className="muted text-xs">Answer</div>
             <div className="flex flex-1 items-center justify-center py-6 text-center text-lg leading-relaxed text-balance">
               <InlineMd>{card.back}</InlineMd>
@@ -197,7 +214,12 @@ function StudySession({
       {!flipped ? (
         <div className="mt-4 flex gap-2">
           {card.hint && (
-            <Button variant="ghost" icon={<Lightbulb className="size-4" />} onClick={() => setShowHint(true)} disabled={showHint}>
+            <Button
+              variant="ghost"
+              icon={<Lightbulb className="size-4" />}
+              onClick={() => setShowHint(true)}
+              disabled={showHint}
+            >
               {showHint ? card.hint : 'Hint'}
             </Button>
           )}
@@ -209,13 +231,33 @@ function StudySession({
         <div className="mt-4 grid grid-cols-4 gap-2">
           {(
             [
-              [0, 'Again', 'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 dark:text-red-300'],
-              [1, 'Hard', 'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 dark:text-amber-300'],
-              [2, 'Good', 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 dark:text-emerald-300'],
-              [3, 'Easy', 'bg-sky-50 text-sky-700 hover:bg-sky-100 dark:bg-sky-950/50 dark:hover:bg-sky-900/60 dark:text-sky-300'],
+              [
+                0,
+                'Again',
+                'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 dark:text-red-300',
+              ],
+              [
+                1,
+                'Hard',
+                'bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 dark:text-amber-300',
+              ],
+              [
+                2,
+                'Good',
+                'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 dark:text-emerald-300',
+              ],
+              [
+                3,
+                'Easy',
+                'bg-sky-50 text-sky-700 hover:bg-sky-100 dark:bg-sky-950/50 dark:hover:bg-sky-900/60 dark:text-sky-300',
+              ],
             ] as const
           ).map(([g, label, cls]) => (
-            <button key={g} onClick={() => grade(g)} className={cx('flex flex-col items-center rounded-xl py-2.5 text-sm font-semibold transition', cls)}>
+            <button
+              key={g}
+              onClick={() => grade(g)}
+              className={cx('flex flex-col items-center rounded-xl py-2.5 text-sm font-semibold transition', cls)}
+            >
               {label}
               <span className="text-[11px] font-normal opacity-75">{intervalLabel(state, g)}</span>
             </button>
@@ -243,7 +285,12 @@ function Browse({ cards }: { cards: Flashcard[] }) {
           </div>
         </div>
         <div className="mt-3 flex justify-between">
-          <Button variant="ghost" icon={<ChevronLeft className="size-4" />} disabled={i === 0} onClick={() => setI(i - 1)}>
+          <Button
+            variant="ghost"
+            icon={<ChevronLeft className="size-4" />}
+            disabled={i === 0}
+            onClick={() => setI(i - 1)}
+          >
             Prev
           </Button>
           <Button variant="ghost" onClick={() => setI(null)}>
@@ -260,7 +307,10 @@ function Browse({ cards }: { cards: Flashcard[] }) {
     <ul className="grid gap-3 sm:grid-cols-2">
       {cards.map((c, idx) => (
         <li key={idx}>
-          <button onClick={() => setI(idx)} className="card block h-full w-full p-4 text-left transition hover:border-accent-300 dark:hover:border-accent-700">
+          <button
+            onClick={() => setI(idx)}
+            className="card hover:border-accent-300 dark:hover:border-accent-700 block h-full w-full p-4 text-left transition"
+          >
             <div className="font-medium">
               <InlineMd>{c.front}</InlineMd>
             </div>
