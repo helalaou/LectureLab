@@ -598,7 +598,7 @@ function VoicePicker({
 
 function DeleteData() {
   const [busy, setBusy] = useState(false)
-  const { user, signOut } = useAuth()
+  const { signOut } = useAuth()
   const toast = useToast()
   return (
     <div className="mt-6 border-t border-zinc-200 pt-5 dark:border-zinc-800">

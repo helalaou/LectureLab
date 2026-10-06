@@ -12,6 +12,7 @@ export default function FlashcardsView({ cards, lectureId }: { cards: Flashcard[
   const [mode, setMode] = useState<Mode>('study')
   const [progress, setProgress] = useState<Record<string, CardState>>({})
   const [loaded, setLoaded] = useState(false)
+  const [now] = useState(() => Date.now())
 
   useEffect(() => {
     listCardProgress(lectureId)
@@ -23,7 +24,6 @@ export default function FlashcardsView({ cards, lectureId }: { cards: Flashcard[
   }, [lectureId])
 
   const stats = useMemo(() => {
-    const now = Date.now()
     let fresh = 0,
       due = 0,
       learned = 0
@@ -34,7 +34,7 @@ export default function FlashcardsView({ cards, lectureId }: { cards: Flashcard[
       else learned++
     }
     return { fresh, due, learned }
-  }, [cards, progress])
+  }, [cards, progress, now])
 
   return (
     <div>
@@ -89,6 +89,7 @@ function StudySession({
   progress: Record<string, CardState>
   setProgress: React.Dispatch<React.SetStateAction<Record<string, CardState>>>
 }) {
+  const [sessionStart] = useState(() => Date.now())
   const buildQueue = useCallback(
     (all = false) => {
       const now = Date.now()
@@ -144,7 +145,7 @@ function StudySession({
   if (!card) {
     const nextDue = Object.values(progress)
       .map((p) => new Date(p.due_at).getTime())
-      .filter((t) => t > Date.now())
+      .filter((t) => t > sessionStart)
       .sort((a, b) => a - b)[0]
     return (
       <div className="card px-6 py-12 text-center">

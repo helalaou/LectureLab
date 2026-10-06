@@ -97,12 +97,9 @@ export default function LecturePage() {
   const canGenerate = sources.some((s) => s.status === 'ready' && s.content.trim())
   const course = courses.find((c) => c.id === lecture?.course_id)
 
-  const setOutput = useCallback(
-    (o: Output) => {
-      setOutputs((m) => ({ ...m, [o.type]: o }))
-    },
-    [id],
-  )
+  const setOutput = useCallback((o: Output) => {
+    setOutputs((m) => ({ ...m, [o.type]: o }))
+  }, [])
 
   async function makeAll() {
     setMakingAll(true)
@@ -369,8 +366,14 @@ export default function LecturePage() {
         {tab === 'chat' && <ChatView lectureId={id} canChat={canGenerate} />}
       </div>
 
-      <AddSourceModal open={addOpen} onClose={() => setAddOpen(false)} lectureId={id} />
+      <AddSourceModal
+        key={addOpen ? 'open' : 'closed'}
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        lectureId={id}
+      />
       <EditLectureModal
+        key={editOpen ? 'open' : 'closed'}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         lecture={lecture}
@@ -404,13 +407,6 @@ function EditLectureModal({
   const [courseId, setCourseId] = useState<string | null>(lecture.course_id)
   const [date, setDate] = useState(lecture.lecture_date)
   const [busy, setBusy] = useState(false)
-  useEffect(() => {
-    if (open) {
-      setTitle(lecture.title)
-      setCourseId(lecture.course_id)
-      setDate(lecture.lecture_date)
-    }
-  }, [open, lecture])
   return (
     <Modal open={open} onClose={onClose} title="Edit lecture">
       <form

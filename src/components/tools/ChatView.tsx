@@ -41,7 +41,7 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
     if (!msg || streaming !== null) return
     setInput('')
     const temp: ChatMessage = {
-      id: 'tmp-' + Date.now(),
+      id: `pending-${crypto.randomUUID()}`,
       role: 'user',
       content: msg,
       created_at: new Date().toISOString(),
@@ -69,7 +69,12 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
         if (acc)
           setMessages((m) => [
             ...m,
-            { id: 'stop-' + Date.now(), role: 'assistant', content: acc + ' …', created_at: new Date().toISOString() },
+            {
+              id: `stopped-${crypto.randomUUID()}`,
+              role: 'assistant',
+              content: acc + ' …',
+              created_at: new Date().toISOString(),
+            },
           ])
       } else {
         toast((e as Error).message, 'error')

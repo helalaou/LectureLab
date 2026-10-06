@@ -21,8 +21,18 @@ export function useCourses() {
     setLoading(false)
   }, [])
   useEffect(() => {
-    refresh()
-  }, [refresh])
+    let active = true
+    listCourses()
+      .catch(() => [])
+      .then((list) => {
+        if (!active) return
+        setCourses(list)
+        setLoading(false)
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
   const create = useCallback(
     async (name: string) => {
