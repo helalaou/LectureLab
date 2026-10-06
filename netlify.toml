@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  NODE_VERSION = "22"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
@@ -11,7 +14,7 @@
   targetPort = 5173
   port = 8888
 
-# Single-page app: send every unknown route to index.html
+# Single-page app: serve index.html for every client-side route.
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -20,6 +23,14 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Permissions-Policy = "microphone=(self)"
+    Permissions-Policy = "microphone=(self), camera=(), geolocation=()"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Hashed build assets never change, so cache them for a year.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
