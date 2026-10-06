@@ -64,3 +64,29 @@ All prompts live in **`netlify/lib/prompts.ts`**. They're long and opinionated, 
    | `ALLOWED_EMAILS` | Comma-separated emails that may use your key, e.g. `you@gmail.com, neighbour@gmail.com` |
    | `KEY_ENCRYPTION_SECRET` | A random string, e.g. output of `openssl rand -base64 32` |
 
+3. Deploy. Audio storage (Netlify Blobs) needs no setup.
+
+> ⚠️ Don't change `KEY_ENCRYPTION_SECRET` later, or saved personal keys can't be decrypted. Users would just need to re-enter them.
+
+### 3. Run locally
+
+```bash
+npm install
+cp .env.example .env        # fill in the same values
+npm run dev                  # Netlify Dev on http://localhost:8888 (site + functions + Blobs)
+```
+
+---
+
+## Costs (default models)
+
+| Step | Model | Approx. cost |
+|---|---|---|
+| Transcription | `gpt-transcribe` | ~$0.27 per hour of audio |
+| Study tools / chat | `gpt-6-luna` | well under $0.01 per tool |
+| Podcast audio | `gpt-4o-mini-tts` | ~$0.05–0.15 per episode |
+
+Users can change models in **Settings → Advanced**. Every AI call is logged in Firestore under `users/{uid}/usage` (kind, amount, model, whether the shared key was used), so you can see in the Firebase console how much each person uses your key.
+
+---
+
