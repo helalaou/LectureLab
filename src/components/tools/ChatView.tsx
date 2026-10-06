@@ -4,7 +4,9 @@ import { clearChat, listChat } from '@/lib/db'
 import { apiStream, ApiError } from '@/lib/api'
 import type { ChatMessage } from '@/lib/types'
 import Markdown from '@/components/Markdown'
-import { cx, IconButton, useToast } from '@/components/ui'
+import { IconButton } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useToast } from '@/hooks/useToast'
 import { useNavigate } from 'react-router-dom'
 
 const SUGGESTIONS = [
@@ -188,9 +190,9 @@ export default function ChatView({ lectureId, canChat }: { lectureId: string; ca
 
 function Bubble({ role, content }: { role: 'user' | 'assistant'; content: string }) {
   return (
-    <div className={cx('flex', role === 'user' ? 'justify-end' : 'justify-start')}>
+    <div className={cn('flex', role === 'user' ? 'justify-end' : 'justify-start')}>
       <div
-        className={cx(
+        className={cn(
           'max-w-[88%] rounded-2xl px-4 py-2.5',
           role === 'user' ? 'bg-accent-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800',
         )}

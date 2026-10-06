@@ -32,7 +32,9 @@ import GlossaryView from '@/components/tools/GlossaryView'
 import ChatView from '@/components/tools/ChatView'
 import Markdown from '@/components/Markdown'
 import CourseSelect from '@/components/CourseSelect'
-import { Button, IconButton, Menu, MenuItem, Modal, PageSpinner, cx, useToast } from '@/components/ui'
+import { Button, IconButton, Menu, MenuItem, Modal, PageSpinner } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useToast } from '@/hooks/useToast'
 import { FileSpreadsheet, Layers } from 'lucide-react'
 import { ApiError } from '@/lib/api'
 
@@ -192,7 +194,7 @@ export default function LecturePage() {
             <div className="muted flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
               {course && (
                 <span className="flex items-center gap-1.5">
-                  <span className={cx('size-2 rounded-full', COURSE_COLORS[course.color])} />
+                  <span className={cn('size-2 rounded-full', COURSE_COLORS[course.color])} />
                   {course.name}
                 </span>
               )}
@@ -265,7 +267,7 @@ export default function LecturePage() {
                   key={t}
                   data-active={active}
                   onClick={() => setTab(t)}
-                  className={cx(
+                  className={cn(
                     'relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
                     active
                       ? 'bg-accent-600 text-white shadow-sm'

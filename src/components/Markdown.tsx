@@ -4,7 +4,7 @@ import remarkMath from 'remark-math'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import rehypeKatex from 'rehype-katex'
-import { cx } from '@/components/ui'
+import { cn } from '@/lib/cn'
 
 // Allow <details>/<summary> (used for hidden answers) and the classes math rendering needs.
 const schema = {
@@ -22,7 +22,7 @@ const schema = {
 
 export default function Markdown({ children, className }: { children: string; className?: string }) {
   return (
-    <div className={cx('prose-study', className)}>
+    <div className={cn('prose-study', className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: true }]]}
         rehypePlugins={[rehypeRaw, [rehypeSanitize, schema], [rehypeKatex, { throwOnError: false, strict: 'ignore' }]]}
@@ -37,7 +37,7 @@ export default function Markdown({ children, className }: { children: string; cl
 /** Inline markdown for short strings (cards, quiz options) — no block wrappers. */
 export function InlineMd({ children, className }: { children: string; className?: string }) {
   return (
-    <span className={cx('[&_.katex]:text-[1.02em] [&_p]:inline', className)}>
+    <span className={cn('[&_.katex]:text-[1.02em] [&_p]:inline', className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: 'ignore' }]]}

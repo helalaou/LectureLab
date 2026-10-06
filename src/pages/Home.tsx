@@ -21,7 +21,9 @@ import type { Lecture, OutputType, SourceKind } from '@/lib/types'
 import { useCourses, COURSE_COLORS } from '@/hooks/useCourses'
 import { useAuth } from '@/hooks/useAuth'
 import CourseSelect from '@/components/CourseSelect'
-import { Button, Empty, Modal, PageSpinner, cx, useToast, IconButton } from '@/components/ui'
+import { Button, Empty, Modal, PageSpinner, IconButton } from '@/components/ui'
+import { cn } from '@/lib/cn'
+import { useToast } from '@/hooks/useToast'
 import { OUTPUT_META } from '@/components/tools/meta'
 
 type LectureRow = Lecture
@@ -121,7 +123,7 @@ export default function Home() {
               <button
                 key={c.id}
                 onClick={() => setCourseFilter(c.id)}
-                className={cx(
+                className={cn(
                   'flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors',
                   courseFilter === c.id
                     ? 'border-accent-600 bg-accent-600 text-white'
@@ -130,7 +132,7 @@ export default function Home() {
               >
                 {'color' in c && (
                   <span
-                    className={cx(
+                    className={cn(
                       'size-2 rounded-full',
                       COURSE_COLORS[(c as { color: string }).color] || 'bg-zinc-400',
                     )}
@@ -187,7 +189,7 @@ export default function Home() {
                     <div className="min-w-0">
                       {course && (
                         <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                          <span className={cx('size-2 rounded-full', COURSE_COLORS[course.color] || 'bg-zinc-400')} />
+                          <span className={cn('size-2 rounded-full', COURSE_COLORS[course.color] || 'bg-zinc-400')} />
                           <span className="truncate">{course.name}</span>
                         </div>
                       )}
@@ -249,7 +251,7 @@ export default function Home() {
         <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
           {courses.map((c) => (
             <li key={c.id} className="flex items-center gap-3 py-2.5">
-              <span className={cx('size-3 rounded-full', COURSE_COLORS[c.color])} />
+              <span className={cn('size-3 rounded-full', COURSE_COLORS[c.color])} />
               <span className="flex-1 font-medium">{c.name}</span>
               <IconButton
                 label="Rename"

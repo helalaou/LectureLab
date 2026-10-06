@@ -1,18 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type ButtonHTMLAttributes,
-  type ReactNode,
-} from 'react'
+import { useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import clsx from 'clsx'
-
-export { clsx as cx }
 
 // ------------------------------------------------------------------ Button
 
@@ -283,49 +272,6 @@ export function Modal({
     document.body,
   )
 }
-
-// ------------------------------------------------------------------ Toasts
-
-interface ToastItem {
-  id: number
-  kind: 'success' | 'error' | 'info'
-  message: string
-}
-const ToastCtx = createContext<(message: string, kind?: ToastItem['kind']) => void>(() => {})
-
-export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ToastItem[]>([])
-  const idRef = useRef(0)
-  const push = useCallback((message: string, kind: ToastItem['kind'] = 'info') => {
-    const id = ++idRef.current
-    setItems((x) => [...x, { id, kind, message }])
-    setTimeout(() => setItems((x) => x.filter((t) => t.id !== id)), kind === 'error' ? 7000 : 3500)
-  }, [])
-  return (
-    <ToastCtx.Provider value={push}>
-      {children}
-      {createPortal(
-        <div className="pointer-events-none fixed inset-x-0 bottom-24 z-[60] flex flex-col items-center gap-2 px-4 sm:bottom-6">
-          {items.map((t) => (
-            <div
-              key={t.id}
-              className="pointer-events-auto flex max-w-md items-start gap-2.5 rounded-2xl bg-zinc-900 px-4 py-3 text-sm text-white shadow-xl dark:bg-zinc-100 dark:text-zinc-900"
-            >
-              {t.kind === 'success' && (
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400 dark:text-emerald-600" />
-              )}
-              {t.kind === 'error' && <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-400 dark:text-red-600" />}
-              <span>{t.message}</span>
-            </div>
-          ))}
-        </div>,
-        document.body,
-      )}
-    </ToastCtx.Provider>
-  )
-}
-
-export const useToast = () => useContext(ToastCtx)
 
 // ------------------------------------------------------------------ Menu
 

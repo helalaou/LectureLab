@@ -22,7 +22,9 @@ import { listMicrophones, micConstraints, type MicPrefs } from '@/lib/audio/reco
 import { getMicPrefs, setMicPrefs } from '@/lib/micPrefs'
 import { apiBlob, apiJson } from '@/lib/api'
 import { deleteAllData } from '@/lib/db'
-import { Button, Segmented, Toggle, useToast, cx, Badge } from '@/components/ui'
+import { Button, Segmented, Toggle, Badge } from '@/components/ui'
+import { useToast } from '@/hooks/useToast'
+import { cn } from '@/lib/cn'
 import type { UserSettings } from '@/lib/types'
 
 const TEXT_MODELS = [
@@ -387,7 +389,7 @@ function MicrophoneSection() {
             </Button>
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
               <div
-                className={cx(
+                className={cn(
                   'h-full rounded-full transition-[width] duration-75',
                   level > 0.85 ? 'bg-red-500' : level > 0.05 ? 'bg-emerald-500' : 'bg-zinc-400',
                 )}

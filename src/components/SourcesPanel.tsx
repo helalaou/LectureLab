@@ -19,7 +19,9 @@ import { addDocument, addMediaFile, addText, deleteSource, retryRecordingSource,
 import { DOC_ACCEPT } from '@/lib/docs'
 import { audioUrl as getAudioUrl } from '@/lib/storage'
 import { fmtDuration, wordCount } from '@/lib/format'
-import { Button, Modal, Progress, useToast, cx, IconButton, Badge } from '@/components/ui'
+import { Button, Modal, Progress, IconButton, Badge } from '@/components/ui'
+import { useToast } from '@/hooks/useToast'
+import { cn } from '@/lib/cn'
 
 const KIND = {
   recording: { icon: Mic, label: 'Class recording' },
@@ -204,7 +206,7 @@ function SourceItem({ source }: { source: Source }) {
     <li className="card overflow-hidden">
       <div className="flex items-center gap-3 p-3.5 sm:p-4">
         <div
-          className={cx(
+          className={cn(
             'flex size-10 shrink-0 items-center justify-center rounded-xl',
             source.status === 'error'
               ? 'bg-red-50 text-red-600 dark:bg-red-950/50'
@@ -237,7 +239,7 @@ function SourceItem({ source }: { source: Source }) {
         </button>
         {source.status === 'ready' && (
           <IconButton label={open ? 'Hide' : 'Show content'} onClick={() => setOpen((o) => !o)}>
-            <ChevronDown className={cx('size-5 transition-transform', open && 'rotate-180')} />
+            <ChevronDown className={cn('size-5 transition-transform', open && 'rotate-180')} />
           </IconButton>
         )}
         {!processing && (
@@ -324,7 +326,7 @@ function SourceItem({ source }: { source: Source }) {
                         audioRef.current.currentTime = s.start
                         audioRef.current.play()
                       }}
-                      className={cx(
+                      className={cn(
                         'flex w-full gap-3 rounded-lg px-2 py-1.5 text-left text-[15px] leading-relaxed transition',
                         active ? 'bg-accent-50 dark:bg-accent-950/40' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50',
                       )}
