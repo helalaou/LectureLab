@@ -27,7 +27,9 @@ export default function Mermaid({ code, onSvg }: { code: string; onSvg?: (svg: s
   const [error, setError] = useState<string | null>(null)
   const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
   const onSvgRef = useRef(onSvg)
-  onSvgRef.current = onSvg
+  useEffect(() => {
+    onSvgRef.current = onSvg
+  }, [onSvg])
 
   useEffect(() => {
     const obs = new MutationObserver(() => setDark(document.documentElement.classList.contains('dark')))

@@ -18,7 +18,7 @@ export default async (req: Request) => {
 
     const { key } = (await req.json().catch(() => ({}))) as { key?: string }
     const clean = (key || '').trim()
-    if (!/^sk-[A-Za-z0-9_\-]{20,}$/.test(clean)) {
+    if (!/^sk-[A-Za-z0-9_-]{20,}$/.test(clean)) {
       throw new HttpError(400, 'That does not look like an OpenAI API key. It should start with "sk-".')
     }
     if (!(await validateKey(clean))) {

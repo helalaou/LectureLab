@@ -45,40 +45,39 @@ export function AddSourceModal({
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
 
-  useEffect(() => {
-    if (!open) {
-      setPasting(false)
-      setTitle('')
-      setText('')
-    }
-  }, [open])
-
   const options = [
     {
       icon: Mic,
       title: 'Record now',
       text: 'Use your microphone during class',
-      onClick: () => navigate(`/record?lecture=${lectureId}`),
+      action: 'record' as const,
     },
     {
       icon: AudioLines,
       title: 'Upload recordings',
       text: 'MP3, M4A, WAV, WEBM, or video files (MP4, MOV)',
-      onClick: () => mediaRef.current?.click(),
+      action: 'media' as const,
     },
     {
       icon: FileText,
       title: 'Upload documents',
       text: 'Slides or readings as PDF, Word (.docx), or TXT',
-      onClick: () => docRef.current?.click(),
+      action: 'documents' as const,
     },
     {
       icon: Type,
       title: 'Paste text',
       text: 'Your own notes, a syllabus, or a textbook passage',
-      onClick: () => setPasting(true),
+      action: 'paste' as const,
     },
   ]
+
+  function choose(action: (typeof options)[number]['action']) {
+    if (action === 'record') navigate(`/record?lecture=${lectureId}`)
+    else if (action === 'media') mediaRef.current?.click()
+    else if (action === 'documents') docRef.current?.click()
+    else setPasting(true)
+  }
 
   return (
     <Modal open={open} onClose={onClose} title={pasting ? 'Paste text' : 'Add a source'}>
@@ -88,10 +87,10 @@ export function AddSourceModal({
             Add as many sources as you like. Every study tool uses all of them together.
           </p>
           <div className="grid gap-2.5">
-            {options.map(({ icon: Icon, title, text, onClick }) => (
+            {options.map(({ icon: Icon, title, text, action }) => (
               <button
                 key={title}
-                onClick={onClick}
+                onClick={() => choose(action)}
                 className="hover:border-accent-400 hover:bg-accent-50/50 dark:hover:border-accent-700 dark:hover:bg-accent-950/30 flex items-center gap-4 rounded-2xl border border-zinc-200 p-4 text-left transition dark:border-zinc-800"
               >
                 <div className="bg-accent-50 text-accent-600 dark:bg-accent-950/60 dark:text-accent-300 flex size-11 shrink-0 items-center justify-center rounded-xl">

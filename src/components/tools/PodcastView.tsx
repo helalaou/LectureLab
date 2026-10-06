@@ -95,12 +95,18 @@ export default function PodcastView({
   const [current, setCurrent] = useState(-1)
   const audioRef = useRef<HTMLAudioElement>(null)
   const offsets = p._audio_offsets
+  const playableUrl = output.audio_path ? url : null
 
   useEffect(() => {
-    if (!output.audio_path) return setUrl(null)
-    audioUrl(output.audio_path)
-      .then(setUrl)
-      .catch(() => setUrl(null))
+    const path = output.audio_path
+    if (!path) return
+    let active = true
+    audioUrl(path)
+      .then((u) => active && setUrl(u))
+      .catch(() => active && setUrl(null))
+    return () => {
+      active = false
+    }
   }, [output.audio_path])
 
   useEffect(() => {
@@ -148,9 +154,16 @@ export default function PodcastView({
               <Progress className="mt-2" value={job} />
               <p className="muted mt-2 text-xs">Usually 30–90 seconds. You can switch tabs, but keep the app open.</p>
             </div>
-          ) : url ? (
+          ) : playableUrl ? (
             <div className="space-y-3">
-              <audio ref={audioRef} src={url} controls preload="metadata" className="w-full" onTimeUpdate={onTime} />
+              <audio
+                ref={audioRef}
+                src={playableUrl}
+                controls
+                preload="metadata"
+                className="w-full"
+                onTimeUpdate={onTime}
+              />
               <div className="flex flex-wrap items-center gap-2">
                 <Gauge className="muted size-4" />
                 {SPEEDS.map((s) => (
@@ -173,7 +186,7 @@ export default function PodcastView({
                   className="ml-auto"
                   icon={<Download className="size-4" />}
                   onClick={async () => {
-                    download(`${slug(p.title)}.mp3`, await fetchAudioBlob(url), 'audio/mpeg')
+                    download(`${slug(p.title)}.mp3`, await fetchAudioBlob(playableUrl), 'audio/mpeg')
                   }}
                 >
                   MP3

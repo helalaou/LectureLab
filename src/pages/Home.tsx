@@ -235,6 +235,7 @@ export default function Home() {
       )}
 
       <NewLectureModal
+        key={newOpen ? 'open' : 'closed'}
         open={newOpen}
         onClose={() => setNewOpen(false)}
         courses={courses}
@@ -306,9 +307,6 @@ function NewLectureModal({
   const [courseId, setCourseId] = useState<string | null>(defaultCourse)
   const [busy, setBusy] = useState(false)
   const toast = useToast()
-  useEffect(() => {
-    if (open) setCourseId(defaultCourse)
-  }, [open, defaultCourse])
 
   return (
     <Modal open={open} onClose={onClose} title="New lecture">
