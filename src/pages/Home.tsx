@@ -15,17 +15,16 @@ import {
   Trash2,
 } from 'lucide-react'
 import { listLectures } from '@/lib/db'
-import { createLecture } from '@/lib/pipeline'
 import { listStoredRecordings, type RecordingMeta } from '@/lib/audio/recorder'
 import { fmtDate, relativeTime } from '@/lib/format'
 import type { Lecture, OutputType, SourceKind } from '@/lib/types'
 import { useCourses, COURSE_COLORS } from '@/hooks/useCourses'
 import { useAuth } from '@/hooks/useAuth'
-import CourseSelect from '@/components/CourseSelect'
 import { Button, Empty, Modal, PageSpinner, IconButton } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/hooks/useToast'
 import { OUTPUT_META } from '@/components/tools/meta'
+import { NewLectureModal } from '@/components/lectures/NewLectureModal'
 
 type LectureRow = Lecture
 
@@ -288,67 +287,5 @@ export default function Home() {
         </div>
       </Modal>
     </div>
-  )
-}
-
-function NewLectureModal({
-  open,
-  onClose,
-  courses,
-  createCourse,
-  defaultCourse,
-  onCreated,
-}: {
-  open: boolean
-  onClose: () => void
-  courses: ReturnType<typeof useCourses>['courses']
-  createCourse: ReturnType<typeof useCourses>['create']
-  defaultCourse: string | null
-  onCreated: (id: string) => void
-}) {
-  const [title, setTitle] = useState('')
-  const [courseId, setCourseId] = useState<string | null>(defaultCourse)
-  const [busy, setBusy] = useState(false)
-  const toast = useToast()
-
-  return (
-    <Modal open={open} onClose={onClose} title="New lecture">
-      <form
-        className="space-y-4"
-        onSubmit={async (e) => {
-          e.preventDefault()
-          setBusy(true)
-          try {
-            const id = await createLecture({ title, courseId })
-            onCreated(id)
-          } catch (err) {
-            toast((err as Error).message, 'error')
-          } finally {
-            setBusy(false)
-          }
-        }}
-      >
-        <div>
-          <label className="label">Title</label>
-          <input
-            className="input"
-            autoFocus
-            placeholder="Leave blank and the AI will name it"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="label">Course</label>
-          <CourseSelect courses={courses} value={courseId} onChange={setCourseId} onCreate={createCourse} />
-        </div>
-        <p className="muted text-sm">
-          Next you'll add sources: recordings, files, slides or notes. You can add as many as you like.
-        </p>
-        <Button type="submit" className="w-full" loading={busy}>
-          Create lecture
-        </Button>
-      </form>
-    </Modal>
   )
 }

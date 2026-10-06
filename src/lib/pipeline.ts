@@ -47,12 +47,6 @@ export function useJobs(): Record<string, Job> {
   )
 }
 
-/** Notifies pages that a source row changed so they can refetch. */
-export const sourceEvents = new EventTarget()
-function changed(lectureId: string) {
-  sourceEvents.dispatchEvent(new CustomEvent('change', { detail: lectureId }))
-}
-
 // ------------------------------------------------------------------ helpers
 
 export async function createLecture(input: { title?: string; courseId?: string | null }): Promise<string> {
@@ -66,13 +60,11 @@ async function insertSource(
   extra: Partial<Source> = {},
 ): Promise<Source> {
   const src = await db.addSource(lectureId, kind, title, extra)
-  changed(lectureId)
   return src
 }
 
 async function updateSource(id: string, lectureId: string, patch: Partial<Source>) {
   await db.updateSource(lectureId, id, patch)
-  changed(lectureId)
 }
 
 async function lectureContext(lectureId: string) {
@@ -228,7 +220,6 @@ export async function addText(lectureId: string, title: string, text: string): P
 
 export async function deleteSource(src: Source) {
   await db.removeSource(src)
-  changed(src.lecture_id)
 }
 
 /** Find the on-device recording that belongs to a failed source, if any. */
