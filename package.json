@@ -1,20 +1,44 @@
 {
   "name": "lecturelab",
-  "private": true,
   "version": "0.1.0",
-  "description": "Record or upload lectures and turn them into notes, flashcards, quizzes, podcasts, visuals and more.",
+  "private": true,
+  "description": "Record or upload lectures and turn them into study notes, flashcards, quizzes, a study podcast and an AI tutor grounded in your course material.",
+  "keywords": [
+    "education",
+    "study",
+    "lecture",
+    "transcription",
+    "flashcards",
+    "spaced-repetition",
+    "openai",
+    "firebase",
+    "netlify",
+    "react"
+  ],
+  "homepage": "https://github.com/helalaou/lecturelab#readme",
+  "bugs": {
+    "url": "https://github.com/helalaou/lecturelab/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helalaou/lecturelab.git"
+  },
   "license": "MIT",
+  "author": "Hamza El Alaoui",
   "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "netlify dev",
     "dev:web": "vite",
     "build": "tsc -b && vite build",
-    "typecheck": "tsc -b",
     "preview": "vite preview",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
